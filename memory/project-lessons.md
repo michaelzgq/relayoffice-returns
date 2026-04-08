@@ -1562,3 +1562,51 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/Admin/ReturnCaseController.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/cases/brand-review.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/Returns/BrandReviewLinkTest.php`
+
+## 2026-04-08 - Render 419 after deploy was a trusted-proxy bug, not a CSRF mystery
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: debugging production `419 Page Expired` errors on `demo.relayoffice.ai` after a successful Render deploy
+- Outcome: fixed in code and deploy config
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Reproducing the live flow with a real HTTP session exposed the exact redirect chain instead of guessing at CSRF.
+- Checking the first redirect target after form POST immediately showed the real signal: `https -> http -> https`.
+- Looking at `bootstrap/app.php` instead of only the legacy middleware file surfaced that the wrong `TrustProxies` class was actually registered.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I initially treated 419 like a generic session problem instead of a proxy/scheme problem
+- What happened: the symptom was `419 Page Expired`, but the real issue was that production requests were being interpreted as `http` behind Render/Cloudflare.
+- Root cause: `web-panel/bootstrap/app.php` was wiring `Illuminate\Http\Middleware\TrustProxies` instead of the configured `App\Http\Middleware\TrustProxies`, so forwarded scheme headers were ignored.
+- Earlier signal I missed: live POST redirects were landing on `http://demo.relayoffice.ai/...`, which should never happen on a properly trusted `https` deployment.
+- Prevention rule: when production shows `419` behind a proxy/CDN, inspect redirect scheme and cookie flags before touching CSRF code.
+- Next-time checklist item: after first production deploy, submit one real form and verify there is no `http://` hop anywhere in the redirect chain.
+
+### Mistake: I left production secure-cookie behavior implicit
+- What happened: the app relied on default session cookie behavior, which meant production cookies were not explicitly forced to `Secure`.
+- Root cause: Render environment variables set `APP_URL` and `FORCE_HTTPS`, but not `SESSION_SECURE_COOKIE=true`.
+- Earlier signal I missed: live `Set-Cookie` headers did not include the `Secure` attribute.
+- Prevention rule: any HTTPS production environment must explicitly enable secure session cookies, even if the app “mostly works” without them.
+- Next-time checklist item: inspect `Set-Cookie` once after deployment and confirm the session cookie has `Secure`.
+
+## Permanent Rules
+- In Laravel bootstrap wiring, always verify the app is actually registering the custom `TrustProxies` middleware when one exists.
+- A production `419` behind a CDN/proxy is often a request-scheme or cookie transport bug, not a CSRF-token bug.
+- Secure cookies should be explicit in production env config, not left to defaults.
+
+## Next-Project Checklist
+- [ ] On new deployments, submit one real form and inspect the first redirect target.
+- [ ] Confirm no live route on an HTTPS domain generates `http://` redirects.
+- [ ] Confirm production session cookies include the `Secure` attribute.
+- [ ] Confirm proxy-aware middleware is the app-specific implementation, not the framework default.
+
+## Open Risks Or Follow-Ups
+- Render still needs a successful redeploy of the proxy fix before the live environment can be re-verified.
+- If Cloudflare settings change later, the live form flow should be spot-checked again.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/bootstrap/app.php`
+- `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
