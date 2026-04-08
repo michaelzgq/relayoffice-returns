@@ -1580,7 +1580,7 @@
 
 ### Mistake: I initially treated 419 like a generic session problem instead of a proxy/scheme problem
 - What happened: the symptom was `419 Page Expired`, but the real issue was that production requests were being interpreted as `http` behind Render/Cloudflare.
-- Root cause: `web-panel/bootstrap/app.php` was wiring `Illuminate\Http\Middleware\TrustProxies` instead of the configured `App\Http\Middleware\TrustProxies`, so forwarded scheme headers were ignored.
+- Root cause: `web-panel/bootstrap/app.php` was wiring `Illuminate\Http\Middleware\TrustProxies` instead of the configured `App\Http\Middleware\TrustProxies`, and the app middleware itself was not explicitly trusting proxy IPs with `protected $proxies = '*'`. Forwarded scheme headers were therefore ignored on Render/Cloudflare.
 - Earlier signal I missed: live POST redirects were landing on `http://demo.relayoffice.ai/...`, which should never happen on a properly trusted `https` deployment.
 - Prevention rule: when production shows `419` behind a proxy/CDN, inspect redirect scheme and cookie flags before touching CSRF code.
 - Next-time checklist item: after first production deploy, submit one real form and verify there is no `http://` hop anywhere in the redirect chain.
@@ -1609,4 +1609,5 @@
 
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/bootstrap/app.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Middleware/TrustProxies.php`
 - `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
