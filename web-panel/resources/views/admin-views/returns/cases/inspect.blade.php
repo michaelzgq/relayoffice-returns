@@ -113,7 +113,7 @@
                                     {{ $initialProfile?->profile_name ?? 'Choose a client playbook first.' }}
                                 </div>
                                 <div class="small text-muted mb-3" id="rule-profile-status">
-                                    {{ $initialProfile ? 'This playbook decides what proof is required and what refund status will be used by default.' : 'The form will load the right required fields after you choose a client.' }}
+                                    {{ $initialProfile ? 'This playbook decides what proof is required and which decision state will be used by default.' : 'The form will load the right required fields after you choose a client.' }}
                                 </div>
 
                                 <div class="d-flex flex-wrap gap-2 mb-3">
@@ -121,7 +121,7 @@
                                         {{ $initialProfile ? $initialProfile->required_photo_count . ' evidence photo(s) required' : 'Evidence requirement pending' }}
                                     </span>
                                     <span class="badge badge-soft-info requirement-chip" id="rule-default-refund">
-                                        {{ $initialProfile ? 'Default refund: ' . str_replace('_', ' ', $initialProfile->default_refund_status) : 'Refund default pending' }}
+                                        {{ $initialProfile ? 'Default decision state: ' . \App\Models\ReturnCase::decisionStatusLabel($initialProfile->default_refund_status) : 'Decision default pending' }}
                                     </span>
                                 </div>
 
@@ -208,11 +208,11 @@
                         <div class="card-body">
                             @if($canManageRefundGate)
                                 <div class="form-group">
-                                    <label class="title">Refund status</label>
+                                    <label class="title">Decision state</label>
                                     <select class="form-control form-control-lg" id="refund-status-input" name="refund_status">
                                         @foreach($refundStatusOptions as $status)
                                             <option value="{{ $status }}" {{ old('refund_status', $currentCase?->refund_status ?? 'hold') === $status ? 'selected' : '' }}>
-                                                {{ str_replace('_', ' ', ucfirst($status)) }}
+                                                {{ \App\Models\ReturnCase::decisionStatusLabel($status) }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -223,8 +223,8 @@
                                 </div>
                             @else
                                 <div class="alert alert-soft-primary mb-3">
-                                    <div class="font-weight-bold mb-1">Refund status will be set automatically</div>
-                                    <div class="small mb-0">Inspectors only capture facts here. The selected playbook decides the default refund status, and ops can review it later in Queue.</div>
+                                    <div class="font-weight-bold mb-1">Decision state will be set automatically</div>
+                                    <div class="small mb-0">Inspectors only capture facts here. The selected playbook decides the default decision state, and ops can review it later in Queue.</div>
                                 </div>
                             @endif
                             <div class="form-group mb-0">
@@ -315,7 +315,8 @@
             const conditionInputs = Array.from(form.querySelectorAll('.condition-input'));
             const dispositionInputs = Array.from(form.querySelectorAll('.disposition-input'));
 
-            const humanize = (value) => String(value || '').replaceAll('_', ' ');
+            const statusLabels = @json(\App\Models\ReturnCase::decisionStatusLabels());
+            const humanize = (value) => statusLabels[value] || String(value || '').replaceAll('_', ' ');
             const humanizeList = (values) => (values || []).map((value) => humanize(value)).join(', ');
             const mapToHumanList = (mapping) => Object.entries(mapping || {}).map(([condition, disposition]) => `${humanize(condition)} -> ${humanize(disposition)}`).join(', ');
 
@@ -400,7 +401,7 @@
                     ruleProfileName.textContent = 'No active rule profile found for this brand.';
                     ruleProfileStatus.textContent = 'Create or activate a client playbook before submitting inspections.';
                     rulePhotoCount.textContent = 'Evidence requirement unavailable';
-                    ruleDefaultRefund.textContent = 'Refund default unavailable';
+                    ruleDefaultRefund.textContent = 'Decision default unavailable';
                     ruleRecommendedActions.textContent = 'Recommended warehouse actions: brand rule missing';
                     ruleRequiredFields.textContent = 'Required fields: brand rule missing';
                     rulePhotoTypes.textContent = 'Required photo types: brand rule missing';
@@ -418,9 +419,9 @@
 
                 summary.className = 'alert alert-soft-primary mt-3 mb-0 rule-summary';
                 ruleProfileName.textContent = profile.profile_name;
-                ruleProfileStatus.textContent = 'This playbook controls what proof is required and which refund status is used by default.';
+                ruleProfileStatus.textContent = 'This playbook controls what proof is required and which decision state is used by default.';
                 rulePhotoCount.textContent = `${profile.required_photo_count} evidence photo(s) required`;
-                ruleDefaultRefund.textContent = `Default refund: ${humanize(profile.default_refund_status)}`;
+                ruleDefaultRefund.textContent = `Default decision state: ${humanize(profile.default_refund_status)}`;
                 ruleRecommendedActions.textContent = `Recommended warehouse actions: ${mapToHumanList(profile.recommended_dispositions || {}) || 'No default actions'}`;
 
                 const requiredFields = [];

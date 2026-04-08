@@ -39,7 +39,7 @@ class BatchUpdateRefundDecisionRequest extends ValidationHandler
             $resources = $this->returnCases();
 
             if ($targetStatus === 'needs_review' && !$this->filled('decision_note')) {
-                $validator->errors()->add('decision_note', 'A batch note is required when cases are moved to needs review.');
+                $validator->errors()->add('decision_note', 'A batch note is required when cases are moved to Needs ops review.');
             }
 
             if (!in_array($targetStatus, ['ready_to_release', 'released'], true)) {
@@ -54,7 +54,7 @@ class BatchUpdateRefundDecisionRequest extends ValidationHandler
             if ($blocked->isNotEmpty()) {
                 $validator->errors()->add(
                     'case_ids',
-                    'Evidence must be complete before release. Blocked cases: ' . $blocked->implode(', ')
+                    'Evidence must be complete before a case can move to Ready for brand review or Decision completed. Blocked cases: ' . $blocked->implode(', ')
                 );
             }
         });

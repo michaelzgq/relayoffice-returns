@@ -11,6 +11,7 @@ output/
 .playwright-cli/
 
 # Local env and runtime leftovers
+.env.self-hosted
 web-panel/.env
 web-panel/storage/logs/*.log
 web-panel/storage/framework/cache/data/*

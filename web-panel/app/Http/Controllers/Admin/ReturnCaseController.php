@@ -14,6 +14,7 @@ use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 use function App\CPU\translate;
 
@@ -37,17 +38,25 @@ class ReturnCaseController extends Controller
         ]);
     }
 
-    public function show(int $id): View
+    public function show(Request $request, int $id): View
     {
         $resource = $this->visibleCaseQuery()
             ->with(['brand', 'ruleProfile', 'media', 'events', 'refundDecision'])
             ->findOrFail($id);
+
+        $shareDays = ReturnCase::normalizeShareExpiryDays($request->integer('share_days'));
+        $shareExpiresAt = now()->addDays($shareDays);
 
         return view('admin-views.returns.cases.show', [
             'resource' => $resource,
             'refundStatusOptions' => ReturnCase::refundStatusOptions(),
             'canManageRefundGate' => Helpers::admin_has_module('returns_queue_section'),
             'inspectorView' => Helpers::returns_user_is_inspector(),
+            'shareExpiryDays' => $shareDays,
+            'shareExpiryOptions' => ReturnCase::shareExpiryOptions(),
+            'shareExpiresAt' => $shareExpiresAt,
+            'brandReviewUrl' => URL::temporarySignedRoute('returns.brand-review', $shareExpiresAt, ['id' => $resource->id]),
+            'brandReviewPdfUrl' => URL::temporarySignedRoute('returns.brand-review.pdf', $shareExpiresAt, ['id' => $resource->id]),
         ]);
     }
 
@@ -80,13 +89,13 @@ class ReturnCaseController extends Controller
             ->whereDate('inspected_at', today())
             ->count();
 
-        $awaitingRefundAction = (clone $openQueueQuery)->count();
+        $awaitingDecisionReview = (clone $openQueueQuery)->count();
 
-        $readyToReleaseCount = (clone $openQueueQuery)
+        $readyForBrandReviewCount = (clone $openQueueQuery)
             ->where('refund_status', 'ready_to_release')
             ->count();
 
-        $over48hStuck = (clone $openQueueQuery)
+        $over48hStuckInOpsHold = (clone $openQueueQuery)
             ->where('refund_status', 'hold')
             ->whereRaw($this->slaAgeSql() . ' >= ?', [48])
             ->count();
@@ -124,9 +133,9 @@ class ReturnCaseController extends Controller
 
         return view('admin-views.returns.dashboard.index', compact(
             'inspectionsToday',
-            'awaitingRefundAction',
-            'readyToReleaseCount',
-            'over48hStuck',
+            'awaitingDecisionReview',
+            'readyForBrandReviewCount',
+            'over48hStuckInOpsHold',
             'brandsWithBacklogCount',
             'brandsWithHighestBacklog',
             'missingEvidenceCount',
@@ -144,12 +153,12 @@ class ReturnCaseController extends Controller
                 resource: $resource,
                 targetStatus: (string) $request->input('refund_status'),
                 decisionNote: $request->filled('decision_note') ? (string) $request->input('decision_note') : null,
-                title: $request->input('redirect_to') === 'queue' ? 'Refund gate updated from queue' : 'Refund gate updated',
+                title: $request->input('redirect_to') === 'queue' ? 'Decision review updated from queue' : 'Decision review updated',
                 eventMeta: ['source' => $request->input('redirect_to') === 'queue' ? 'queue' : 'case_detail']
             );
         });
 
-        Toastr::success(translate('Refund gate decision updated'));
+        Toastr::success(translate('Decision review updated'));
 
         if ($request->input('redirect_to') === 'queue') {
             return redirect()->route('admin.returns.queue.index', $this->queueRedirectQuery($request));
@@ -170,13 +179,13 @@ class ReturnCaseController extends Controller
                     resource: $resource,
                     targetStatus: $targetStatus,
                     decisionNote: $decisionNote,
-                    title: 'Refund gate updated from batch queue action',
+                    title: 'Decision review updated from batch queue action',
                     eventMeta: ['source' => 'queue_batch']
                 );
             }
         });
 
-        Toastr::success($resources->count() . ' refund case(s) updated from queue');
+        Toastr::success($resources->count() . ' case(s) updated from queue');
         return redirect()->route('admin.returns.queue.index', $this->queueRedirectQuery($request));
     }
 

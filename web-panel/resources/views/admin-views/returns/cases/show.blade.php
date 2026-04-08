@@ -10,6 +10,8 @@
             'needs_review' => 'badge-soft-danger',
             'released' => 'badge-soft-success',
         ];
+        $statusLabels = \App\Models\ReturnCase::decisionStatusLabels();
+        $statusHelp = \App\Models\ReturnCase::decisionStatusHelp();
     @endphp
     <div class="content container-fluid">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
@@ -36,12 +38,13 @@
             <div class="col-lg-3 col-sm-6">
                 <div class="card h-100">
                     <div class="card-body">
-                        <div class="text-muted small">Refund Status</div>
+                        <div class="text-muted small">Decision State</div>
                         <div class="mt-2">
                             <span class="badge {{ $badgeMap[$resource->refund_status] ?? 'badge-soft-secondary' }}">
-                                {{ str_replace('_', ' ', $resource->refund_status) }}
+                                {{ $statusLabels[$resource->refund_status] ?? str_replace('_', ' ', $resource->refund_status) }}
                             </span>
                         </div>
+                        <div class="text-muted small mt-2">{{ $statusHelp[$resource->refund_status] ?? 'Case status summary is available in the timeline.' }}</div>
                     </div>
                 </div>
             </div>
@@ -93,6 +96,53 @@
 
                 <div class="card mb-3">
                     <div class="card-header border-0">
+                        <h4 class="mb-0">Brand Review Link</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Create a signed read-only case record for brand-side review without exposing internal queue controls.</p>
+                        <form method="get" action="{{ route('admin.returns.cases.show', $resource->id) }}" class="mb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="title">Link expires in</label>
+                                    <select class="form-control" name="share_days" onchange="this.form.submit()">
+                                        @foreach($shareExpiryOptions as $days => $label)
+                                            <option value="{{ $days }}" {{ (int) $shareExpiryDays === (int) $days ? 'selected' : '' }}>
+                                                {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="text-muted small">This link stays valid until {{ $shareExpiresAt->format('Y-m-d H:i') }}.</div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="form-group">
+                            <label class="title">Brand Review Link</label>
+                            <div class="input-group">
+                                <input class="form-control" type="text" id="brand-review-link" value="{{ $brandReviewUrl }}" readonly>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-primary" type="button" id="copy-brand-review-link" data-copy-target="#brand-review-link">Copy</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-0">
+                            <label class="title">Signed PDF Link</label>
+                            <div class="input-group">
+                                <input class="form-control" type="text" id="brand-review-pdf-link" value="{{ $brandReviewPdfUrl }}" readonly>
+                                <div class="input-group-append">
+                                    <a class="btn btn-light" href="{{ $brandReviewUrl }}" target="_blank">Open</a>
+                                    <a class="btn btn-outline-primary" href="{{ $brandReviewPdfUrl }}" target="_blank">PDF</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header border-0">
                         <h4 class="mb-0">Evidence</h4>
                     </div>
                     <div class="card-body">
@@ -107,40 +157,40 @@
                 @if($canManageRefundGate)
                     <div class="card mb-3">
                         <div class="card-header border-0">
-                            <h4 class="mb-0">Refund Gate</h4>
+                            <h4 class="mb-0">Decision Review</h4>
                         </div>
                         <div class="card-body">
                             <form method="post" action="{{ route('admin.returns.cases.refund-decision', $resource->id) }}">
                                 @csrf
                                 <div class="form-group">
-                                    <label class="title">Decision</label>
+                                    <label class="title">Decision state</label>
                                     <select class="form-control" name="refund_status">
                                         @foreach($refundStatusOptions as $status)
                                             <option value="{{ $status }}" {{ $resource->refund_status === $status ? 'selected' : '' }}>
-                                                {{ str_replace('_', ' ', ucfirst($status)) }}
+                                                {{ $statusLabels[$status] ?? str_replace('_', ' ', ucfirst($status)) }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="title">Decision note</label>
-                                    <textarea class="form-control" rows="4" name="decision_note" placeholder="Explain why this case should move.">{{ old('decision_note', $resource->refundDecision?->reason) }}</textarea>
+                                    <textarea class="form-control" rows="4" name="decision_note" placeholder="Explain what should happen next and why.">{{ old('decision_note', $resource->refundDecision?->reason) }}</textarea>
                                 </div>
-                                <button class="btn btn-primary btn-block" type="submit">Update refund gate</button>
+                                <button class="btn btn-primary btn-block" type="submit">Update decision review</button>
                             </form>
                         </div>
                     </div>
                 @else
                     <div class="card mb-3">
                         <div class="card-header border-0">
-                            <h4 class="mb-0">Refund Gate</h4>
+                            <h4 class="mb-0">Decision Review</h4>
                         </div>
                         <div class="card-body">
                             <div class="text-muted small mb-2">Current decision</div>
                             <span class="badge {{ $badgeMap[$resource->refund_status] ?? 'badge-soft-secondary' }}">
-                                {{ str_replace('_', ' ', $resource->refund_status) }}
+                                {{ $statusLabels[$resource->refund_status] ?? str_replace('_', ' ', $resource->refund_status) }}
                             </span>
-                            <div class="text-muted small mt-3">Inspectors can review evidence and notes here, but only ops users can change refund status.</div>
+                            <div class="text-muted small mt-3">Inspectors can review evidence and notes here, but only ops users can change the decision state.</div>
                         </div>
                     </div>
                 @endif
@@ -152,7 +202,7 @@
                     <div class="card-body">
                         @if($resource->ruleProfile)
                             <div class="mb-2"><strong>{{ $resource->ruleProfile->profile_name }}</strong></div>
-                            <div class="text-muted small mb-2">Default refund: {{ str_replace('_', ' ', $resource->ruleProfile->default_refund_status) }}</div>
+                            <div class="text-muted small mb-2">Default decision state: {{ \App\Models\ReturnCase::decisionStatusLabel($resource->ruleProfile->default_refund_status) }}</div>
                             <div class="text-muted small mb-2">Recommended actions: {{ collect($resource->ruleProfile->recommended_dispositions ?? [])->map(fn ($item, $condition) => str_replace('_', ' ', $condition) . ' -> ' . str_replace('_', ' ', $item))->implode(', ') ?: 'No default actions' }}</div>
                             <div class="text-muted small mb-2">Conditions: {{ implode(', ', array_map(fn ($item) => str_replace('_', ' ', $item), $resource->ruleProfile->allowed_conditions ?? [])) }}</div>
                             <div class="text-muted small">Dispositions: {{ implode(', ', array_map(fn ($item) => str_replace('_', ' ', $item), $resource->ruleProfile->allowed_dispositions ?? [])) }}</div>
@@ -165,3 +215,29 @@
         </div>
     </div>
 @endsection
+
+@push('script_2')
+    <script>
+        "use strict";
+
+        $(function () {
+            $('#copy-brand-review-link').on('click', async function () {
+                const target = document.querySelector($(this).data('copy-target'));
+                if (!target) {
+                    return;
+                }
+
+                target.select();
+                target.setSelectionRange(0, target.value.length);
+
+                try {
+                    await navigator.clipboard.writeText(target.value);
+                    toastr.success('Brand Review Link copied');
+                } catch (error) {
+                    document.execCommand('copy');
+                    toastr.success('Brand Review Link copied');
+                }
+            });
+        });
+    </script>
+@endpush

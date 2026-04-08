@@ -41,11 +41,11 @@ class UpdateRefundDecisionRequest extends ValidationHandler
             }
 
             if (in_array($targetStatus, ['ready_to_release', 'released'], true) && !$resource->evidence_complete) {
-                $validator->errors()->add('refund_status', 'Evidence must be complete before a case can move to ready to release or released.');
+                $validator->errors()->add('refund_status', 'Evidence must be complete before a case can move to Ready for brand review or Decision completed.');
             }
 
             if ($targetStatus === 'needs_review' && !$this->filled('decision_note')) {
-                $validator->errors()->add('decision_note', 'A decision note is required when a case is moved to needs review.');
+                $validator->errors()->add('decision_note', 'A decision note is required when a case is moved to Needs ops review.');
             }
         });
     }

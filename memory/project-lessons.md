@@ -1241,3 +1241,324 @@
 - `/Users/mikezhang/Desktop/projects/6POS/docker/mysql/Dockerfile`
 - `/Users/mikezhang/Desktop/projects/6POS/render-deploy-relayoffice-ai.md`
 - Validation via `docker build -f /Users/mikezhang/Desktop/projects/6POS/docker/mysql/Dockerfile /Users/mikezhang/Desktop/projects/6POS/docker/mysql`
+
+## 2026-04-07 - Render first-access failure after deploy
+
+## Snapshot
+- Date: 2026-04-07
+- Scope: debugging why the Render app URL looked inaccessible right after first deploy
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Probing the live service paths separately (`/healthz`, `/`, `/admin/auth/login`) isolated the problem quickly.
+- The distinction between "service is up" and "app is usable" prevented a wrong DNS or routing diagnosis.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I initially framed first-access troubleshooting too much around URL reachability
+- What happened: The deployed app looked "not accessible," but the service was actually responding and only the login page was failing.
+- Root cause: First-access debugging often defaults to DNS/routing thinking, even when the app process is healthy and only application initialization is broken.
+- Earlier signal I missed: `/healthz` was already part of the deploy contract and should have been the first check before discussing hostnames.
+- Prevention rule: On first deploy, always test a health endpoint and the first database-backed page separately.
+- Next-time checklist item: Verify `/healthz`, `/`, and the first auth page independently before concluding a site is unreachable.
+
+### Mistake: The deploy guide listed seed commands, but the failure mode was not spelled out
+- What happened: The app migrated successfully, but the login view still 500'd because required seeded settings like `shop_logo` were missing.
+- Root cause: The guide told the user what to run, but not what specific symptom would appear if they skipped it.
+- Earlier signal I missed: The login Blade template dereferences `BusinessSetting::where(...)->first()->value` without a null-safe operator for `shop_logo`.
+- Prevention rule: When a first-run seed is required for app boot paths, document the exact broken symptom that appears without it.
+- Next-time checklist item: Call out "login page 500 if seeders have not run" in the deployment runbook.
+
+## Permanent Rules
+- A green deploy does not mean the first authenticated page works.
+- Health check, redirect root, and first DB-backed screen should all be tested in cloud environments.
+- Seed-dependent views should either be documented explicitly or hardened against empty tables.
+
+## Next-Project Checklist
+- [ ] After first deploy, check `/healthz`.
+- [ ] After first deploy, check `/`.
+- [ ] After first deploy, check the login page before handing the URL to the user.
+- [ ] If seeders are required, document the exact page that will fail without them.
+
+## Open Risks Or Follow-Ups
+- The live Render app still needs `db:seed` and demo reset before the login page will work normally.
+- The custom domain `demo.relayoffice.ai` still needs DNS verification after the app is usable.
+
+## Source Artifacts
+- `https://relayoffice-returns-app.onrender.com/healthz`
+- `https://relayoffice-returns-app.onrender.com/`
+- `https://relayoffice-returns-app.onrender.com/admin/auth/login`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/auth/login.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/scripts/render/predeploy.sh`
+
+## 2026-04-08 - Render custom domain verification lag
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: debugging `demo.relayoffice.ai` after Cloudflare DNS was added
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Checking the public domain externally separated "Render dashboard still shows an error" from "the domain is actually live."
+- Verifying CNAME resolution and testing the real HTTPS response prevented unnecessary DNS churn.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I treated the Render certificate/error badge as the source of truth for longer than necessary
+- What happened: The dashboard still showed verification/certificate trouble, but the public domain was already resolving and serving the app over HTTPS.
+- Root cause: Managed platform status indicators can lag behind actual DNS and certificate readiness.
+- Earlier signal I missed: Once the DNS record was correct and external resolution matched the expected target, the next step should have been an external HTTPS probe immediately.
+- Prevention rule: For custom-domain launches, treat public DNS resolution plus live HTTPS response as the final truth, not the platform badge alone.
+- Next-time checklist item: After adding a DNS record, test `dig` and a real HTTPS request before assuming the platform status is accurate.
+
+## Permanent Rules
+- Render/Cloudflare UI status can lag behind working DNS and live HTTPS.
+- A correct `CNAME` plus successful HTTPS response is stronger evidence than a stale dashboard badge.
+- Do not keep changing DNS once the public resolver shows the right target unless there is fresh contradictory evidence.
+
+## Next-Project Checklist
+- [ ] After adding a custom-domain DNS record, verify the public resolver target.
+- [ ] Probe the final HTTPS URL before making more DNS changes.
+- [ ] Only revisit CAA/AAAA if DNS is correct and HTTPS still fails.
+
+## Open Risks Or Follow-Ups
+- Render dashboard status may need a manual refresh before it matches reality.
+- If the user later enables Cloudflare proxying, re-check certificate and origin behavior.
+
+## Source Artifacts
+- `https://demo.relayoffice.ai`
+- `https://demo.relayoffice.ai/admin/auth/login`
+- `demo.relayoffice.ai CNAME -> relayoffice-returns-app.onrender.com`
+
+## 2026-04-08 - Competitive map correction after Rabot and Two Boxes review
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: correcting the product positioning after deeper review of Rabot, Two Boxes, WMS substitutes, and refund-decision ownership
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Re-checking the actual product boundary of each competitor prevented a shallow "they look similar, so they are the same threat" conclusion.
+- Separating direct rivals, adjacent rivals, and substitutes produced a more accurate positioning map than lumping everything into one competitor bucket.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I over-indexed on surface overlap instead of product center-of-gravity
+- What happened: Rabot was initially framed as the most direct rival because it also touches proof and returns.
+- Root cause: I weighted visible overlap in features too heavily and did not distinguish between a product's primary workflow and a secondary add-on workflow.
+- Earlier signal I missed: Rabot's pricing and hardware model are station-based and oriented around camera-backed proof, which implies a different operational center than a browser-first returns exception tool.
+- Prevention rule: When mapping competitors, first identify each product's primary operational loop before comparing overlapping features.
+- Next-time checklist item: For every competitor, answer "What is this product primarily hired to do?" before assigning direct-rival status.
+
+### Mistake: I treated refund gate as more validated than it actually is
+- What happened: Product framing leaned toward release control before validating whether 3PLs actually own the refund decision.
+- Root cause: The workflow logic in the product made the refund-control story feel natural, but decision authority is an organizational fact, not a product assumption.
+- Earlier signal I missed: In many real returns setups, the physical processor and the refund approver are not the same party.
+- Prevention rule: Any workflow that assumes decision authority must be validated explicitly with customer interviews before it becomes the core pitch.
+- Next-time checklist item: Ask "Who owns the refund decision today?" in the first discovery conversation, not later.
+
+## Permanent Rules
+- Direct rival status should be based on primary workflow, not partial feature overlap.
+- Zero-hardware is only a moat if the product stays exception-first and browser-first.
+- Authority questions outrank feature questions when positioning operational software.
+
+## Next-Project Checklist
+- [ ] Split competitors into direct, adjacent, and substitute layers before writing positioning.
+- [ ] Validate buyer authority before locking the core product story.
+- [ ] Prefer shareable case surfaces over proof-media escalation unless customers explicitly demand richer media.
+
+## Open Risks Or Follow-Ups
+- Refund authority is still not validated with live customer calls.
+- Product copy and queue semantics should be updated if evidence shows brands, not 3PLs, own final refunds.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/returns-competition-positioning-summary.md`
+- `/Users/mikezhang/Desktop/projects/6POS/returns-gtm-positioning-pack.md`
+
+## 2026-04-08 - Authority split and Brand Review Link execution bridge
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: turning the competition summary into a 30-day execution bridge covering authority split, Brand Review Link, pricing hypotheses, channels, and pilot learning
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Converting strategy into explicit `if / then` paths exposed where the product story changes materially instead of only cosmetically.
+- Defining Brand Review Link as read-only in v1 kept the idea high-leverage without turning it into a premature cross-company workflow platform.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I had treated "highest-leverage feature" as if it could also carry full workflow complexity on day one
+- What happened: Brand Review Link clearly surfaced as the strongest next feature, but without constraints it could easily expand into approvals, disputes, and external collaboration.
+- Root cause: High-value features create pressure to make them complete immediately, even when the first version only needs to prove one job-to-be-done.
+- Earlier signal I missed: The moment external users can take actions, the product stops being a share surface and starts becoming a multi-party workflow system.
+- Prevention rule: For any new external-facing feature, lock the v1 job-to-be-done first and push all role-changing or workflow-changing actions out of scope unless already validated.
+- Next-time checklist item: When a feature crosses company boundaries, define a strict "read-only vs actionable" boundary before discussing UI details.
+
+## Permanent Rules
+- A product-positioning document is not enough; it must be followed by an execution bridge with decision branches, learning loops, and channel plans.
+- External share surfaces should launch as read-only unless action-taking by the external party is already validated.
+- The first pilot should optimize for learning velocity, not for long-duration adoption theater.
+
+## Next-Project Checklist
+- [ ] After any strategy memo, write the `if / then` execution split before discussing roadmap.
+- [ ] For external-facing features, define the minimal v1 surface and explicit out-of-scope actions.
+- [ ] Keep first pilots to `2-3 weeks` unless the learning objective truly requires longer.
+
+## Open Risks Or Follow-Ups
+- Refund authority still needs live customer validation.
+- Pricing tiers remain hypotheses until at least a few real customer conversations test willingness to pay.
+- Brand Review Link still needs a proper product spec if it becomes the next build target.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/returns-authority-brand-review-execution-plan.md`
+- `/Users/mikezhang/Desktop/projects/6POS/returns-competition-positioning-summary.md`
+
+## 2026-04-08 - Local desktop + BYO API + lifetime license strategy review
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: evaluating whether the product should pivot from hosted web software to a local desktop app with customer-owned data, BYO API keys, and one-time pricing
+- Outcome: partial success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Challenging the packaging model separately from the product problem exposed that deployment model and pricing model can silently change the ICP.
+- Comparing against local-first and perpetual-license tools clarified that buy-once models work best for personal tools or admin utilities, not automatically for multi-party operational systems.
+
+## Mistakes To Stop Repeating
+
+### Mistake: It is easy to project founder preferences onto the buyer
+- What happened: "Users hate subscriptions" and "people don't want their data on our server" sounded compelling, but those are not yet validated buying triggers for the target ops teams.
+- Root cause: Product strategy can drift when the founder's own purchase preferences masquerade as market evidence.
+- Earlier signal I missed: The strongest current product ideas depend on shared workflows, external review links, and multi-role use, all of which are weakened by a purely local single-machine setup.
+- Prevention rule: Separate founder discomfort from validated buyer objections before changing pricing or architecture.
+- Next-time checklist item: When proposing a packaging pivot, ask "Is this solving a buyer objection we have heard repeatedly, or a founder preference?"
+
+### Mistake: I initially treated "desktop" and "data ownership" as the same architectural answer
+- What happened: Local desktop sounded like the cleanest path to customer-owned data and no hosting burden.
+- Root cause: Desktop packaging feels like the default escape hatch from SaaS, but for multi-user operational products the real alternative is often self-hosted web.
+- Earlier signal I missed: The current product is already browser-first, inspector-friendly, and built around multiple roles plus external sharing.
+- Prevention rule: For B2B ops software, test self-hosted web before considering a full desktop rewrite.
+- Next-time checklist item: If the real customer need is data custody, evaluate self-hosted deployment before local desktop.
+
+## Permanent Rules
+- Packaging changes can silently change the ICP even when the workflow problem stays the same.
+- BYO API is a feature choice, not a business model by itself.
+- Perpetual pricing works best when paired with paid updates, support windows, or optional recurring collaboration services.
+
+## Next-Project Checklist
+- [ ] Validate whether subscription aversion is a repeated buyer objection before redesigning pricing.
+- [ ] Validate whether data-hosting concern means "local files," "self-hosted," or simply "exportability and backups."
+- [ ] For any local-first idea, test whether the product still supports the key multi-user and external-sharing workflow.
+
+## Open Risks Or Follow-Ups
+- No live customer evidence yet shows that desktop/local-only would convert faster than browser-based deployment.
+- If the product later prioritizes multi-brand operators over 3PLs, the packaging recommendation may change.
+
+## Source Artifacts
+- `https://tableplus.com/pricing`
+- `https://www.typingmind.com/buy`
+- `https://obsidian.md/pricing`
+
+## 2026-04-08 - Self-hosted web delivery pack smoke test
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: validating that the new self-hosted web delivery pack can actually boot, initialize, and reach the admin workspace outside the existing Render demo
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Keeping the self-hosted package as a thin layer on top of the existing production Docker image avoided a second deployment architecture.
+- Testing the package end-to-end with a temporary `.env.self-hosted` file caught real integration issues instead of only validating static docs.
+- Reading the captcha value from the Laravel session was far more reliable than trying to OCR the login image.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I initially treated compose validation as equivalent to deployment validation
+- What happened: the compose file parsed successfully with a sample env file, but that still did not prove that migrations, seeding, session storage, and login would work together.
+- Root cause: config-level validation is cheaper and tempting, but it only proves syntax and interpolation, not application behavior.
+- Earlier signal I missed: the package includes custom bootstrap logic and seeded auth flows, so a real smoke test was always necessary.
+- Prevention rule: any customer-facing deployment pack must be proven by a full boot + init + HTTP smoke test before being called ready.
+- Next-time checklist item: after writing a deployment guide, always run the exact documented commands in a clean environment.
+
+### Mistake: I underestimated how easy it is for shell quoting noise to hide the real problem
+- What happened: complex one-liner shell commands made it harder to tell whether login failures were caused by the app, CSRF/session behavior, or just command quoting.
+- Root cause: long inline command chains optimize for speed but reduce debuggability.
+- Earlier signal I missed: the first curl-based login attempt failed with `419`, which was a strong hint that this should move to either a real script or a browser-driven test immediately.
+- Prevention rule: when a validation step needs cookies, CSRF, and multiple round-trips, move to a script or browser automation early.
+- Next-time checklist item: if an HTTP test needs more than one request and stateful cookies, do not keep extending a one-liner.
+
+## Permanent Rules
+- Deployment assets are not validated until the exact install instructions have been run end-to-end.
+- Compose `env_file` wiring and service behavior must both be tested; passing one does not prove the other.
+- For auth smoke tests, prefer real browser automation or server-side session introspection over brittle OCR hacks.
+
+## Next-Project Checklist
+- [ ] Validate new deployment packs with boot, init, health check, and one authenticated page load.
+- [ ] Use a temporary env file that matches the documented install path.
+- [ ] Clean up temporary containers, volumes, and scripts before calling the task complete.
+
+## Open Risks Or Follow-Ups
+- The self-hosted pack still does not include licensing, update entitlements, or a customer-friendly installer.
+- The default login captcha is expected but should be called out in delivery docs so customers do not mistake it for a deployment issue.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/docker-compose.self-hosted.yml`
+- `/Users/mikezhang/Desktop/projects/6POS/.env.self-hosted.example`
+- `/Users/mikezhang/Desktop/projects/6POS/self-hosted-web-delivery-pack.md`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/scripts/self-hosted/init.sh`
+
+## 2026-04-08 - Decision-control layer and Brand Review Link implementation
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: converting the product from refund-gate language to decision-review language and shipping signed external Brand Review Links
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Keeping the stored status codes unchanged while layering neutral labels on top avoided a risky migration and still changed the user-facing product story.
+- Using Laravel signed URLs for external sharing delivered a real Brand Review Link without introducing user accounts, notifications, or a new permissions system.
+- Hiding internal notes in the external share view preserved the “read-only review surface” rule from the strategy docs.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I initially considered changing the underlying status machine before validating the value of the surface
+- What happened: the strategy docs suggested new status semantics, and the first instinct was to rename or migrate actual stored values.
+- Root cause: strategy language can make a deep model change feel cleaner than it really is.
+- Earlier signal I missed: tests, seed data, validation rules, and playbooks were already tightly coupled to the existing stored status values.
+- Prevention rule: when strategy changes the story before it changes the workflow, ship a UI label layer first and migrate stored state only after the new behavior is validated.
+- Next-time checklist item: ask “Do we need new stored values, or just a new user-facing interpretation?”
+
+### Mistake: External sharing features naturally try to grow into collaboration systems
+- What happened: as soon as the Brand Review Link existed, the obvious next step would have been Accept/Dispute actions and cross-company feedback loops.
+- Root cause: external share links create pressure to add interactive workflow immediately.
+- Earlier signal I missed: the highest-value first job is simple reviewability, not external state changes.
+- Prevention rule: first external surfaces should prove visibility and trust, not multi-party action handling.
+- Next-time checklist item: for any external-facing feature, define what external users can explicitly *not* do in v1.
+
+## Permanent Rules
+- Keep storage-compatible status codes when a language-layer change can deliver the product shift safely.
+- Signed read-only links are the fastest valid bridge from internal tool to customer-facing proof surface.
+- External review views must hide internal notes unless external note sharing is explicitly designed and validated.
+
+## Next-Project Checklist
+- [ ] Before changing state machines, try a user-facing label layer first.
+- [ ] For share features, separate internal and external-safe fields explicitly.
+- [ ] Add tests for signed-link validity, forbidden unsigned access, and hidden internal content.
+
+## Open Risks Or Follow-Ups
+- The Brand Review Link is still read-only; there is no external acknowledgement or dispute workflow yet.
+- If discovery calls show brands expect a different artifact than a signed web link, the surface may need to adapt.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/Admin/EvidenceExportController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/Admin/ReturnCaseController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/cases/brand-review.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/Returns/BrandReviewLinkTest.php`

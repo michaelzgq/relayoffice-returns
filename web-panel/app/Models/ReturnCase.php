@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ReturnCase extends Model
 {
@@ -75,6 +76,50 @@ class ReturnCase extends Model
             'needs_review',
             'released',
         ];
+    }
+
+    public static function decisionStatusLabels(): array
+    {
+        return [
+            'hold' => 'Ops hold',
+            'ready_to_release' => 'Ready for brand review',
+            'needs_review' => 'Needs ops review',
+            'released' => 'Decision completed',
+        ];
+    }
+
+    public static function decisionStatusHelp(): array
+    {
+        return [
+            'hold' => 'Keep the case on an internal hold until the evidence or recommendation is ready.',
+            'ready_to_release' => 'Evidence is complete and the case is ready to hand off or release.',
+            'needs_review' => 'Ops still needs to review the facts before sharing or finalizing the next step.',
+            'released' => 'The final decision has already been executed and the case is closed.',
+        ];
+    }
+
+    public static function shareExpiryOptions(): array
+    {
+        return [
+            1 => '1 day',
+            7 => '7 days',
+            30 => '30 days',
+        ];
+    }
+
+    public static function normalizeShareExpiryDays(?int $days): int
+    {
+        return array_key_exists($days, static::shareExpiryOptions()) ? $days : 7;
+    }
+
+    public static function decisionStatusLabel(?string $status): string
+    {
+        return static::decisionStatusLabels()[$status] ?? Str::headline((string) $status);
+    }
+
+    public static function decisionStatusHelpText(?string $status): string
+    {
+        return static::decisionStatusHelp()[$status] ?? 'Case status is available in the timeline.';
     }
 
     public static function photoTypeOptions(): array

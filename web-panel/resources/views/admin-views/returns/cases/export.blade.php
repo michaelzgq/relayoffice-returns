@@ -293,7 +293,6 @@
 <body>
     @php
         $statusTone = $resource->evidence_complete ? ($resource->refund_status === 'released' ? 'good' : 'warn') : 'bad';
-        $statusLabel = str_replace('_', ' ', $resource->refund_status);
     @endphp
 
     <div class="print-actions">
@@ -305,7 +304,7 @@
             <div class="pill {{ $statusTone }}">Brand Defense Pack</div>
             <h1>Brand Defense Pack</h1>
             <div class="hero-subtitle">
-                Built for operator review, refund control, and brand escalation. This pack combines inspection evidence,
+                Built for operator review, decision support, and brand escalation. This pack combines inspection evidence,
                 rule coverage, decision notes, and timeline audit history for return case <strong>{{ $resource->return_id }}</strong>.
             </div>
         </div>
@@ -347,7 +346,7 @@
                     <div class="fact-value" style="text-transform: capitalize;">{{ str_replace('_', ' ', $resource->condition_code) }}</div>
                 </div>
                 <div class="fact-card">
-                    <div class="fact-label">Disposition</div>
+                    <div class="fact-label">Warehouse Action</div>
                     <div class="fact-value" style="text-transform: capitalize;">{{ str_replace('_', ' ', $resource->disposition_code) }}</div>
                 </div>
                 <div class="fact-card">
@@ -371,6 +370,10 @@
                             <td>{{ $item['value'] }}</td>
                         </tr>
                     @endforeach
+                    <tr>
+                        <td>Decision State</td>
+                        <td>{{ $decisionStateLabel }}</td>
+                    </tr>
                     <tr>
                         <td>SKU / Serial</td>
                         <td>{{ $resource->product_sku ?: 'N/A' }}{{ $resource->serial_number ? ' / ' . $resource->serial_number : '' }}</td>
@@ -433,15 +436,15 @@
         </div>
         <div class="section-body">
             <div class="photo-grid">
-                @forelse($resource->media as $media)
+                @forelse($mediaAssets as $media)
                     <div class="photo-card">
-                        <img src="{{ $media->file_fullpath }}" alt="{{ $media->capture_type ?? 'evidence' }}">
+                        <img src="{{ $media['web_url'] }}" alt="{{ $media['capture_type'] ?? 'evidence' }}">
                         <div class="photo-meta">
                             <div style="font-weight: 700; text-transform: capitalize;">
-                                {{ str_replace('_', ' ', $media->capture_type ?? 'evidence') }}
+                                {{ str_replace('_', ' ', $media['capture_type'] ?? 'evidence') }}
                             </div>
                             <div class="muted" style="font-size: 12px; margin-top: 4px;">
-                                Media slot {{ $media->sort_order }}
+                                Media slot {{ $media['sort_order'] }}
                             </div>
                         </div>
                     </div>
@@ -458,11 +461,11 @@
         </div>
         <div class="section-body">
             <div class="timeline">
-                @forelse($resource->events as $event)
+                @forelse($timelineItems as $event)
                     <div class="timeline-item">
-                        <div style="font-weight: 700;">{{ $event->title }}</div>
-                        <div class="timeline-time">{{ $event->created_at?->format('Y-m-d H:i') ?? 'N/A' }}</div>
-                        <div>{{ $event->description ?: 'No event detail captured.' }}</div>
+                        <div style="font-weight: 700;">{{ $event['title'] }}</div>
+                        <div class="timeline-time">{{ $event['time'] }}</div>
+                        <div>{{ $event['description'] ?: 'No event detail captured.' }}</div>
                     </div>
                 @empty
                     <div class="muted">No timeline events recorded.</div>

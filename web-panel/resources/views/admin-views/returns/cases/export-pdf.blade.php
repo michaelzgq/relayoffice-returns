@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brand Defense Pack {{ $resource->return_id }}</title>
+    <title>{{ $externalView ?? false ? 'Brand Review Record' : 'Brand Defense Pack' }} {{ $resource->return_id }}</title>
     <style>
         body {
             font-family: sans-serif;
@@ -149,7 +149,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="pill {{ $shareReadiness['tone'] }}">Brand Defense Pack</div>
+        <div class="pill {{ $shareReadiness['tone'] }}">{{ ($externalView ?? false) ? 'Brand Review Record' : 'Brand Defense Pack' }}</div>
         <h1>{{ $resource->brand?->name ?? 'Unknown brand' }} - {{ $resource->return_id }}</h1>
         <p>{{ $brandDefenseSummary }}</p>
         <p class="subtle">{{ $shareReadiness['summary'] }}</p>
@@ -166,7 +166,7 @@
                             <tr><td class="label">Brand</td><td>{{ $resource->brand?->name ?? 'N/A' }}</td></tr>
                             <tr><td class="label">Condition</td><td>{{ ucfirst(str_replace('_', ' ', $resource->condition_code)) }}</td></tr>
                             <tr><td class="label">Warehouse Action</td><td>{{ ucfirst(str_replace('_', ' ', $resource->disposition_code)) }}</td></tr>
-                            <tr><td class="label">Refund Status</td><td>{{ ucfirst(str_replace('_', ' ', $resource->refund_status)) }}</td></tr>
+                            <tr><td class="label">Decision State</td><td>{{ $decisionStateLabel }}</td></tr>
                             <tr><td class="label">SLA Age</td><td>{{ $resource->sla_age_hours }}h</td></tr>
                             <tr><td class="label">SKU / Serial</td><td>{{ $resource->product_sku ?: 'N/A' }}{{ $resource->serial_number ? ' / ' . $resource->serial_number : '' }}</td></tr>
                         </table>
@@ -181,7 +181,9 @@
                             @foreach($decisionBasis as $item)
                                 <tr><td class="label">{{ $item['label'] }}</td><td>{{ $item['value'] }}</td></tr>
                             @endforeach
-                            <tr><td class="label">Inspector Note</td><td>{{ $resource->notes ?: 'No inspector note recorded.' }}</td></tr>
+                            @unless($externalView ?? false)
+                                <tr><td class="label">Inspector Note</td><td>{{ $resource->notes ?: 'No inspector note recorded.' }}</td></tr>
+                            @endunless
                         </table>
                     </div>
                 </div>
@@ -203,7 +205,7 @@
             @forelse($actionsNeeded as $item)
                 <div class="flag bad">{{ $item }}</div>
             @empty
-                <div class="flag good">No action blockers detected. This pack is ready for ops or brand-facing review.</div>
+                <div class="flag good">No action blockers detected. This record is ready for review.</div>
             @endforelse
         </div>
     </div>
@@ -244,12 +246,14 @@
         <div class="section-header"><h2>Timeline Audit</h2></div>
         <div class="section-body">
             <table>
-                @forelse($resource->events as $event)
+                @forelse($timelineItems as $event)
                     <tr>
-                        <td class="label">{{ $event->created_at?->format('Y-m-d H:i') ?? 'N/A' }}</td>
+                        <td class="label">{{ $event['time'] }}</td>
                         <td>
-                            <strong>{{ $event->title }}</strong><br>
-                            {{ $event->description ?: 'No event detail captured.' }}
+                            <strong>{{ $event['title'] }}</strong>
+                            @if(!empty($event['description']))
+                                <br>{{ $event['description'] }}
+                            @endif
                         </td>
                     </tr>
                 @empty

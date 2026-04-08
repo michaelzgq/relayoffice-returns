@@ -32,7 +32,7 @@
         <div class="row align-items-center mb-3">
             <div class="col-sm">
                 <h1 class="page-header-title mb-0">Ops Board</h1>
-                <p class="text-muted mb-0">One screen for daily inspection throughput, refund decisions, backlog, and evidence gaps.</p>
+                <p class="text-muted mb-0">One screen for daily inspection throughput, decision review, backlog, and evidence gaps.</p>
             </div>
             <div class="col-sm-auto mt-3 mt-sm-0">
                 <div class="d-flex gap-2 flex-wrap">
@@ -59,9 +59,9 @@
                 <a class="sla-card-link" href="{{ route('admin.returns.queue.index') }}">
                     <div class="card h-100">
                         <div class="card-body">
-                            <div class="text-muted small">Awaiting refund action</div>
-                            <div class="display-4">{{ $awaitingRefundAction }}</div>
-                            <div class="small text-primary mt-2">Open the live refund queue</div>
+                            <div class="text-muted small">Awaiting decision review</div>
+                            <div class="display-4">{{ $awaitingDecisionReview }}</div>
+                            <div class="small text-primary mt-2">Open the live decision queue</div>
                         </div>
                     </div>
                 </a>
@@ -70,9 +70,9 @@
                 <a class="sla-card-link" href="{{ route('admin.returns.queue.index', ['filter_status' => 'ready_to_release']) }}">
                     <div class="card h-100">
                         <div class="card-body">
-                            <div class="text-muted small">Ready to release</div>
-                            <div class="display-4">{{ $readyToReleaseCount }}</div>
-                            <div class="small text-primary mt-2">Open release-ready cases</div>
+                            <div class="text-muted small">Ready for brand review</div>
+                            <div class="display-4">{{ $readyForBrandReviewCount }}</div>
+                            <div class="small text-primary mt-2">Open brand-ready cases</div>
                         </div>
                     </div>
                 </a>
@@ -81,9 +81,9 @@
                 <a class="sla-card-link" href="{{ route('admin.returns.queue.index', ['filter_status' => 'hold', 'min_sla_hours' => 48]) }}">
                     <div class="card h-100">
                         <div class="card-body">
-                            <div class="text-muted small">Over 48h stuck in hold</div>
-                            <div class="display-4">{{ $over48hStuck }}</div>
-                            <div class="small text-primary mt-2">Open aged hold queue</div>
+                            <div class="text-muted small">Over 48h stuck in ops hold</div>
+                            <div class="display-4">{{ $over48hStuckInOpsHold }}</div>
+                            <div class="small text-primary mt-2">Open aged ops hold queue</div>
                         </div>
                     </div>
                 </a>

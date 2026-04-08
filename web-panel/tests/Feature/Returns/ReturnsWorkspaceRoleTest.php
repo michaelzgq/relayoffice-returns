@@ -54,7 +54,7 @@ class ReturnsWorkspaceRoleTest extends TestCase
         $response = $this->actingAs($inspector, 'admin')->get(route('admin.returns.inspect'));
 
         $response->assertOk();
-        $response->assertSee('Refund status will be set automatically');
+        $response->assertSee('Decision state will be set automatically');
         $response->assertDontSee('name="refund_status"', false);
         $response->assertDontSee('name="received_at"', false);
     }

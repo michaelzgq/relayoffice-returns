@@ -61,7 +61,22 @@ class RefundQueueFlowTest extends TestCase
             ->latest('id')
             ->first();
 
-        $this->assertSame('Refund gate updated from batch queue action', $latestEvent?->title);
+        $this->assertSame('Decision review updated from batch queue action', $latestEvent?->title);
         $this->assertSame('Batch escalation for audit.', $latestEvent?->description);
+    }
+
+    public function test_queue_page_uses_decision_queue_language(): void
+    {
+        $admin = $this->signInAdmin();
+        $this->createReturnCaseWithDecision([
+            'refund_status' => 'hold',
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.returns.queue.index'));
+
+        $response->assertOk();
+        $response->assertSee('Decision Queue');
+        $response->assertSee('Ready for brand review');
+        $response->assertSee('Needs ops review');
     }
 }

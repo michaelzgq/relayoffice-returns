@@ -13,7 +13,7 @@
         <div class="row align-items-center mb-3">
             <div class="col-sm">
                 <h1 class="page-header-title mb-0">Client Playbooks</h1>
-                <p class="text-muted mb-0">Set the inspection checklist and refund defaults each client brand expects your warehouse team to follow.</p>
+                <p class="text-muted mb-0">Set the inspection checklist and default decision state each client brand expects your warehouse team to follow.</p>
             </div>
         </div>
 
@@ -53,11 +53,11 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="title">Default Refund Status</label>
+                                        <label class="title">Default Decision State</label>
                                         <select class="form-control" name="default_refund_status">
                                             @foreach($refundStatusOptions as $status)
                                                 <option value="{{ $status }}" {{ old('default_refund_status', $editingProfile?->default_refund_status ?? 'hold') === $status ? 'selected' : '' }}>
-                                                    {{ str_replace('_', ' ', ucfirst($status)) }}
+                                                    {{ \App\Models\ReturnCase::decisionStatusLabel($status) }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -180,7 +180,7 @@
                             <tr>
                                 <th>Brand</th>
                                 <th>Evidence</th>
-                                <th>Refund Default</th>
+                                <th>Decision Default</th>
                                 <th>Status</th>
                                 <th></th>
                             </tr>
@@ -200,7 +200,7 @@
                                         </div>
                                     </td>
                                     <td>{{ $profile->required_photo_count }} photos</td>
-                                    <td class="text-capitalize">{{ str_replace('_', ' ', $profile->default_refund_status) }}</td>
+                                    <td class="text-capitalize">{{ \App\Models\ReturnCase::decisionStatusLabel($profile->default_refund_status) }}</td>
                                     <td>
                                         <span class="badge {{ $profile->active ? 'badge-soft-success' : 'badge-soft-danger' }}">
                                             {{ $profile->active ? 'Active' : 'Inactive' }}

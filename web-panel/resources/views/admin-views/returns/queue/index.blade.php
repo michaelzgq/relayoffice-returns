@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 
-@section('title', \App\CPU\translate('refund_queue'))
+@section('title', 'Decision Queue')
 
 @push('css_or_js')
     <style>
@@ -44,11 +44,7 @@
 @section('content')
     @php
         $grouped = $resources->getCollection()->groupBy('refund_status');
-        $statusLabels = [
-            'hold' => 'Hold',
-            'ready_to_release' => 'Ready to Release',
-            'needs_review' => 'Needs Review',
-        ];
+        $statusLabels = \App\Models\ReturnCase::decisionStatusLabels();
         $statusBadgeMap = [
             'hold' => 'badge-soft-warning',
             'ready_to_release' => 'badge-soft-info',
@@ -59,8 +55,8 @@
     <div class="content container-fluid">
         <div class="row align-items-center mb-3">
             <div class="col-sm">
-                <h1 class="page-header-title mb-0">Refund Queue</h1>
-                <p class="text-muted mb-0">Clear hold, review, and release decisions directly from the board.</p>
+                <h1 class="page-header-title mb-0">Decision Queue</h1>
+                <p class="text-muted mb-0">Review evidence readiness, move cases forward, and keep the audit trail in one place.</p>
             </div>
         </div>
 
@@ -89,7 +85,7 @@
                                 <option value="">All queue states</option>
                                 @foreach(['hold', 'ready_to_release', 'needs_review'] as $status)
                                     <option value="{{ $status }}" {{ request('filter_status', request('refund_status')) === $status ? 'selected' : '' }}>
-                                        {{ str_replace('_', ' ', ucfirst($status)) }}
+                                        {{ $statusLabels[$status] ?? str_replace('_', ' ', ucfirst($status)) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -162,7 +158,7 @@
                             <select class="form-control" name="refund_status" required>
                                 <option value="">Choose status</option>
                                 @foreach($refundStatusOptions as $status)
-                                    <option value="{{ $status }}">{{ str_replace('_', ' ', ucfirst($status)) }}</option>
+                                    <option value="{{ $status }}">{{ $statusLabels[$status] ?? str_replace('_', ' ', ucfirst($status)) }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -179,12 +175,12 @@
         </div>
 
         <div class="row g-3">
-            @foreach($statusLabels as $status => $label)
+            @foreach(['hold', 'ready_to_release', 'needs_review'] as $status)
                 <div class="col-lg-4">
                     <div class="card queue-column h-100">
                         <div class="card-header border-0 d-flex justify-content-between align-items-center">
                             <div>
-                                <h4 class="mb-0">{{ $label }}</h4>
+                                <h4 class="mb-0">{{ $statusLabels[$status] ?? str_replace('_', ' ', ucfirst($status)) }}</h4>
                                 <div class="text-muted small">{{ $columnCounts[$status] ?? 0 }} total in filtered queue</div>
                             </div>
                             <span class="badge badge-primary rounded">{{ $grouped->get($status, collect())->count() }}</span>
@@ -217,7 +213,7 @@
 
                                     <div class="d-flex flex-wrap gap-2 mt-3">
                                         <span class="badge {{ $statusBadgeMap[$resource->refund_status] ?? 'badge-soft-secondary' }}">
-                                            {{ str_replace('_', ' ', $resource->refund_status) }}
+                                            {{ $statusLabels[$resource->refund_status] ?? str_replace('_', ' ', $resource->refund_status) }}
                                         </span>
                                         <span class="badge {{ $resource->evidence_complete ? 'badge-soft-success' : 'badge-soft-danger' }}">
                                             Evidence {{ $resource->evidence_photo_count }}/{{ $resource->required_photo_count }}
@@ -240,7 +236,7 @@
 
                                     @if(!$resource->evidence_complete)
                                         <div class="small text-danger mt-3">
-                                            This case cannot move to ready to release or released until evidence is complete.
+                                            This case cannot move to Ready for brand review or Decision completed until evidence is complete.
                                         </div>
                                     @endif
 
@@ -271,7 +267,7 @@
                                                     <option value="{{ $option }}"
                                                             {{ $resource->refund_status === $option ? 'selected' : '' }}
                                                             {{ $blocked ? 'disabled' : '' }}>
-                                                        {{ str_replace('_', ' ', ucfirst($option)) }}{{ $blocked ? ' - needs evidence' : '' }}
+                                                        {{ $statusLabels[$option] ?? str_replace('_', ' ', ucfirst($option)) }}{{ $blocked ? ' - needs evidence' : '' }}
                                                     </option>
                                                 @endforeach
                                             </select>

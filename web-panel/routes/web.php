@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\EvidenceExportController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,13 @@ Route::get('healthz', function () {
         'app' => config('app.name'),
         'time' => now()->toIso8601String(),
     ]);
+});
+
+Route::middleware('signed')->group(function () {
+    Route::controller(EvidenceExportController::class)->group(function () {
+        Route::get('brand-review/{id}', 'brandReview')->name('returns.brand-review');
+        Route::get('brand-review/{id}/pdf', 'brandReviewPdf')->name('returns.brand-review.pdf');
+    });
 });
 
 Route::fallback(function(){

@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\ReturnCase;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 use Mpdf\Mpdf;
 
@@ -36,7 +38,38 @@ class EvidenceExportController extends Controller
         ], $packData));
     }
 
-    private function buildPackData(ReturnCase $resource): array
+    public function brandReview(Request $request, int $id): View
+    {
+        $resource = $this->returnCase
+            ->newQuery()
+            ->with(['brand', 'ruleProfile', 'media', 'events', 'refundDecision'])
+            ->findOrFail($id);
+
+        $packData = $this->buildPackData($resource, externalView: true);
+        $expiresAt = $this->expiresAtFromRequest($request);
+
+        return view('admin-views.returns.cases.brand-review', array_merge([
+            'resource' => $resource,
+            'brandReviewPdfUrl' => URL::temporarySignedRoute('returns.brand-review.pdf', $expiresAt, ['id' => $resource->id]),
+            'brandReviewExpiresAt' => $expiresAt,
+        ], $packData));
+    }
+
+    public function brandReviewPdf(Request $request, int $id): Response
+    {
+        $resource = $this->returnCase
+            ->newQuery()
+            ->with(['brand', 'ruleProfile', 'media', 'events', 'refundDecision'])
+            ->findOrFail($id);
+
+        return $this->downloadPdf(
+            resource: $resource,
+            packData: $this->buildPackData($resource, externalView: true),
+            externalView: true,
+        );
+    }
+
+    private function buildPackData(ReturnCase $resource, bool $externalView = false): array
     {
         $requiredPhotoTypes = collect($resource->ruleProfile?->required_photo_types ?? [])
             ->filter()
@@ -70,25 +103,32 @@ class EvidenceExportController extends Controller
         $recommendedDisposition = $resource->ruleProfile?->recommendedDispositionForCondition($resource->condition_code);
         $conditionLabel = str_replace('_', ' ', (string) $resource->condition_code);
         $dispositionLabel = str_replace('_', ' ', (string) $resource->disposition_code);
-        $refundStatusLabel = str_replace('_', ' ', (string) $resource->refund_status);
+        $decisionStateLabel = ReturnCase::decisionStatusLabel($resource->refund_status);
         $brandName = $resource->brand?->name ?? 'Unknown brand';
+        $evidenceSummary = $resource->evidence_complete
+            ? 'Evidence checklist is complete.'
+            : 'Evidence checklist still has missing items.';
 
         $shareReadiness = $coverageGaps->isNotEmpty()
             ? [
                 'tone' => 'bad',
-                'label' => 'Internal only',
-                'summary' => 'Coverage gaps still need to be resolved before this pack is safe to share outside the ops team.',
+                'label' => $externalView ? 'Needs warehouse follow-up' : 'Internal only',
+                'summary' => $externalView
+                    ? 'This case still has evidence gaps. Treat this link as a review record, not a final decision package.'
+                    : 'Coverage gaps still need to be resolved before this pack is safe to share outside the ops team.',
             ]
             : match ($resource->refund_status) {
                 'released' => [
                     'tone' => 'good',
-                    'label' => 'Brand-ready',
-                    'summary' => 'Evidence is complete and the refund decision has already been executed.',
+                    'label' => 'Decision completed',
+                    'summary' => 'Evidence is complete and the final case decision has already been executed.',
                 ],
                 'ready_to_release' => [
                     'tone' => 'good',
                     'label' => 'Brand-ready',
-                    'summary' => 'Evidence is complete and supports a ready-to-release refund decision.',
+                    'summary' => $externalView
+                        ? 'Evidence is complete and the case is ready for brand-side review.'
+                        : 'Evidence is complete and supports a ready-to-release refund decision.',
                 ],
                 'needs_review' => [
                     'tone' => 'warn',
@@ -98,19 +138,21 @@ class EvidenceExportController extends Controller
                 default => [
                     'tone' => 'warn',
                     'label' => 'Ops hold',
-                    'summary' => 'Case evidence is documented, but the refund is still being held pending an ops decision.',
+                    'summary' => $externalView
+                        ? 'Case evidence is documented, but the warehouse is still holding the case pending internal review.'
+                        : 'Case evidence is documented, but the refund is still being held pending an ops decision.',
                 ],
             };
 
         $summarySentence = sprintf(
-            '%s return %s was inspected as %s and assigned warehouse action %s. The case currently has %d of %d required evidence slot(s) captured, and refund status is %s.',
+            '%s return %s was inspected as %s and assigned warehouse action %s. The case currently has %d of %d required evidence slot(s) captured, and decision state is %s.',
             $brandName,
             $resource->return_id,
             $conditionLabel,
             $dispositionLabel,
             (int) $resource->evidence_photo_count,
             (int) $resource->required_photo_count,
-            $refundStatusLabel
+            $decisionStateLabel
         );
 
         $whatThisPackShows = collect([
@@ -125,33 +167,48 @@ class EvidenceExportController extends Controller
             $resource->serial_number
                 ? 'A serial number was captured on this case.'
                 : ($resource->ruleProfile?->serial_required ? 'A serial number is required by the playbook but missing.' : null),
-            $resource->refundDecision?->reason
-                ? 'A refund decision note is attached for audit and brand communication.'
-                : 'No refund decision note has been recorded yet.',
-            $resource->notes
-                ? 'Inspector notes are attached to explain the observed condition.'
-                : 'No inspector notes are attached to explain the observed condition.',
+            $externalView
+                ? 'This share view omits internal-only notes and queue controls.'
+                : ($resource->refundDecision?->reason
+                    ? 'A decision note is attached for audit and brand communication.'
+                    : 'No decision note has been recorded yet.'),
+            $externalView
+                ? 'This link is designed for brand-side review and dispute follow-up.'
+                : ($resource->notes
+                    ? 'Inspector notes are attached to explain the observed condition.'
+                    : 'No inspector notes are attached to explain the observed condition.'),
         ])->filter()->values();
 
         $actionsNeeded = collect();
         foreach ($coverageGaps as $gap) {
-            $actionsNeeded->push($gap);
+            $actionsNeeded->push($externalView ? 'Warehouse follow-up needed: ' . $gap : $gap);
         }
-        if (!$resource->refundDecision?->reason) {
-            $actionsNeeded->push('Add a clear refund decision note before sharing this pack with brand stakeholders.');
+        if (!$externalView && !$resource->refundDecision?->reason) {
+            $actionsNeeded->push('Add a clear decision note before sharing this pack with brand stakeholders.');
         }
         if ($resource->refund_status === 'hold' && $coverageGaps->isEmpty()) {
-            $actionsNeeded->push('Case is still on hold. Add release or review rationale before treating this as a final brand-facing pack.');
+            $actionsNeeded->push($externalView
+                ? 'This case is still on an internal hold. Ask the warehouse team whether more review is pending.'
+                : 'Case is still on hold. Add release or review rationale before treating this as a final brand-facing pack.');
         }
 
-        $decisionBasis = collect([
-            ['label' => 'Rule profile', 'value' => $resource->ruleProfile?->profile_name ?? 'No linked rule profile'],
-            ['label' => 'Condition', 'value' => ucfirst($conditionLabel)],
-            ['label' => 'Warehouse action', 'value' => ucfirst($dispositionLabel)],
-            ['label' => 'Playbook recommendation', 'value' => $recommendedDisposition ? ucfirst(str_replace('_', ' ', $recommendedDisposition)) : 'No playbook default'],
-            ['label' => 'Refund status', 'value' => ucfirst($refundStatusLabel)],
-            ['label' => 'Decision note', 'value' => $resource->refundDecision?->reason ?: 'No refund decision note recorded'],
-        ]);
+        $decisionBasis = $externalView
+            ? collect([
+                ['label' => 'Rule profile', 'value' => $resource->ruleProfile?->profile_name ?? 'No linked rule profile'],
+                ['label' => 'Condition', 'value' => ucfirst($conditionLabel)],
+                ['label' => 'Warehouse action', 'value' => ucfirst($dispositionLabel)],
+                ['label' => 'Playbook recommendation', 'value' => $recommendedDisposition ? ucfirst(str_replace('_', ' ', $recommendedDisposition)) : 'No playbook default'],
+                ['label' => 'Decision state', 'value' => $decisionStateLabel],
+                ['label' => 'Evidence readiness', 'value' => $evidenceSummary],
+            ])
+            : collect([
+                ['label' => 'Rule profile', 'value' => $resource->ruleProfile?->profile_name ?? 'No linked rule profile'],
+                ['label' => 'Condition', 'value' => ucfirst($conditionLabel)],
+                ['label' => 'Warehouse action', 'value' => ucfirst($dispositionLabel)],
+                ['label' => 'Playbook recommendation', 'value' => $recommendedDisposition ? ucfirst(str_replace('_', ' ', $recommendedDisposition)) : 'No playbook default'],
+                ['label' => 'Decision state', 'value' => $decisionStateLabel],
+                ['label' => 'Decision note', 'value' => $resource->refundDecision?->reason ?: 'No decision note recorded'],
+            ]);
 
         $mediaAssets = $resource->media->map(function ($media) {
             $publicPath = 'return-cases/' . $media->file_path;
@@ -168,7 +225,16 @@ class EvidenceExportController extends Controller
             ];
         })->values();
 
+        $timelineItems = $resource->events->map(function ($event) use ($externalView) {
+            return [
+                'time' => $event->created_at?->format('Y-m-d H:i') ?? 'N/A',
+                'title' => $event->title,
+                'description' => $externalView ? null : ($event->description ?: 'No event detail captured.'),
+            ];
+        })->values();
+
         return [
+            'externalView' => $externalView,
             'evidenceChecklist' => $evidenceChecklist,
             'coverageGaps' => $coverageGaps,
             'shareReadiness' => $shareReadiness,
@@ -178,10 +244,12 @@ class EvidenceExportController extends Controller
             'decisionBasis' => $decisionBasis,
             'recommendedDisposition' => $recommendedDisposition,
             'mediaAssets' => $mediaAssets,
+            'timelineItems' => $timelineItems,
+            'decisionStateLabel' => $decisionStateLabel,
         ];
     }
 
-    private function downloadPdf(ReturnCase $resource, array $packData): Response
+    private function downloadPdf(ReturnCase $resource, array $packData, bool $externalView = false): Response
     {
         $html = view('admin-views.returns.cases.export-pdf', array_merge([
             'resource' => $resource,
@@ -199,11 +267,22 @@ class EvidenceExportController extends Controller
         $mpdf->autoLangToFont = true;
         $mpdf->WriteHTML($html);
 
-        $filename = 'brand_defense_pack_' . strtolower($resource->return_id) . '.pdf';
+        $filename = ($externalView ? 'brand_review_record_' : 'brand_defense_pack_') . strtolower($resource->return_id) . '.pdf';
 
         return response($mpdf->Output($filename, 'S'), 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
+    }
+
+    private function expiresAtFromRequest(Request $request): Carbon
+    {
+        $expiresAt = $request->query('expires');
+
+        if (is_numeric($expiresAt) && (int) $expiresAt > now()->timestamp) {
+            return Carbon::createFromTimestamp((int) $expiresAt);
+        }
+
+        return now()->addDays(7);
     }
 }
