@@ -1,0 +1,96 @@
+FROM php:8.4-cli-bookworm AS vendor
+
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libcurl4-openssl-dev \
+    libicu-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libwebp-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install \
+        curl \
+        gd \
+        intl \
+        mbstring \
+        mysqli \
+        zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /app
+
+COPY . .
+
+RUN composer install \
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-interaction
+
+FROM php:8.4-fpm-bookworm
+
+RUN apt-get update && apt-get install -y \
+    nginx \
+    supervisor \
+    gettext-base \
+    git \
+    unzip \
+    libcurl4-openssl-dev \
+    libicu-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libwebp-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install \
+        bcmath \
+        curl \
+        exif \
+        gd \
+        intl \
+        mbstring \
+        mysqli \
+        opcache \
+        pdo_mysql \
+        zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /var/www/html
+
+COPY --from=vendor /app /var/www/html
+
+COPY docker/render/nginx.conf /etc/nginx/nginx.conf
+COPY docker/render/site.conf.template /etc/nginx/templates/default.conf.template
+COPY docker/render/php-fpm-render.conf /usr/local/etc/php-fpm.d/zz-render.conf
+COPY docker/render/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY scripts/render/bootstrap-app-env.sh /usr/local/bin/bootstrap-app-env.sh
+COPY scripts/render/predeploy.sh /usr/local/bin/render-predeploy.sh
+COPY scripts/render/start.sh /usr/local/bin/render-start.sh
+
+RUN chmod +x /usr/local/bin/bootstrap-app-env.sh /usr/local/bin/render-predeploy.sh /usr/local/bin/render-start.sh \
+    && mkdir -p \
+        /var/www/html/storage/framework/cache/data \
+        /var/www/html/storage/framework/sessions \
+        /var/www/html/storage/framework/views \
+        /var/www/html/storage/app/public \
+        /var/log/supervisor \
+        /run/php \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+EXPOSE 10000
+
+CMD ["render-start.sh"]

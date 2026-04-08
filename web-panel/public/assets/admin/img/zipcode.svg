@@ -1,0 +1,20 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon-park-solid:zip">
+<g id="Mask group">
+<mask id="mask0_663_22258" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="13" height="12">
+<g id="Group">
+<g id="Group_2">
+<path id="Vector" fill-rule="evenodd" clip-rule="evenodd" d="M3.16553 5.03921L8.26316 3L13.3608 5.03921C13.4096 5.05872 13.4515 5.09241 13.481 5.13594C13.5105 5.17947 13.5263 5.23084 13.5263 5.28342V12.7368C13.5263 12.8066 13.4986 12.8736 13.4492 12.9229C13.3999 12.9723 13.333 13 13.2632 13H3.26316C3.19336 13 3.12643 12.9723 3.07708 12.9229C3.02773 12.8736 3 12.8066 3 12.7368V5.28342C3.00003 5.23084 3.01582 5.17947 3.04532 5.13594C3.07483 5.09241 3.11669 5.05872 3.16553 5.03921Z" fill="white" stroke="white" stroke-width="1.0668" stroke-linejoin="round"/>
+<path id="Vector_2" d="M8.26367 7.47363V10.1052" stroke="black" stroke-width="1.0668" stroke-linecap="round"/>
+<path id="Vector_3" d="M10.6313 8.78942C11.0673 8.78942 11.4207 8.49469 11.4207 8.13153C11.4207 7.76837 11.0673 7.47363 10.6313 7.47363H9.92074C9.89981 7.47363 9.87973 7.48195 9.86492 7.49676C9.85011 7.51156 9.8418 7.53164 9.8418 7.55258V8.13153C9.8418 8.49469 10.1952 8.78942 10.6313 8.78942Z" stroke="black" stroke-width="1.0668"/>
+<path id="Vector_4" d="M9.8418 7.47363V10.1052" stroke="black" stroke-width="1.0668" stroke-linecap="round"/>
+<path id="Vector_5" d="M5.10547 7.47363H6.68573L5.10547 10.1052H6.68573" stroke="black" stroke-width="1.0668" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</mask>
+<g mask="url(#mask0_663_22258)">
+<path id="Vector_6" d="M1.94727 1.68457H14.5788V14.3161H1.94727V1.68457Z" fill="currentColor" fill-opacity="0.7"/>
+</g>
+</g>
+</g>
+</svg>

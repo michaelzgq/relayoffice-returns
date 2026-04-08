@@ -1,0 +1,24 @@
+.DS_Store
+.idea/
+.vscode/
+
+# Original source archives and vendor package dumps
+codecanyon-FjagBuR5-6pos-the-ultimate-pos-solution/
+codecanyon-FjagBuR5-6pos-the-ultimate-pos-solution.zip
+
+# Local QA artifacts
+output/
+.playwright-cli/
+
+# Local env and runtime leftovers
+web-panel/.env
+web-panel/storage/logs/*.log
+web-panel/storage/framework/cache/data/*
+web-panel/storage/framework/sessions/*
+web-panel/storage/framework/views/*
+web-panel/storage/app/public/*
+!web-panel/storage/app/public/.gitignore
+
+# Dependency/build output
+web-panel/vendor/
+web-panel/node_modules/
