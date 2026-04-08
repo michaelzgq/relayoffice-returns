@@ -23,6 +23,7 @@
 ### Render blueprint
 
 - [render.yaml](/Users/mikezhang/Desktop/projects/6POS/render.yaml)
+- MySQL builder image: [docker/mysql/Dockerfile](/Users/mikezhang/Desktop/projects/6POS/docker/mysql/Dockerfile)
 
 ### 生产 Docker
 
@@ -59,25 +60,34 @@
 
 ### 必做
 
-1. 先把整个项目推到一个 GitHub repo  
-当前目录 **还不是 git repo**，这是现在真正的第一阻塞项。  
-Render Blueprint 需要从 Git 仓库拉代码。
-
-2. 在 Render 新建 Blueprint 部署  
+1. 在 Render 新建 Blueprint 部署  
 选择这个 repo，Render 会读取根目录的 `render.yaml`。
 
-3. 先部署，再绑域名  
+2. 先部署，再绑域名  
 域名建议绑定到 web service：
 - `demo.relayoffice.ai`
 
 ### 最短路径
 
-1. 新建一个 GitHub repo
-2. 把当前目录内容推上去
-3. Render 里点 `New + > Blueprint`
-4. 选这个 repo
-5. 等第一次部署完成
-6. 再绑定 `demo.relayoffice.ai`
+1. Render 里点 `New + > Blueprint`
+2. 选 `michaelzgq/relayoffice-returns`
+3. `Blueprint Name` 填 `relayoffice-demo`
+4. `Branch` 选 `main`
+5. `Blueprint Path` 填 `render.yaml`
+6. 等第一次部署完成
+7. 再绑定 `demo.relayoffice.ai`
+
+### 如果 Blueprint 页面报 MySQL image 错误
+
+说明 Render 还没拉到最新仓库内容。
+
+这时只做 2 件事：
+
+1. 确认 GitHub 上 [render.yaml](https://github.com/michaelzgq/relayoffice-returns/blob/main/render.yaml) 里 `relayoffice-mysql` 使用的是：
+   - `env: docker`
+   - `dockerContext: ./docker/mysql`
+   - `dockerfilePath: ./docker/mysql/Dockerfile`
+2. 回 Render 刷新 Blueprint 页面
 
 ## 4. DNS 建议
 

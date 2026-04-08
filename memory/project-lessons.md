@@ -1193,3 +1193,51 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/public/assets/admin/js/theme.min.js`
 - `https://github.com/michaelzgq/relayoffice-returns.git`
 - Validation via `git -C /Users/mikezhang/Desktop/projects/6POS push -u origin main`
+
+## 2026-04-07 - Render blueprint MySQL import fix
+
+## Snapshot
+- Date: 2026-04-07
+- Scope: fixing the Render Blueprint import failure for `relayoffice-returns`
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Using the exact Render MySQL example pattern exposed that the failure was in our blueprint spec, not in the user's form inputs or GitHub permissions.
+- Replacing the direct registry image reference with a tiny repo-local MySQL Dockerfile created a deployment path we can validate locally and keep under version control.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I assumed a Render private service could consume `docker.io/mysql:8.0` directly in the way I wrote it
+- What happened: The Blueprint page loaded the repo correctly, but Render rejected `services[0].image` with `image "docker.io/mysql:8.0" not found`.
+- Root cause: I wrote the first `pserv` block from general schema intuition instead of matching Render's documented MySQL example for private services.
+- Earlier signal I missed: The error was not a generic YAML failure; it named the `image` field specifically, which meant the blueprint structure itself was the likely problem.
+- Prevention rule: For managed platform resources like databases, prefer vendor example patterns over "probably valid" generic schema guesses.
+- Next-time checklist item: Before publishing deploy docs, compare each nontrivial service block against an official platform example, especially databases and private services.
+
+### Mistake: I focused too much on form fields when the real bug was the repository content
+- What happened: The user asked how to fill the Blueprint page, but the visible fields were already fine.
+- Root cause: Platform UIs make configuration feel like a form problem even when the imported config file is the actual source of truth.
+- Earlier signal I missed: The page said "A Blueprint file was found, but there was an issue," which explicitly pointed to the repo file, not the user-entered name/branch/path fields.
+- Prevention rule: When a Blueprint UI reports a parsed-file error, debug the imported file first and only then explain the form.
+- Next-time checklist item: Separate "UI field guidance" from "imported config validation" in deployment troubleshooting.
+
+## Permanent Rules
+- Render Blueprint errors that name a specific field should be treated as repo-config bugs first, not user form mistakes.
+- Database services on managed platforms should start from official examples, then be adapted minimally.
+- Repo-local infra Dockerfiles are often safer than raw registry references when platform parsing is picky.
+
+## Next-Project Checklist
+- [ ] Match each Blueprint service type against an official example before declaring the config ready.
+- [ ] Validate tiny infra Dockerfiles locally when replacing direct registry image references.
+- [ ] If the UI says the file was found but has an issue, inspect the imported file before changing user-entered fields.
+
+## Open Risks Or Follow-Ups
+- The updated `render.yaml` still needs to be re-imported in Render and confirmed in the Blueprint UI.
+- First live deploy still requires post-deploy QA on login, queue, and Brand Defense Pack against the cloud database.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
+- `/Users/mikezhang/Desktop/projects/6POS/docker/mysql/Dockerfile`
+- `/Users/mikezhang/Desktop/projects/6POS/render-deploy-relayoffice-ai.md`
+- Validation via `docker build -f /Users/mikezhang/Desktop/projects/6POS/docker/mysql/Dockerfile /Users/mikezhang/Desktop/projects/6POS/docker/mysql`

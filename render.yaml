@@ -4,11 +4,12 @@ previews:
 services:
   - type: pserv
     name: relayoffice-mysql
-    runtime: image
+    env: docker
+    dockerContext: ./docker/mysql
+    dockerfilePath: ./docker/mysql/Dockerfile
+    autoDeploy: false
     plan: starter
     region: oregon
-    image:
-      url: docker.io/mysql:8.0
     envVars:
       - key: MYSQL_DATABASE
         value: relayoffice
