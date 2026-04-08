@@ -1143,3 +1143,53 @@
 - Validation via `docker build -f /Users/mikezhang/Desktop/projects/6POS/web-panel/Dockerfile.render -t relayoffice-render-test /Users/mikezhang/Desktop/projects/6POS/web-panel`
 - Validation via `curl http://127.0.0.1:18080/healthz`
 - Validation via `git -C /Users/mikezhang/Desktop/projects/6POS rev-parse --is-inside-work-tree`
+
+## 2026-04-07 - GitHub repo bootstrap and first push
+
+## Snapshot
+- Date: 2026-04-07
+- Scope: turning the local returns project into a clean GitHub repo and pushing it to `relayoffice-returns`
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Adding a root `.gitignore` before the first push kept the repo focused on the deployable app and docs instead of shipping Codecanyon archives and QA artifacts.
+- GitHub push protection caught a real issue early and prevented a dirty first public history.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I treated first push as a git task instead of a source hygiene task
+- What happened: The initial commit pushed almost everything cleanly, but GitHub blocked it because a third-party minified asset contained a Mapbox access token.
+- Root cause: I checked local noise like zip files and caches, but I did not scan committed static assets for embedded secrets before the first public push.
+- Earlier signal I missed: The project originated from a commercial template package, and template JS/CSS often ships with demo tokens, example keys, or third-party service defaults.
+- Prevention rule: On first public push of any template-derived codebase, run a secret scan against committed assets before pushing.
+- Next-time checklist item: Before first push, scan the staged tree for token-like strings in minified JS, CSS, and config files.
+
+### Mistake: I needed to rewrite history because I pushed too soon after the first commit
+- What happened: The first local root commit had to be replaced with a clean one after push protection rejected it.
+- Root cause: I optimized for “get to GitHub fast” before proving the initial commit was push-safe.
+- Earlier signal I missed: A first commit in a legacy or vendor-derived codebase is the exact moment when a pre-push secret review matters most.
+- Prevention rule: Treat the first commit as publishable release material, not as a scratch checkpoint.
+- Next-time checklist item: Run secret checks before creating or at least before publishing the first root commit.
+
+## Permanent Rules
+- First public push of a template-derived project requires a secret scan across static assets.
+- GitHub push protection should be treated as a code hygiene signal, not something to bypass with an unblock link.
+- A root commit should be treated as release-grade history if it is intended to be pushed immediately.
+
+## Next-Project Checklist
+- [ ] Add root `.gitignore` before the first `git add .` in mixed-source projects.
+- [ ] Scan staged files for token patterns before the first push.
+- [ ] Prefer replacing vendor demo tokens with neutral defaults instead of requesting GitHub unblock.
+- [ ] Confirm the remote push works before declaring the repo bootstrap done.
+
+## Open Risks Or Follow-Ups
+- The repo is now on GitHub, but Render deployment still needs to be run from the remote repository and then QA’d against the live domain.
+- The app still includes some legacy POS assets and storage font files that are not blockers now, but could be trimmed later if you want a more product-focused public repo.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/.gitignore`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/.gitignore`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/public/assets/admin/js/theme.min.js`
+- `https://github.com/michaelzgq/relayoffice-returns.git`
+- Validation via `git -C /Users/mikezhang/Desktop/projects/6POS push -u origin main`
