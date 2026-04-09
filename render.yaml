@@ -34,7 +34,7 @@ services:
     healthCheckPath: /healthz
     preDeployCommand: /usr/local/bin/render-predeploy.sh
     domains:
-      - demo.relayoffice.ai
+      - demo.dossentry.com
     envVars:
       - key: APP_NAME
         value: Dossentry
@@ -49,7 +49,7 @@ services:
       - key: FORCE_HTTPS
         value: "true"
       - key: APP_URL
-        value: https://demo.relayoffice.ai
+        value: https://demo.dossentry.com
       - key: APP_KEY_BASE64
         generateValue: true
       - key: LOG_CHANNEL

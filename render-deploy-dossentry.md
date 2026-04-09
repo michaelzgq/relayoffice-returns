@@ -1,10 +1,12 @@
-# Render 部署方案：`Dossentry`
+# Render 部署方案：`demo.dossentry.com`
 
 最后更新时间：2026-04-07 America/Los_Angeles
 
 ## 1. 目标
 
-把当前 `Dossentry` returns-only V0 部署到你自己的线上域名。
+把当前 `Dossentry` returns-only V0 部署到：
+
+- `https://demo.dossentry.com`
 
 部署平台：
 
@@ -63,7 +65,7 @@
 
 2. 先部署，再绑域名  
 域名建议绑定到 web service：
-- `demo.yourdomain.com`
+- `demo.dossentry.com`
 
 ### 最短路径
 
@@ -73,7 +75,7 @@
 4. `Branch` 选 `main`
 5. `Blueprint Path` 填 `render.yaml`
 6. 等第一次部署完成
-7. 再绑定你的 demo 子域名
+7. 再绑定 `demo.dossentry.com`
 
 ### 如果 Blueprint 页面报 MySQL image 错误
 
@@ -89,12 +91,12 @@
 
 ## 4. DNS 建议
 
-不要先把根域名直接给应用。
+不要先把根域名 `dossentry.com` 直接给应用。
 
 建议：
 
-- `yourdomain.com` 留给 landing page
-- `demo.yourdomain.com` 给当前产品 demo
+- `dossentry.com` 留给 landing page
+- `demo.dossentry.com` 给当前产品 demo
 
 ### DNS 记录
 
@@ -108,12 +110,12 @@
 
 ### 为什么不用根域名
 
-根域名直接绑应用不是不行，但不够省事。
+`dossentry.com` 直接绑应用不是不行，但不够省事。
 
 当前最方便的做法是：
 
-- `yourdomain.com` 留给 landing page
-- `demo.yourdomain.com` 直接指向 Render app
+- `dossentry.com` 留给 landing page
+- `demo.dossentry.com` 直接指向 Render app
 
 这样不需要先处理 apex 记录、官网和应用拆分也更清楚。
 
@@ -149,8 +151,8 @@ php artisan returns:reset-demo --force --bootstrap
 
 按这个顺序验证：
 
-1. `https://demo.yourdomain.com/healthz`
-2. `https://demo.yourdomain.com/admin/auth/login`
+1. `https://demo.dossentry.com/healthz`
+2. `https://demo.dossentry.com/admin/auth/login`
 3. 用 `admin` 登录
 4. 打开 `Ops Board`
 5. 打开 `Inspect`
@@ -210,7 +212,7 @@ php artisan returns:reset-demo --force --bootstrap
 
 1. 先创建并推 GitHub repo
 2. Render 导入 `render.yaml`
-3. 绑定你的 demo 子域名
+3. 绑定 `demo.dossentry.com`
 4. 首次 seed
 5. 跑 QA
 6. 再开始外部 demo

@@ -1807,6 +1807,40 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/migrations/2026_04_09_000001_rebrand_workspace_defaults_to_dossentry.php`
 - `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
 - `/Users/mikezhang/Desktop/projects/6POS/render-deploy-dossentry.md`
+
+## 2026-04-09 - Domain migration should be decided as an explicit product-surface split
+
+## Snapshot
+- Date: 2026-04-09
+- Scope: moving the live demo entrypoint from the old relayoffice subdomain plan to `demo.dossentry.com`
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Locking the split as `root domain for landing page, demo subdomain for app` kept the migration simple.
+- Updating both `render.yaml` and the deploy doc together reduced the chance of drift between config and operations.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Domain strategy can stay implicit for too long
+- What happened: the product brand changed before the new public app domain was decided, which left the deploy config and docs lagging behind the naming direction.
+- Root cause: domain migration was treated as a later ops detail instead of part of the brand rollout.
+- Earlier signal I missed: the new brand was already chosen, but the app was still pointing at the old branded subdomain.
+- Prevention rule: once a new public brand is selected, define the exact `root vs demo/app subdomain` structure immediately.
+- Next-time checklist item: after naming is selected, decide domain mapping before more public promotion.
+
+## Permanent Rules
+- Brand selection is incomplete until the public domain structure is chosen.
+- Keep the product app on a dedicated subdomain when the root domain may later host marketing pages.
+
+## Next-Project Checklist
+- [ ] Decide whether the product lives on the root domain or a dedicated app/demo subdomain.
+- [ ] Update deploy config and deploy docs in the same change.
+- [ ] Verify DNS and TLS steps are written against the actual chosen domain, not placeholders.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
+- `/Users/mikezhang/Desktop/projects/6POS/render-deploy-dossentry.md`
 - [USPTO comprehensive clearance search guidance](https://www.uspto.gov/trademarks/search/comprehensive-clearance-search-similar-trademarks)
 - [Relay](https://www.relaytech.co/)
 
