@@ -82,12 +82,12 @@ trait BuildsReturnsFixtures
 
         DB::table('business_settings')->updateOrInsert(
             ['key' => 'shop_name'],
-            ['value' => 'RelayOffice Returns']
+            ['value' => 'Dossentry']
         );
 
         DB::table('business_settings')->updateOrInsert(
             ['key' => 'footer_text'],
-            ['value' => 'RelayOffice Returns workspace']
+            ['value' => 'Dossentry workspace']
         );
     }
 

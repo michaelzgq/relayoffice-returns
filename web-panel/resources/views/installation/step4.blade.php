@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="text-center text-white mb-4">
-        <h2>{{\App\CPU\translate('RelayOffice Returns Setup')}}</h2>
+        <h2>{{\App\CPU\translate('Dossentry Setup')}}</h2>
         <h6 class="fw-normal">{{\App\CPU\translate('Please proceed step by step with proper data according to instructions')}}</h6>
     </div>
     <div class="pb-2">

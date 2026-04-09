@@ -1,12 +1,10 @@
-# Render 部署方案：`demo.relayoffice.ai`
+# Render 部署方案：`Dossentry`
 
 最后更新时间：2026-04-07 America/Los_Angeles
 
 ## 1. 目标
 
-把当前 returns-only V0 部署到：
-
-- `https://demo.relayoffice.ai`
+把当前 `Dossentry` returns-only V0 部署到你自己的线上域名。
 
 部署平台：
 
@@ -65,17 +63,17 @@
 
 2. 先部署，再绑域名  
 域名建议绑定到 web service：
-- `demo.relayoffice.ai`
+- `demo.yourdomain.com`
 
 ### 最短路径
 
 1. Render 里点 `New + > Blueprint`
-2. 选 `michaelzgq/relayoffice-returns`
-3. `Blueprint Name` 填 `relayoffice-demo`
+2. 选当前 GitHub 仓库
+3. `Blueprint Name` 填 `dossentry-demo`
 4. `Branch` 选 `main`
 5. `Blueprint Path` 填 `render.yaml`
 6. 等第一次部署完成
-7. 再绑定 `demo.relayoffice.ai`
+7. 再绑定你的 demo 子域名
 
 ### 如果 Blueprint 页面报 MySQL image 错误
 
@@ -83,7 +81,7 @@
 
 这时只做 2 件事：
 
-1. 确认 GitHub 上 [render.yaml](https://github.com/michaelzgq/relayoffice-returns/blob/main/render.yaml) 里 `relayoffice-mysql` 使用的是：
+1. 确认 GitHub 上根目录的 [render.yaml](/Users/mikezhang/Desktop/projects/6POS/render.yaml) 里 MySQL service 使用的是：
    - `env: docker`
    - `dockerContext: ./docker/mysql`
    - `dockerfilePath: ./docker/mysql/Dockerfile`
@@ -91,12 +89,12 @@
 
 ## 4. DNS 建议
 
-不要先把根域名 `relayoffice.ai` 直接给应用。
+不要先把根域名直接给应用。
 
 建议：
 
-- `relayoffice.ai` 以后留给 landing page
-- `demo.relayoffice.ai` 给当前产品 demo
+- `yourdomain.com` 留给 landing page
+- `demo.yourdomain.com` 给当前产品 demo
 
 ### DNS 记录
 
@@ -110,12 +108,12 @@
 
 ### 为什么不用根域名
 
-`relayoffice.ai` 直接绑应用不是不行，但不够省事。
+根域名直接绑应用不是不行，但不够省事。
 
 当前最方便的做法是：
 
-- `relayoffice.ai` 留给 landing page
-- `demo.relayoffice.ai` 直接指向 Render app
+- `yourdomain.com` 留给 landing page
+- `demo.yourdomain.com` 直接指向 Render app
 
 这样不需要先处理 apex 记录、官网和应用拆分也更清楚。
 
@@ -151,8 +149,8 @@ php artisan returns:reset-demo --force --bootstrap
 
 按这个顺序验证：
 
-1. `https://demo.relayoffice.ai/healthz`
-2. `https://demo.relayoffice.ai/admin/auth/login`
+1. `https://demo.yourdomain.com/healthz`
+2. `https://demo.yourdomain.com/admin/auth/login`
 3. 用 `admin` 登录
 4. 打开 `Ops Board`
 5. 打开 `Inspect`
@@ -212,7 +210,7 @@ php artisan returns:reset-demo --force --bootstrap
 
 1. 先创建并推 GitHub repo
 2. Render 导入 `render.yaml`
-3. 绑定 `demo.relayoffice.ai`
+3. 绑定你的 demo 子域名
 4. 首次 seed
 5. 跑 QA
 6. 再开始外部 demo

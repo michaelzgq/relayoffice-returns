@@ -37,7 +37,7 @@ services:
       - demo.relayoffice.ai
     envVars:
       - key: APP_NAME
-        value: RelayOffice Returns
+        value: Dossentry
       - key: APP_ENV
         value: production
       - key: APP_DEBUG

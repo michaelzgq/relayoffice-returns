@@ -1,8 +1,8 @@
-# RelayOffice Returns 当前应用功能使用说明书
+# Dossentry 当前应用功能使用说明书
 
 ## 1. 文档范围
 
-这份文档描述的是当前可运行的 **RelayOffice Returns Web 管理后台**，地址是：
+这份文档描述的是当前可运行的 **Dossentry Web 管理后台**，地址是：
 
 - `http://localhost:8000/admin`
 

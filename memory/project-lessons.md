@@ -1710,3 +1710,138 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/seeders/DemoBootstrapSeeder.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/installation/step0.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/lang/en/messages.php`
+
+## 2026-04-08 - Brand clearance must happen before product-wide rebranding
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: rethinking the outward brand after discovering `RelayOffice` / `RelayOffice Returns` had material market-confusion and naming-risk issues
+- Outcome: corrected direction after initial over-commitment
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Internet and category-adjacent verification caught the issue before broader promotion scaled it.
+- Separating “hold the domain” from “use it as the public brand” led to a more precise decision.
+- Turning the naming problem into a rule set plus shortlist produced a cleaner next action than continuing abstract debate.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Rebranding happened before minimum naming clearance
+- What happened: the app was rebranded to `RelayOffice Returns` before completing even a minimal legal and market-confusion screen.
+- Root cause: speed to demo and deployment was prioritized over naming risk, and the existing domain created false confidence.
+- Earlier signal I missed: the candidate name reused a crowded word (`Relay`) that was already active in adjacent logistics and returns categories.
+- Prevention rule: no outward rebrand should happen until a minimum naming gate is passed: exact web search, exact LinkedIn/company search, domain scan, and USPTO search.
+- Next-time checklist item: before any product-wide rename, force a `candidate-name clearance` checklist and do not touch code until it passes.
+
+### Mistake: Owning a domain was treated as if it implied brand safety
+- What happened: having `relayoffice.ai` available and deployable created the impression that it was safe enough to adopt as the public brand.
+- Root cause: domain ownership is easy to verify, but trademark and confusion risk depend on adjacent market use, not just domain availability.
+- Earlier signal I missed: the product operated inside logistics / returns, where `Relay` already had live commercial meaning.
+- Prevention rule: domain ownership only proves control of a URL, not brand clearance.
+- Next-time checklist item: separate `domain availability`, `internet use`, and `trademark risk` into distinct decision checks.
+
+## Permanent Rules
+- Do not push a full rebrand into product surfaces before running minimum clearance on the candidate name.
+- A “good-enough” name for deployment is not automatically a good-enough name for public go-to-market.
+- If a root word is crowded in the target category, prefer abandoning it early instead of optimizing around it.
+
+## Next-Project Checklist
+- [ ] Run exact web search on the candidate brand and close variants.
+- [ ] Check adjacent-category operators on Google and LinkedIn before editing product copy.
+- [ ] Check USPTO before deciding a public-facing name is acceptable.
+- [ ] Distinguish clearly between `domain to hold`, `demo URL`, and `formal brand`.
+- [ ] Keep a neutral placeholder brand ready so deployment can continue while final naming is unresolved.
+
+## Open Risks Or Follow-Ups
+- The live app and some deployment defaults may still reference `RelayOffice Returns` until a new final brand is selected and re-applied.
+- The shortlist still needs deeper legal and domain clearance before any name is adopted publicly.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`
+
+## 2026-04-09 - Rebranding a live app requires separating visible brand from live infrastructure identifiers
+
+## Snapshot
+- Date: 2026-04-09
+- Scope: switching the app from `RelayOffice Returns` to `Dossentry` after the user picked a new brand
+- Outcome: success with controlled infrastructure carry-over
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Treating the rebrand as a live migration prevented a dangerous “search and replace everything” approach.
+- Adding a new migration for existing `business_settings` values means deployed databases can move to `Dossentry` automatically.
+- Keeping the current Render custom domain and service identifiers stable avoided breaking the working production demo while still changing the visible brand.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Live infrastructure names and public brand can diverge, and that must be planned explicitly
+- What happened: after the first rebrand, the visible brand changed but the live Render service/domain identity still reflected the old naming path.
+- Root cause: product copy and deployment infrastructure were treated as one layer instead of two.
+- Earlier signal I missed: the app already had a working custom domain and auto-deploy pipeline, so forcing an all-at-once rename would risk unnecessary downtime.
+- Prevention rule: when rebranding a deployed product, separate the work into `visible brand changes` and `infrastructure identity migration`.
+- Next-time checklist item: before touching deploy config, ask whether the current domain/service names are still needed to keep production stable.
+
+### Mistake: Default seeded emails should not imply ownership of an unregistered brand domain
+- What happened: the prior seeded defaults used a branded email on a domain that was not actually secured as the long-term public brand.
+- Root cause: the brand system was changed faster than the domain system.
+- Earlier signal I missed: naming remained in flux while seeded defaults were already acting like the domain decision was final.
+- Prevention rule: until the final brand domain is registered and configured, default seeded emails should use a safe local/internal address.
+- Next-time checklist item: if domain ownership is not finalized, use `.local` or another explicitly internal default.
+
+## Permanent Rules
+- Rebrand user-facing surfaces first; migrate live infrastructure identifiers only in a separate planned window.
+- Existing deployments need a settings migration, not just new seeds.
+- Branded email defaults should not assume a domain that has not been secured for long-term use.
+
+## Next-Project Checklist
+- [ ] Split rebrand work into `visible product layer` and `infrastructure layer`.
+- [ ] Add a live-data migration for current business settings.
+- [ ] Use internal/local defaults until the final branded domain is actually ready.
+- [ ] Verify installer, exported assets, and seeded defaults all match the new brand.
+
+## Open Risks Or Follow-Ups
+- The live demo domain and some Render service identifiers still use the old relayoffice naming path for operational continuity.
+- Once the user registers a final Dossentry domain, a second pass will be needed to migrate `APP_URL`, custom domains, and possibly Render service names.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/migrations/2026_04_09_000001_rebrand_workspace_defaults_to_dossentry.php`
+- `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
+- `/Users/mikezhang/Desktop/projects/6POS/render-deploy-dossentry.md`
+- [USPTO comprehensive clearance search guidance](https://www.uspto.gov/trademarks/search/comprehensive-clearance-search-similar-trademarks)
+- [Relay](https://www.relaytech.co/)
+
+## 2026-04-08 - Naming shortlist should be filtered by exact internet noise before deeper clearance
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: screening candidate brand names after `Northset` showed high noise in public search
+- Outcome: improved
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Exact-match internet checks killed weak candidates quickly.
+- Separating `exact brand use` from `fuzzy USPTO result volume` produced better naming decisions.
+- Domain WHOIS plus live-web checks gave a faster signal than abstract discussion.
+
+## Mistakes To Stop Repeating
+
+### Mistake: A promising name can survive too long if exact public-use checks are skipped
+- What happened: `Northset` initially looked clean enough, but exact public-use checking later showed enough noise to stop it.
+- Root cause: shortlist creation moved faster than exact-match validation.
+- Earlier signal I missed: abstract, polished-sounding names often already exist in small companies, music projects, or other low-visibility uses.
+- Prevention rule: every shortlist candidate must pass `exact web search`, `company/social search`, and `domain whois` before it is treated as a serious finalist.
+- Next-time checklist item: never present a naming “primary recommendation” before exact public-use checks.
+
+## Permanent Rules
+- Fuzzy trademark result counts are not enough; exact public-use checking must happen early.
+- A candidate can be legally uncertain and still be commercially too noisy to be worth pursuing.
+- Domain availability is a useful signal, but only after exact-name web noise is checked.
+
+## Next-Project Checklist
+- [ ] Exact Google search for the candidate in quotes.
+- [ ] LinkedIn/company noise check for the exact candidate.
+- [ ] WHOIS check for the preferred domains.
+- [ ] Kill any candidate with obvious active commercial noise before attorney review.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`

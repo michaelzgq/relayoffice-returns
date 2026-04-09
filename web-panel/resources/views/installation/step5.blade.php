@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="text-center text-white mb-4">
-        <h2>{{\App\CPU\translate('RelayOffice Returns Setup')}}</h2>
+        <h2>{{\App\CPU\translate('Dossentry Setup')}}</h2>
         <h6 class="fw-normal">{{\App\CPU\translate('Please proceed step by step with proper data according to instructions')}}</h6>
     </div>
 
@@ -44,7 +44,7 @@
                                 <div class="from-group">
                                     <label for="first-name" class="d-flex align-items-center gap-2 mb-2">Business Name</label>
                                     <input type="text" id="first-name" class="form-control" name="business_name"
-                                           required placeholder="{{\App\CPU\translate('Ex: RelayOffice Returns')}}">
+                                           required placeholder="{{\App\CPU\translate('Ex: Dossentry')}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
