@@ -11,7 +11,7 @@
                     </div>
                 @endif
                 <div class="mar-ver pad-btm text-center">
-                    <h1 class="h3 text-white">{{\App\CPU\translate('6POS Software Update')}}</h1>
+                    <h1 class="h3 text-white">{{\App\CPU\translate('RelayOffice Returns Update')}}</h1>
                 </div>
                 <div class="card mt-3">
                     <div class="card-body">
@@ -39,4 +39,3 @@
         </div>
     </div>
 @endsection
-

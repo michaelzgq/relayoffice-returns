@@ -104,7 +104,7 @@ INSERT INTO `business_settings` (`id`, `key`, `value`, `created_at`, `updated_at
 (1, 'shop_logo', '2021-11-10-618b99fd673d2.png', NULL, NULL),
 (2, 'pagination_limit', '12', NULL, NULL),
 (3, 'currency', 'BDT', NULL, NULL),
-(4, 'shop_name', 'AM tech Shop', NULL, NULL),
+(4, 'shop_name', 'RelayOffice Returns', NULL, NULL),
 (5, 'shop_address', 'Dhaka', NULL, NULL),
 (6, 'shop_phone', '0123456789', NULL, NULL),
 (7, 'shop_email', 'shop@gmail.com', NULL, NULL),

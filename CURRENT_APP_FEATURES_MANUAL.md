@@ -1,8 +1,8 @@
-# 6POS 当前应用功能使用说明书
+# RelayOffice Returns 当前应用功能使用说明书
 
 ## 1. 文档范围
 
-这份文档描述的是当前本地可运行的 **6POS Web 管理后台**，地址是：
+这份文档描述的是当前可运行的 **RelayOffice Returns Web 管理后台**，地址是：
 
 - `http://localhost:8000/admin`
 
@@ -827,7 +827,7 @@ Counter 可以理解成收银台 / 终端 / cashier station。
 
 - 当前应用最强的部分是：`Web admin + Returns demo workspace`
 - Returns 模块是当前最深度验证的一块
-- 原始 6POS 模块已经存在并可进入，但在真正当生产系统前，建议你先做一次手工 smoke test
+- 原始 vendor 模块已经存在并可进入，但在真正当生产系统前，建议你先做一次手工 smoke test
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel` 现在还不是 git repo，当前改动还没有版本管理
 
 ## 10. 常用本地命令

@@ -1611,3 +1611,102 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/bootstrap/app.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Middleware/TrustProxies.php`
 - `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
+
+## 2026-04-08 - Network promotion planning must optimize for conversations, not vanity reach
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: turning the current go-to-market discussion into a usable 30-day network promotion plan
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Anchoring the plan to the live product and current positioning avoided generic “startup marketing” advice.
+- Treating LinkedIn, direct outreach, and directory presence as one coordinated system produced a plan that can actually start this week.
+- Keeping `Brand Review Link` as the marketing hero prevented the message from drifting back into feature soup.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I had previously spread the channel discussion too wide
+- What happened: earlier GTM material covered positioning and outreach well, but did not turn that into a strict 30-day network promotion system.
+- Root cause: strategy work is easier than channel prioritization, so the plan stayed too abstract.
+- Earlier signal I missed: the product already had enough clarity for direct promotion, but there was still no single document saying what to do this week.
+- Prevention rule: once positioning is stable enough to explain in one sentence, convert it immediately into a 30-day channel plan with daily cadence and kill thresholds.
+- Next-time checklist item: after any strategy pack is written, ask “what are the three channels we will actually run in the next 30 days?”
+
+### Mistake: It is easy to confuse traffic goals with validation goals
+- What happened: network promotion could have drifted toward SEO, ads, or general visibility before validating demand from the narrow ICP.
+- Root cause: “more reach” sounds like progress even when the real bottleneck is high-quality conversations.
+- Earlier signal I missed: the current product still needs authority and dispute-workflow validation more than it needs broad awareness.
+- Prevention rule: in early-stage B2B promotion, optimize for replies, calls, and paid reviews before optimizing for visits or followers.
+- Next-time checklist item: define the conversion event first, then choose the channel.
+
+## Permanent Rules
+- Early network promotion should be judged by qualified conversations, not total impressions.
+- A GTM plan is incomplete until it names the exact channels to run and the channels to ignore.
+- Product marketing should lead with the smallest valuable outcome, not the longest feature list.
+
+## Next-Project Checklist
+- [ ] Define the single conversion event for the next 30 days.
+- [ ] Limit active acquisition channels to three or fewer.
+- [ ] Build one tracker that ties outreach, content, and calls into the same scorecard.
+- [ ] Write kill thresholds before starting promotion.
+
+## Open Risks Or Follow-Ups
+- The plan still needs real execution data to show whether LinkedIn or directory traffic produces higher-quality conversations.
+- The user still needs a live root-domain landing page that matches the new message hierarchy.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/network-promotion-30-day-plan.md`
+- `/Users/mikezhang/Desktop/projects/6POS/linkedin-30-day-post-plan.md`
+- `/Users/mikezhang/Desktop/projects/6POS/target-50-accounts-template.csv`
+
+## 2026-04-08 - Rebranding must include live defaults and install paths, not just visible copy
+
+## Snapshot
+- Date: 2026-04-08
+- Scope: removing `6POS` branding from the application and switching the product to `RelayOffice Returns`
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Treating rebranding as a data + install + UI problem prevented a shallow rename.
+- Adding a migration for legacy default business settings means existing deployments can pick up the new brand automatically on deploy.
+- Updating installer screens, translation values, seeders, and test fixtures together kept the brand consistent across live demo and future self-hosted installs.
+
+## Mistakes To Stop Repeating
+
+### Mistake: The first instinct in a rebrand is usually too shallow
+- What happened: the obvious move was to only change visible page copy, but that would have left old vendor branding in seeded business settings, install flows, and fresh self-hosted installs.
+- Root cause: UI text is easy to spot; default data and install assets are not.
+- Earlier signal I missed: the current product already depended on seeded `shop_name` values and installer SQL backups, so leaving those untouched would have recreated the old brand later.
+- Prevention rule: any product rebrand must audit UI strings, seeded defaults, migrations, installer flows, and generated exports together.
+- Next-time checklist item: search for the old brand in views, seeders, migrations, install files, and tests before calling a rebrand complete.
+
+### Mistake: Historical vendor branding can leak back in through bootstrap paths
+- What happened: even after the main app is rebranded, installer screens and imported SQL defaults can reintroduce the old brand on new environments.
+- Root cause: install assets often live outside the normal runtime path, so they are easy to ignore.
+- Earlier signal I missed: self-hosted delivery became part of the product, which raised the importance of installation-time branding.
+- Prevention rule: once self-hosted is part of the offering, installer and backup SQL assets become customer-facing and must be branded too.
+- Next-time checklist item: when shipping self-hosted, run a dedicated “fresh install branding” audit.
+
+## Permanent Rules
+- A rebrand is incomplete until existing deployments, new installs, and demo seeds all produce the new brand by default.
+- If business identity is stored in settings tables, rebranding requires a safe migration path, not just changed seeders.
+- Customer-facing install and update screens count as product surface area.
+
+## Next-Project Checklist
+- [ ] Search for old brand names across views, seeders, migrations, tests, and installation assets.
+- [ ] Add a safe migration for old default brand values when live databases already exist.
+- [ ] Verify demo seed output and installer defaults match the new brand.
+- [ ] Verify exported PDFs and external share links show the new brand.
+
+## Open Risks Or Follow-Ups
+- Some internal strategy docs still mention `6POS` as historical source context; those are intentionally not treated as customer-facing brand assets.
+- Vendor-side license checks still point to the original provider infrastructure; they are technical dependencies, not active product branding.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/migrations/2026_04_08_000001_rebrand_workspace_defaults_to_relayoffice.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/seeders/DemoBootstrapSeeder.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/installation/step0.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/lang/en/messages.php`

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="text-center text-white mb-4">
-        <h2>{{\App\CPU\translate('6POS Software Installation')}}</h2>
+        <h2>{{\App\CPU\translate('RelayOffice Returns Setup')}}</h2>
         <h6 class="fw-normal">{{\App\CPU\translate('Please proceed step by step with proper data according to instructions')}}</h6>
     </div>
     <div class="pb-2">
@@ -17,7 +17,7 @@
     <div class="card mt-4">
         <div class="p-4 mb-md-3 mx-xl-4 px-md-5">
             <div class="d-flex justify-content-end mb-2">
-                <a href="https://docs.6amtech.com/docs-six-pos/intro" class="d-flex align-items-center gap-1"
+                <a href="https://relayoffice.ai" class="d-flex align-items-center gap-1"
                    target="_blank">
                     {{\App\CPU\translate('Read Documentation')}}
                     <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip"
@@ -154,4 +154,3 @@
         </div>
     </div>
 @endsection
-

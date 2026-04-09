@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="text-center text-white mb-4">
-        <h2>{{\App\CPU\translate('6POS Software Installation')}}</h2>
+        <h2>{{\App\CPU\translate('RelayOffice Returns Setup')}}</h2>
         <h6 class="fw-normal">{{\App\CPU\translate('Please proceed step by step with proper data according to instructions')}}</h6>
     </div>
 
@@ -25,7 +25,7 @@
                     <h6 class="fw-bold text-uppercase fs m-0 letter-spacing" style="--fs: 14px">{{\App\CPU\translate('Required
                         Database Information')}}
                     </h6>
-                    <a href="https://docs.6amtech.com/docs-six-pos/admin-panel/install-on-server"
+                    <a href="https://relayoffice.ai"
                        target="_blank">{{\App\CPU\translate('Where to get this information')}}?</a>
                 </div>
 
@@ -76,4 +76,3 @@
         </div>
     </div>
 @endsection
-

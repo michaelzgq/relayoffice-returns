@@ -1,4 +1,4 @@
-# 6POS Returns V0 完成度与上云准备报告
+# RelayOffice Returns V0 完成度与上云准备报告
 
 最后更新时间：2026-04-07 America/Los_Angeles
 
@@ -24,7 +24,7 @@
 
 ### 口径 B：原始计划逐条严格兑现
 
-指的是 [6pos-p0-development-plan.md](/Users/mikezhang/Desktop/projects/6POS/6pos-p0-development-plan.md) 里每个子项、每个交互要求都算完成。
+指的是最早那份 P0 计划里每个子项、每个交互要求都算完成。
 
 如果按这个口径判断：
 
