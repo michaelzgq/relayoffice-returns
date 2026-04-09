@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\EvidenceExportController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,24 @@ Route::get('healthz', function () {
         'time' => now()->toIso8601String(),
     ]);
 });
+
+Route::get('/', function (Request $request) {
+    $host = $request->getHost();
+    $demoHosts = [
+        'demo.dossentry.com',
+        'relayoffice-returns-app.onrender.com',
+        'demo.relayoffice.ai',
+    ];
+
+    if (in_array($host, $demoHosts, true)) {
+        return redirect('admin/auth/login');
+    }
+
+    return response()->view('landing', [
+        'appName' => config('app.name') === 'Laravel' ? 'Dossentry' : config('app.name', 'Dossentry'),
+        'demoLoginUrl' => 'https://demo.dossentry.com/admin/auth/login',
+    ]);
+})->name('landing');
 
 Route::middleware('signed')->group(function () {
     Route::controller(EvidenceExportController::class)->group(function () {

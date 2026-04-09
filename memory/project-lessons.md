@@ -1759,6 +1759,51 @@
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`
 
+## 2026-04-09 - Marketing pages should be introduced without breaking the live demo entrypoint
+
+## Snapshot
+- Date: 2026-04-09
+- Scope: adding the first public landing page while keeping `demo.dossentry.com` as the working app entrypoint
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Splitting the public marketing host from the demo host let the product stay usable while adding a homepage.
+- Testing host-specific behavior with explicit `Host` headers caught the correct `landing vs login redirect` behavior quickly.
+- Sweeping brand residues after the main page build caught a stale self-hosted example before it leaked back into customer-facing materials.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Brand cleanup can look finished even when delivery artifacts still carry legacy values
+- What happened: the landing page and live app were branded as `Dossentry`, but `.env.self-hosted.example` still used `RelayOffice Returns` and legacy database identifiers.
+- Root cause: visual/UI rebrand work finished first, while deployment and delivery files were treated as secondary.
+- Earlier signal I missed: environment templates often survive rebrands because they are not exercised during browser-based QA.
+- Prevention rule: every rebrand must include a final `exact brand string` scan across deploy, install, and delivery files before shipping.
+- Next-time checklist item: run a repo-wide search for both the old and new brand names before calling rebrand complete.
+
+### Mistake: Landing pages are easy to wire in a way that silently hijacks the working app root
+- What happened: adding a root-domain landing page required a host-based split so the demo subdomain would keep redirecting to login instead of showing marketing content.
+- Root cause: the existing app used `/` as a practical entrypoint, so marketing and product routes were competing for the same root path.
+- Earlier signal I missed: any app that already uses the root path needs explicit host-aware routing when a marketing site is introduced later.
+- Prevention rule: when adding a landing page to a live app, define public hosts and product hosts explicitly before touching the root route.
+- Next-time checklist item: test `root path` behavior for every public hostname before deployment.
+
+## Permanent Rules
+- Rebrand completion requires checking environment templates and delivery packs, not just the visible UI.
+- Marketing and product can share one Laravel service only if host-based root behavior is explicitly tested.
+- Demo subdomains should preserve the shortest path to login; marketing content belongs on the brand root domain.
+
+## Next-Project Checklist
+- [ ] Search the repo for the old brand string before closing the rebrand task.
+- [ ] Test root-route behavior with host-specific requests for each public hostname.
+- [ ] Keep the demo host pointed at login even after adding a landing page.
+- [ ] Check self-hosted examples and install templates for stale names or identifiers.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/web.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/.env.self-hosted.example`
+
 ## 2026-04-09 - Rebranding a live app requires separating visible brand from live infrastructure identifiers
 
 ## Snapshot
@@ -1837,6 +1882,43 @@
 - [ ] Decide whether the product lives on the root domain or a dedicated app/demo subdomain.
 - [ ] Update deploy config and deploy docs in the same change.
 - [ ] Verify DNS and TLS steps are written against the actual chosen domain, not placeholders.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
+- `/Users/mikezhang/Desktop/projects/6POS/render-deploy-dossentry.md`
+
+## 2026-04-09 - Domain cutover should preserve working infrastructure and only swap the public entrypoint
+
+## Snapshot
+- Date: 2026-04-09
+- Scope: moving the live app login from the old relayoffice subdomain to `demo.dossentry.com`
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Keeping the existing Render service alive while only changing the public app domain reduced risk.
+- Updating Render config, DNS, and verification in a narrow sequence prevented multi-variable debugging.
+- Testing login on the new domain immediately after DNS/TLS verification caught success at the right milestone.
+
+## Mistakes To Stop Repeating
+
+### Mistake: It is easy to over-migrate when only the public entrypoint needs to change
+- What happened: there was pressure to rename internal service identifiers and infra labels together with the public brand/domain.
+- Root cause: branding work and infrastructure work naturally blur together during launch.
+- Earlier signal I missed: the live app was already stable, so changing internal identifiers would add migration risk without improving the customer experience.
+- Prevention rule: during domain cutover, change the public entrypoint first and leave internal infra identifiers for a separate maintenance window.
+- Next-time checklist item: ask “what does the customer see?” before deciding what to rename in production.
+
+## Permanent Rules
+- Successful domain cutover is defined by app reachability, TLS, and login on the new domain, not by fully renamed internal infra.
+- Public-facing brand changes should be prioritized over internal naming cleanup when production stability is at stake.
+
+## Next-Project Checklist
+- [ ] Update app domain in deploy config.
+- [ ] Add DNS record in the registrar/DNS provider.
+- [ ] Verify TLS in the hosting platform.
+- [ ] Test login and one protected page on the new domain.
+- [ ] Defer internal infra rename unless it creates a real operational problem.
 
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/render.yaml`

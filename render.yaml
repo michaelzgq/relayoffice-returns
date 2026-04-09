@@ -34,6 +34,7 @@ services:
     healthCheckPath: /healthz
     preDeployCommand: /usr/local/bin/render-predeploy.sh
     domains:
+      - dossentry.com
       - demo.dossentry.com
     envVars:
       - key: APP_NAME

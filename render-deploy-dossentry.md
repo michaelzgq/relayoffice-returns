@@ -1,4 +1,4 @@
-# Render 部署方案：`demo.dossentry.com`
+# Render 部署方案：`dossentry.com` + `demo.dossentry.com`
 
 最后更新时间：2026-04-07 America/Los_Angeles
 
@@ -6,6 +6,7 @@
 
 把当前 `Dossentry` returns-only V0 部署到：
 
+- `https://dossentry.com`
 - `https://demo.dossentry.com`
 
 部署平台：
@@ -64,7 +65,8 @@
 选择这个 repo，Render 会读取根目录的 `render.yaml`。
 
 2. 先部署，再绑域名  
-域名建议绑定到 web service：
+域名绑定到同一个 web service：
+- `dossentry.com`
 - `demo.dossentry.com`
 
 ### 最短路径
@@ -75,7 +77,8 @@
 4. `Branch` 选 `main`
 5. `Blueprint Path` 填 `render.yaml`
 6. 等第一次部署完成
-7. 再绑定 `demo.dossentry.com`
+7. 再绑定 `dossentry.com`
+8. 再绑定 `demo.dossentry.com`
 
 ### 如果 Blueprint 页面报 MySQL image 错误
 
@@ -91,33 +94,31 @@
 
 ## 4. DNS 建议
 
-不要先把根域名 `dossentry.com` 直接给应用。
+当前建议是：
 
-建议：
-
-- `dossentry.com` 留给 landing page
-- `demo.dossentry.com` 给当前产品 demo
+- `dossentry.com` 和 `demo.dossentry.com` 都绑定到同一个 Render app
+- 根域名显示 landing page
+- `demo` 子域名继续作为产品 demo 登录入口
 
 ### DNS 记录
 
 在 Render 添加自定义域名后，按它给出的目标值配置：
 
-- `CNAME`
-- 名称：`demo`
-- 值：Render 提供的目标域名
+- 对 `demo.dossentry.com`
+  - `CNAME`
+  - 名称：`demo`
+  - 值：Render 提供的目标域名
+- 对 `dossentry.com`
+  - 在 Cloudflare 这类支持 apex flattening 的 DNS 上，直接按 Render 提示配置根域名记录
+  - 不要自己猜值，按 Render 页面给的目标域名填写
 
 不要现在就自己猜值，Render 创建域名时会给你准确记录。
 
-### 为什么不用根域名
+### 路由行为
 
-`dossentry.com` 直接绑应用不是不行，但不够省事。
-
-当前最方便的做法是：
-
-- `dossentry.com` 留给 landing page
-- `demo.dossentry.com` 直接指向 Render app
-
-这样不需要先处理 apex 记录、官网和应用拆分也更清楚。
+- `https://dossentry.com/` 显示 landing page
+- `https://demo.dossentry.com/` 自动跳到后台登录页
+- 两个域名走的是同一个 Laravel 服务，区别由 host-based root route 控制
 
 ## 5. 首次部署后的必须操作
 
@@ -151,22 +152,24 @@ php artisan returns:reset-demo --force --bootstrap
 
 按这个顺序验证：
 
-1. `https://demo.dossentry.com/healthz`
-2. `https://demo.dossentry.com/admin/auth/login`
-3. 用 `admin` 登录
-4. 打开 `Ops Board`
-5. 打开 `Inspect`
-6. 提交一个新 case
-7. 打开 `Cases`
-8. 打开 `Queue`
-9. 打开某个 case 的 `Brand Defense Pack`
-10. 下载 PDF
+1. `https://dossentry.com/`
+2. `https://demo.dossentry.com/healthz`
+3. `https://demo.dossentry.com/admin/auth/login`
+4. 用 `admin` 登录
+5. 打开 `Ops Board`
+6. 打开 `Inspect`
+7. 提交一个新 case
+8. 打开 `Cases`
+9. 打开 `Queue`
+10. 打开某个 case 的 `Brand Defense Pack`
+11. 下载 PDF
 
 ### 预期
 
-- 第 `1` 步应该直接返回 JSON：
+- 第 `1` 步应该显示 landing page
+- 第 `2` 步应该直接返回 JSON：
   - `{"status":"ok", ...}`
-- 如果第 `1` 步不通，不要继续点后台页面，先回 Render 看：
+- 如果第 `2` 步不通，不要继续点后台页面，先回 Render 看：
   - build log
   - predeploy log
   - web service log
@@ -212,7 +215,8 @@ php artisan returns:reset-demo --force --bootstrap
 
 1. 先创建并推 GitHub repo
 2. Render 导入 `render.yaml`
-3. 绑定 `demo.dossentry.com`
-4. 首次 seed
-5. 跑 QA
-6. 再开始外部 demo
+3. 绑定 `dossentry.com`
+4. 绑定 `demo.dossentry.com`
+5. 首次 seed
+6. 跑 QA
+7. 再开始外部 demo
