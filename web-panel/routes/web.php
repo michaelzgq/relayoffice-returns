@@ -1,5 +1,6 @@
 <?php
 
+use App\CPU\Helpers;
 use App\Models\ReturnCase;
 use App\Http\Controllers\Admin\EvidenceExportController;
 use App\Http\Controllers\WorkflowReviewRequestController;
@@ -27,11 +28,12 @@ Route::get('healthz', function () {
 
 Route::get('/', function (Request $request) {
     $host = $request->getHost();
-    $demoHosts = [
-        'demo.dossentry.com',
-        'relayoffice-returns-app.onrender.com',
-        'demo.relayoffice.ai',
-    ];
+    $demoHosts = Helpers::dossentry_public_demo_hosts();
+    $internalHost = Helpers::dossentry_internal_admin_host();
+
+    if ($internalHost) {
+        $demoHosts[] = $internalHost;
+    }
 
     if (in_array($host, $demoHosts, true)) {
         return redirect('admin/auth/login');

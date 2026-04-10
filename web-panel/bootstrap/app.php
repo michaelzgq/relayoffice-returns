@@ -11,6 +11,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\{ActivationCheckMiddleware,
     AdminMiddleware,
     Authenticate,
+    EnsureWorkspaceHostMatchesRole,
     EncryptCookies,
     EnsureTokenIsValid,
     InstallationMiddleware,
@@ -78,6 +79,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
             'installation-check' => InstallationMiddleware::class,
             'actch' => ActivationCheckMiddleware::class,
             'api_token' => EnsureTokenIsValid::class,
+            'workspace-host' => EnsureWorkspaceHostMatchesRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

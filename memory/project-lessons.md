@@ -1759,6 +1759,46 @@
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`
 
+## 2026-04-10 - Role permissions are not enough when public demo and internal staff share one backend
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: separating `guest demo` access on `demo.dossentry.com` from internal admin/staff access on the internal workspace
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Treating host routing and role permissions as two separate layers exposed the real gap quickly.
+- Adding a host-aware middleware plus login-time account checks created a real boundary instead of a cosmetic one.
+- Writing tests for `wrong host + right account` and `right host + wrong account` caught the exact failure modes the UI alone would miss.
+
+## Mistakes To Stop Repeating
+
+### Mistake: A read-only demo role still leaks the wrong product shape if it enters the same workspace entrypoint as staff
+- What happened: guest demo permissions were already reduced, but public visitors could still use the same admin login entrypoint that internal staff used.
+- Root cause: permissions were treated as the whole boundary, while host-based entrypoint separation was postponed.
+- Earlier signal I missed: the user explicitly asked not to let customer demo users “directly log into admin functionality,” which is a host and flow problem, not only a role problem.
+- Prevention rule: whenever a public demo account exists, enforce both `what the account can do` and `where that account is allowed to log in`.
+- Next-time checklist item: define `public host`, `internal host`, and `marketing host` before exposing any shared demo account.
+
+## Permanent Rules
+- Public demo accounts need both capability limits and host limits.
+- Shared demo workspaces must never rely on sidebar hiding alone; server-side redirects and write guards are required.
+- When validating access boundaries, always test cross-combinations: `public host + internal account`, `internal host + demo account`, and `authenticated user switching hosts`.
+
+## Next-Project Checklist
+- [ ] Define demo host and internal host in config/env before launch.
+- [ ] Add middleware that enforces host/account matching for authenticated users.
+- [ ] Block invalid account/host combinations at login submit time.
+- [ ] Add UI copy that explains which workspace an account belongs to.
+- [ ] Add tests for both pre-login and post-login host boundary failures.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Middleware/EnsureWorkspaceHostMatchesRole.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/Admin/Auth/LoginController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/auth/login.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/LoginWorkspaceBoundaryTest.php`
+
 ## 2026-04-10 - Shared demo workspaces must be intentionally constrained, not reused from an internal ops role
 
 ## Snapshot

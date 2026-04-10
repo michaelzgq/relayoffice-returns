@@ -478,6 +478,63 @@ class Helpers
         ]);
     }
 
+    public static function dossentry_marketing_hosts(): array
+    {
+        return array_values(array_filter(array_map(
+            static fn ($host) => strtolower(trim((string) $host)),
+            (array) config('dossentry.marketing_hosts', [])
+        )));
+    }
+
+    public static function dossentry_public_demo_hosts(): array
+    {
+        return array_values(array_filter(array_map(
+            static fn ($host) => strtolower(trim((string) $host)),
+            (array) config('dossentry.public_demo_hosts', [])
+        )));
+    }
+
+    public static function dossentry_internal_admin_login_url(): string
+    {
+        return (string) config('dossentry.internal_admin_login_url', url('/admin/auth/login'));
+    }
+
+    public static function dossentry_internal_admin_host(): ?string
+    {
+        $host = parse_url(self::dossentry_internal_admin_login_url(), PHP_URL_HOST);
+
+        return $host ? strtolower((string) $host) : null;
+    }
+
+    public static function dossentry_guest_demo_login_url(): string
+    {
+        $host = self::dossentry_public_demo_hosts()[0] ?? null;
+
+        return $host ? 'https://' . $host . '/admin/auth/login' : url('/admin/auth/login');
+    }
+
+    public static function dossentry_is_marketing_host(?string $host = null): bool
+    {
+        $host = strtolower((string) ($host ?? request()?->getHost() ?? ''));
+
+        return $host !== '' && in_array($host, self::dossentry_marketing_hosts(), true);
+    }
+
+    public static function dossentry_is_public_demo_host(?string $host = null): bool
+    {
+        $host = strtolower((string) ($host ?? request()?->getHost() ?? ''));
+
+        return $host !== '' && in_array($host, self::dossentry_public_demo_hosts(), true);
+    }
+
+    public static function dossentry_is_internal_admin_host(?string $host = null): bool
+    {
+        $host = strtolower((string) ($host ?? request()?->getHost() ?? ''));
+        $internalHost = self::dossentry_internal_admin_host();
+
+        return $host !== '' && $internalHost !== null && $host === $internalHost;
+    }
+
     public static function returns_user_is_guest_demo(): bool
     {
         if (!auth('admin')->check() || !auth('admin')->user()) {

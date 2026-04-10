@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\OrderController;
 
-Route::group(['namespace'=>'Admin', 'as' => 'admin.', 'prefix'=>'admin'] ,function(){
+Route::group(['namespace'=>'Admin', 'as' => 'admin.', 'prefix'=>'admin', 'middleware' => ['workspace-host']] ,function(){
     Route::group(['namespace' => 'Auth', 'prefix' => 'auth', 'as' => 'auth.'], function(){
         Route::controller(LoginController::class)->group(function() {
             Route::get('/code/captcha/{tmp}', 'captcha')->name('default-captcha');

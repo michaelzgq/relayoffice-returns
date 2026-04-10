@@ -18,6 +18,12 @@
 
 <body class="bg-one-auth">
 <main id="content" role="main" class="main">
+                @php($isPublicDemoHost = $isPublicDemoHost ?? \App\CPU\Helpers::dossentry_is_public_demo_host(request()->getHost()))
+                @php($isInternalAdminHost = $isInternalAdminHost ?? \App\CPU\Helpers::dossentry_is_internal_admin_host(request()->getHost()))
+                @php($internalAdminLoginUrl = $internalAdminLoginUrl ?? \App\CPU\Helpers::dossentry_internal_admin_login_url())
+                @php($guestDemoLoginUrl = $guestDemoLoginUrl ?? \App\CPU\Helpers::dossentry_guest_demo_login_url())
+                @php($guestDemo = $guestDemo ?? config('dossentry.guest_demo'))
+                @php($workspaceNotice = request('notice'))
 
                 @php($shop_logo=\App\Models\BusinessSetting::where(['key'=>'shop_logo'])->first()->value)
     <div class="auth-wrapper">
@@ -47,6 +53,38 @@
                             <div>Sign in to review cases, decision queues, and Brand Review links.</div>
                         </div>
                     </div>
+
+                    @if($isPublicDemoHost)
+                        <div class="alert alert-soft-info mb-4">
+                            <strong>Shared guest demo only.</strong>
+                            This public demo workspace only accepts the guest demo account.
+                            <div class="mt-2 small">
+                                Demo login: <code>{{ $guestDemo['email'] ?? 'guest@dossentry.com' }}</code> /
+                                <code>{{ $guestDemo['password'] ?? '12345678' }}</code>
+                            </div>
+                            <div class="mt-2 small">
+                                Internal team members should use the staff workspace:
+                                <a href="{{ $internalAdminLoginUrl }}">staff login</a>
+                            </div>
+                        </div>
+                    @elseif($isInternalAdminHost)
+                        <div class="alert alert-soft-warning mb-4">
+                            <strong>Internal staff workspace.</strong>
+                            Shared demo users should sign in at
+                            <a href="{{ $guestDemoLoginUrl }}">the guest demo workspace</a>.
+                        </div>
+                    @endif
+
+                    @if($workspaceNotice === 'internal-workspace-only')
+                        <div class="alert alert-soft-warning mb-4">
+                            Staff accounts are blocked on the shared demo host. Use the staff workspace instead.
+                        </div>
+                    @elseif($workspaceNotice === 'guest-demo-only')
+                        <div class="alert alert-soft-info mb-4">
+                            The guest demo account is only available on the shared demo workspace.
+                        </div>
+                    @endif
+
                     <div class="js-form-message form-group">
                         <label class="input-label text-capitalize" for="signinSrEmail">{{ \App\CPU\translate('Your email') }}</label>
                         <input type="email" class="form-control form-control-lg" name="email" id="signinSrEmail"
@@ -121,7 +159,7 @@
                     <button type="submit" class="btn btn-lg btn-block btn-primary mt-5" id="signInBtn">{{\App\CPU\translate('sign_in')}}</button>
                 </form>
 
-                @if(env('APP_MODE')=='demo')
+                @if(env('APP_MODE')=='demo' && !$isPublicDemoHost)
                     <div class="auto-fill-data-copy">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
                             <div>

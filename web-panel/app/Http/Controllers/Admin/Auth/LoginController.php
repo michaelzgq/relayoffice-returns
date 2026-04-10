@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
 use Illuminate\Contracts\Foundation\Application;
@@ -52,7 +53,13 @@ class LoginController extends Controller
      */
     public function login(): View|Factory|Application
     {
-        return view('admin-views.auth.login');
+        return view('admin-views.auth.login', [
+            'isPublicDemoHost' => Helpers::dossentry_is_public_demo_host(),
+            'isInternalAdminHost' => Helpers::dossentry_is_internal_admin_host(),
+            'internalAdminLoginUrl' => Helpers::dossentry_internal_admin_login_url(),
+            'guestDemoLoginUrl' => Helpers::dossentry_guest_demo_login_url(),
+            'guestDemo' => config('dossentry.guest_demo'),
+        ]);
     }
 
     /**
@@ -97,6 +104,29 @@ class LoginController extends Controller
 
         if (Session::has('default_captcha_code')) {
             Session::forget('default_captcha_code');
+        }
+
+        $admin = Admin::query()
+            ->with('role')
+            ->whereRaw('LOWER(email) = ?', [strtolower((string) $request->email)])
+            ->first();
+
+        $isGuestDemoAccount = strtolower((string) $admin?->role?->name) === 'guest demo';
+
+        if (Helpers::dossentry_is_public_demo_host() && $admin && !$isGuestDemoAccount) {
+            return redirect()->away(
+                Helpers::dossentry_internal_admin_login_url() . '?notice=internal-workspace-only'
+            )->withErrors([
+                translate('Staff accounts are not available in the shared demo workspace.'),
+            ]);
+        }
+
+        if (Helpers::dossentry_is_internal_admin_host() && $admin && $isGuestDemoAccount) {
+            return redirect()->away(
+                Helpers::dossentry_guest_demo_login_url() . '?notice=guest-demo-only'
+            )->withErrors([
+                translate('The guest demo account can only be used on the shared demo workspace.'),
+            ]);
         }
 
         $remember_me = $request->has('remember') ? true : false;

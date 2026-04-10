@@ -1637,4 +1637,6 @@
   'Refund gate decision updated' => 'Refund gate decision updated',
   'Workflow review request marked as reviewed' => 'Workflow review request marked as reviewed',
   'Guest demo users can review playbooks but cannot edit them' => 'Guest demo users can review playbooks but cannot edit them',
+  'Staff accounts are not available in the shared demo workspace.' => 'Staff accounts are not available in the shared demo workspace.',
+  'The guest demo account can only be used on the shared demo workspace.' => 'The guest demo account can only be used on the shared demo workspace.',
 );
