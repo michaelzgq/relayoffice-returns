@@ -1858,6 +1858,51 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Mail/WorkflowReviewRequestSubmitted.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/WorkflowReviewRequestFlowTest.php`
 
+## 2026-04-10 - Demo CTA should expose value before credentials
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: landing page conversion path for demo traffic
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Promoting the sample Brand Review Link above the shared demo made the strongest product value visible without any login friction.
+- Reframing the shared account as a `guest workspace` made public demo credentials feel intentional instead of sloppy.
+- Keeping `Request Workflow Review` as the third CTA preserved a path for high-intent users who want a real pilot instead of just browsing.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Sending cold visitors directly to a login page with no context or credentials
+- What happened: `Open Live Demo` dropped users into a login screen before they had seen the product's strongest proof artifact.
+- Root cause: the CTA hierarchy was designed around product availability instead of buyer understanding.
+- Earlier signal I missed: users had to ask what to do after clicking demo, which meant the CTA path was already unclear.
+- Prevention rule: public product pages must show one non-login proof artifact before any authenticated experience.
+- Next-time checklist item: ask “what can a visitor see in 10 seconds without an account?”
+
+### Mistake: Treating public demo credentials as a raw operational detail instead of a productized experience
+- What happened: the initial instinct was to paste shared credentials directly onto the page.
+- Root cause: optimization for speed over trust and framing.
+- Earlier signal I missed: shared credentials can look like a leak unless they are explicitly described as a sample workspace with reset behavior.
+- Prevention rule: if a shared demo account is exposed publicly, package it as a guest workspace with scope and reset expectations.
+- Next-time checklist item: pair every shared credential with purpose, audience, and reset/disclaimer copy.
+
+## Permanent Rules
+- Landing pages should lead with the strongest proof artifact, not the most complete product surface.
+- Authenticated demos are secondary; public proof artifacts should carry the first interaction.
+- Shared demo credentials must be intentionally framed as guest access, never as normal production login.
+
+## Next-Project Checklist
+- [ ] Define the public no-login proof artifact before wiring the hero CTA.
+- [ ] Confirm that the first authenticated CTA includes context or guest access details.
+- [ ] Package any public shared account as a guest workspace with reset expectations.
+- [ ] Test the full CTA sequence from “I just landed here” to “I saw value” without prior explanation.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/web.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/LandingPageRoutingTest.php`
+
 ## 2026-04-10 - Root-domain outages should be debugged at public DNS first, not in app code
 
 ## Snapshot

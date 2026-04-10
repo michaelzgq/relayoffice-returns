@@ -268,6 +268,13 @@
             padding: 18px;
         }
 
+        .mock-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
         .mock-topline {
             display: flex;
             gap: 8px;
@@ -323,6 +330,64 @@
             color: var(--ink);
             display: block;
             margin-bottom: 3px;
+        }
+
+        .hero-sidecard {
+            padding: 18px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(24, 37, 44, 0.08);
+            display: grid;
+            gap: 14px;
+        }
+
+        .hero-sidecard strong {
+            font-size: 16px;
+            line-height: 1.3;
+        }
+
+        .hero-sidecard p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .credential-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .credential-row {
+            display: grid;
+            grid-template-columns: 92px 1fr;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .credential-row span {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .credential-row code {
+            display: inline-flex;
+            align-items: center;
+            min-height: 42px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(24, 37, 44, 0.06);
+            border: 1px solid rgba(24, 37, 44, 0.08);
+            color: var(--ink);
+            font-size: 13px;
+            word-break: break-word;
+        }
+
+        .stack-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .section {
@@ -598,6 +663,13 @@
             max-width: none;
         }
 
+        .cta-note .button {
+            margin-top: 14px;
+            min-height: 48px;
+            padding-inline: 18px;
+            font-size: 14px;
+        }
+
         .footer {
             padding: 0 0 34px;
             color: var(--muted);
@@ -732,8 +804,12 @@
                         should send one link instead of digging through Slack, spreadsheets, and folders.
                     </p>
                     <div class="hero-actions">
-                        <a class="button button-primary" href="#review-request">Request Workflow Review</a>
-                        <a class="button button-secondary" href="{{ $demoLoginUrl }}">Open Live Demo</a>
+                        @if($sampleBrandReviewUrl)
+                            <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}">View Sample Brand Review Link</a>
+                        @else
+                            <a class="button button-primary" href="#review-request">Request Workflow Review</a>
+                        @endif
+                        <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
                     </div>
                     <div class="micro-proof">
                         <div>
@@ -788,6 +864,32 @@
                                     Evidence complete. Suggested action: hold pending brand review.
                                 </div>
                             </div>
+                        </div>
+                        <div class="mock-actions">
+                            @if($sampleBrandReviewUrl)
+                                <a class="button button-secondary" href="{{ $sampleBrandReviewUrl }}">Open sample review</a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="hero-sidecard">
+                        <strong>{{ $guestDemo['workspace_label'] ?? 'Shared guest workspace' }}</strong>
+                        <p>
+                            Use the live workspace exactly the way a warehouse or ops lead would. This is sample data only, and the workspace resets regularly.
+                        </p>
+                        <div class="credential-list">
+                            <div class="credential-row">
+                                <span>Email</span>
+                                <code>{{ $guestDemo['email'] ?? 'ops@admin.com' }}</code>
+                            </div>
+                            <div class="credential-row">
+                                <span>Password</span>
+                                <code>{{ $guestDemo['password'] ?? '12345678' }}</code>
+                            </div>
+                        </div>
+                        <p>{{ $guestDemo['disclaimer'] ?? 'Sample data only. Resets regularly.' }}</p>
+                        <div class="stack-actions">
+                            <a class="button button-secondary" href="{{ $demoLoginUrl }}">Go to guest demo</a>
+                            <a class="button button-secondary" href="#review-request">Request a pilot workspace</a>
                         </div>
                     </div>
                 </aside>
@@ -995,12 +1097,34 @@
                             </div>
                             <div class="hero-actions">
                                 <button class="button button-primary" type="submit">Request Workflow Review</button>
-                                <a class="button button-secondary" href="{{ $demoLoginUrl }}">Open Live Demo</a>
+                                <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
                             </div>
                             <p class="form-note">No heavy rollout. No shopper portal project. Start with one real workflow and one brand challenge scenario.</p>
                         </form>
                     </div>
                     <div class="cta-meta">
+                        <div class="cta-note">
+                            <strong>Start with a real example</strong>
+                            <p>Open a sample Brand Review Link first. It is the fastest way to see the exact record your team could send when a brand challenges a return decision.</p>
+                            @if($sampleBrandReviewUrl)
+                                <a class="button button-secondary" href="{{ $sampleBrandReviewUrl }}">View sample review record</a>
+                            @endif
+                        </div>
+                        <div class="cta-note">
+                            <strong>Shared guest demo</strong>
+                            <p>Try the product before you talk to us. Use the shared workspace below, then request a pilot workspace if you want your own setup.</p>
+                            <div class="credential-list">
+                                <div class="credential-row">
+                                    <span>Email</span>
+                                    <code>{{ $guestDemo['email'] ?? 'ops@admin.com' }}</code>
+                                </div>
+                                <div class="credential-row">
+                                    <span>Password</span>
+                                    <code>{{ $guestDemo['password'] ?? '12345678' }}</code>
+                                </div>
+                            </div>
+                            <a class="button button-secondary" href="{{ $demoLoginUrl }}">Open guest demo</a>
+                        </div>
                         <div class="cta-note">
                             <strong>What you get back</strong>
                             <p>A short review of your current evidence flow, where cases break down, and whether Dossentry fits the way your team actually works.</p>

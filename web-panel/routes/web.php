@@ -1,9 +1,11 @@
 <?php
 
+use App\Models\ReturnCase;
 use App\Http\Controllers\Admin\EvidenceExportController;
 use App\Http\Controllers\WorkflowReviewRequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,9 +37,18 @@ Route::get('/', function (Request $request) {
         return redirect('admin/auth/login');
     }
 
+    $sampleReturnId = (string) config('dossentry.sample_brand_review_return_id', 'RMA-1003');
+    $sampleCaseId = ReturnCase::query()
+        ->where('return_id', $sampleReturnId)
+        ->value('id');
+
     return response()->view('landing', [
         'appName' => config('app.name') === 'Laravel' ? 'Dossentry' : config('app.name', 'Dossentry'),
         'demoLoginUrl' => 'https://demo.dossentry.com/admin/auth/login',
+        'guestDemo' => config('dossentry.guest_demo'),
+        'sampleBrandReviewUrl' => $sampleCaseId
+            ? URL::temporarySignedRoute('returns.brand-review', now()->addDays(30), ['id' => $sampleCaseId])
+            : null,
     ]);
 })->name('landing');
 
