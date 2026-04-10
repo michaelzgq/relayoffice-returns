@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\WorkflowReviewRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\Concerns\BuildsReturnsFixtures;
 use Tests\TestCase;
 
@@ -14,6 +15,8 @@ class WorkflowReviewRequestFlowTest extends TestCase
 
     public function test_public_landing_form_stores_a_workflow_review_request(): void
     {
+        Mail::fake();
+
         $response = $this->post('http://dossentry.com/workflow-review-request', [
             'full_name' => 'Jordan Case',
             'work_email' => 'jordan@dockline.co',
@@ -32,6 +35,32 @@ class WorkflowReviewRequestFlowTest extends TestCase
             'company_name' => 'Dockline Fulfillment',
             'status' => 'new',
             'submitted_from_host' => 'dossentry.com',
+        ]);
+
+        Mail::assertSent(\App\Mail\WorkflowReviewRequestSubmitted::class, function ($mail) {
+            return $mail->hasTo('solutionsoscommerce@gmail.com');
+        });
+    }
+
+    public function test_public_landing_form_logs_email_failure_but_still_stores_request(): void
+    {
+        Mail::shouldReceive('to->send')->andThrow(new \RuntimeException('SMTP unavailable'));
+
+        $response = $this->post('http://dossentry.com/workflow-review-request', [
+            'full_name' => 'Jordan Case',
+            'work_email' => 'jordan@dockline.co',
+            'company_name' => 'Dockline Fulfillment',
+            'role_title' => 'Ops Manager',
+            'volume_note' => '100-500',
+            'workflow_note' => 'We currently send screenshots and notes back to the brand after inspection.',
+            'website' => '',
+        ]);
+
+        $response->assertRedirect('http://dossentry.com/#review-request');
+
+        $this->assertDatabaseHas('workflow_review_requests', [
+            'company_name' => 'Dockline Fulfillment',
+            'status' => 'new',
         ]);
     }
 

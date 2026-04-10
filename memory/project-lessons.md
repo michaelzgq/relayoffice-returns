@@ -1759,6 +1759,105 @@
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`
 
+## 2026-04-10 - Root domain launch can look broken even after hosting and DNS are correct
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: debugging `dossentry.com` reachability after Render + Cloudflare cutover
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Checking public DNS answers and live HTTP responses separated real infrastructure issues from browser-local issues.
+- Verifying `Render custom domains`, `Cloudflare DNS`, and public `curl/dig` in parallel prevented more blind config churn.
+- Keeping `demo`, apex, and `www` as separate roles made the final state easier to reason about.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Treating local browser `ERR_NAME_NOT_RESOLVED` as proof that production DNS was still broken
+- What happened: root domain continued to look down in the browser even after Render showed verified domains and public resolvers were already returning answers.
+- Root cause: local DNS cache still held the old NXDOMAIN state from earlier failed lookups.
+- Earlier signal I missed: public `curl` and resolver checks were already healthy while only the local browser still failed.
+- Prevention rule: once authoritative/public DNS and direct HTTP checks are healthy, stop editing infra and clear local DNS caches before changing configs again.
+- Next-time checklist item: run one public resolver check and one direct HTTP check before touching Render or Cloudflare again.
+
+### Mistake: Over-focusing on platform limits and domain count instead of proving the real blocker
+- What happened: the Render hobby-domain limit popup looked suspicious and became a false lead during debugging.
+- Root cause: visible UI warnings are easy to overweight when they appear near the failure being debugged.
+- Earlier signal I missed: the target domains were already verified and certificate-issued, which meant the current failure was unlikely to be caused by an upgrade requirement.
+- Prevention rule: do not escalate hosting plans during DNS incidents unless the failing domain is actually blocked from being attached or verified.
+- Next-time checklist item: ask “is the failing host already verified and certificate-issued?” before blaming plan limits.
+
+### Mistake: Considering deletion of active DNS records before validating each record's role
+- What happened: there was pressure to delete one of the apex/`www`/`demo` records while the launch was still stabilizing.
+- Root cause: cleanup instinct kicked in before the routing model was fully locked.
+- Earlier signal I missed: each record already had a distinct purpose: apex for landing page, `www` for redirect convenience, and `demo` for product login.
+- Prevention rule: do not delete DNS records during a live cutover unless their role is explicitly mapped and a replacement path is tested.
+- Next-time checklist item: write down the purpose of each hostname before removing any record.
+
+## Permanent Rules
+- Public resolver health beats local browser errors during DNS debugging.
+- `Verified` + `Certificate Issued` in Render means the next suspect should usually be DNS propagation or local cache, not hosting-plan limits.
+- Keep apex, `www`, and `demo` records until the final routing model is stable and externally verified.
+
+## Next-Project Checklist
+- [ ] Check authoritative/public DNS answers before changing hosting config.
+- [ ] Test live HTTP response with `curl -I` from the terminal before trusting browser errors.
+- [ ] Flush local DNS cache before changing DNS a second time.
+- [ ] Confirm the purpose of each hostname (`apex`, `www`, `demo`) before deleting any record.
+- [ ] Do not upgrade hosting plans during DNS incidents unless attachment/verification is actually blocked.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
+- `https://dossentry.com`
+- `https://www.dossentry.com`
+- `https://demo.dossentry.com/admin/auth/login`
+
+## 2026-04-10 - Lead capture must notify the owner without making email a hard dependency
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: workflow review request email notification
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Existing review-request form already wrote clean structured data to the database, so the notification layer could be added without redesigning the form flow.
+- Using `reply-to` on the notification email makes follow-up faster than copying details manually from the admin panel.
+- Catching mail transport failures preserved the core business event even when SMTP is missing or broken.
+
+## Mistakes To Stop Repeating
+
+### Mistake: A lead form was considered “done” before the owner was actually notified
+- What happened: workflow review requests were saved in the app, but nothing reached the owner's inbox.
+- Root cause: the feature was validated from the database/admin side, not from the operator-response side.
+- Earlier signal I missed: the CTA was already being prepared for promotion, which raises the standard from “stored somewhere” to “immediately actionable.”
+- Prevention rule: every lead capture flow must be verified end-to-end: submit, notify owner, and provide a reply path.
+- Next-time checklist item: for every public form, ask “who gets alerted within 60 seconds?”
+
+### Mistake: Mail delivery could have become a single point of failure for form submission
+- What happened: adding synchronous email send on submission would have risked breaking the form whenever SMTP was misconfigured.
+- Root cause: notification requirements often get treated as part of the core transaction even when they are operational side effects.
+- Earlier signal I missed: Render mail credentials were not yet configured, so a strict send path would fail immediately in production.
+- Prevention rule: business-event storage must succeed even if notification delivery fails.
+- Next-time checklist item: wrap outbound notifications so the primary user action still completes when transport dependencies are missing.
+
+## Permanent Rules
+- A public lead form is not complete until there is a tested owner-notification path.
+- Email delivery is an operational dependency, not the primary business transaction.
+- Always set a direct reply path (`reply-to` or equivalent) for inbound lead notifications.
+
+## Next-Project Checklist
+- [ ] Confirm the owner notification recipient before shipping a public CTA.
+- [ ] Test successful notification delivery with the real mail transport.
+- [ ] Test failure mode so the form still completes when email transport is down.
+- [ ] Ensure the notification email includes a direct reply path to the submitter.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/WorkflowReviewRequestController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Mail/WorkflowReviewRequestSubmitted.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/WorkflowReviewRequestFlowTest.php`
+
 ## 2026-04-10 - Root-domain outages should be debugged at public DNS first, not in app code
 
 ## Snapshot
