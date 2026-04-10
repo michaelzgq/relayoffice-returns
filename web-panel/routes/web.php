@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\EvidenceExportController;
+use App\Http\Controllers\WorkflowReviewRequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 /*
@@ -39,6 +40,9 @@ Route::get('/', function (Request $request) {
         'demoLoginUrl' => 'https://demo.dossentry.com/admin/auth/login',
     ]);
 })->name('landing');
+
+Route::post('workflow-review-request', [WorkflowReviewRequestController::class, 'store'])
+    ->name('workflow-review-requests.store');
 
 Route::middleware('signed')->group(function () {
     Route::controller(EvidenceExportController::class)->group(function () {

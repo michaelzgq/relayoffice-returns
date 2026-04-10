@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\TransectionController;
 use App\Http\Controllers\Admin\TransferController;
 use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\WorkflowReviewRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\OrderController;
@@ -223,6 +224,11 @@ Route::group(['namespace'=>'Admin', 'as' => 'admin.', 'prefix'=>'admin'] ,functi
             Route::group(['middleware' => ['module:returns_ops_board_section']], function () {
                 Route::controller(ReturnCaseController::class)->group(function () {
                     Route::get('dashboard', 'dashboard')->name('dashboard.index');
+                });
+
+                Route::controller(WorkflowReviewRequestController::class)->group(function () {
+                    Route::get('review-requests', 'index')->name('review-requests.index');
+                    Route::post('review-requests/{id}/mark-reviewed', 'markReviewed')->name('review-requests.mark-reviewed');
                 });
             });
 

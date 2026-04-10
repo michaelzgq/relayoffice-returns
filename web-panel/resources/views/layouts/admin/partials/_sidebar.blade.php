@@ -65,6 +65,15 @@
                             </li>
                         @endif
 
+                        @if($showOpsBoard && !$inspectorView)
+                            <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/returns/review-requests*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('admin.returns.review-requests.index') }}" title="Review requests">
+                                    <i class="fi fi-sr-envelope nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Review Requests</span>
+                                </a>
+                            </li>
+                        @endif
+
                         @if($showPlaybooks)
                             <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/returns/rules') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('admin.returns.rules.index') }}" title="Client playbooks">

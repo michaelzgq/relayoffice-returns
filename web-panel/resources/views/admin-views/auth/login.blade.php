@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>{{\App\CPU\translate('admin')}} | {{\App\CPU\translate('login')}}</title>
+    @php($workspaceName = \App\Models\BusinessSetting::where(['key' => 'shop_name'])->first()?->value ?: (config('app.name') === 'Laravel' ? 'Dossentry' : config('app.name')))
+    <title>{{ $workspaceName }} | Workspace Login</title>
     @php($favIcon = \App\Models\BusinessSetting::where(['key' => 'fav_icon'])->first()?->value)
     <link rel="shortcut icon" href="{{ $favIcon ? asset('storage/shop/' . $favIcon) : asset('assets/admin/img/160x160/img2.jpg') }}">
     <link rel="stylesheet" href="{{asset('assets/admin')}}/css/google-fonts.css">
@@ -25,7 +26,10 @@
                 <img class="onerror-image"
                     src="{{onErrorImage($shop_logo,asset('storage/shop').'/' . $shop_logo,asset('assets/admin/img/160x160/img2.jpg') ,'shop/')}}"
                     alt="{{\App\CPU\translate('Logo')}}">
-                <h2 class="title"><span class="d-block text-primary">{{ \App\CPU\translate('The Ultimate') }}</span> <strong class="color-EC255A">{{ \App\CPU\translate('POS Solution') }}...</strong></h2>
+                <h2 class="title">
+                    <span class="d-block text-primary">{{ $workspaceName }}</span>
+                    <strong class="color-EC255A">Brand-ready return evidence and decision workflows.</strong>
+                </h2>
             </div>
         </div>
         <div class="auth-wrapper-right">
@@ -39,8 +43,8 @@
                 @csrf
                     <div class="auth-header">
                         <div class="mb-5">
-                            <h2 class="title">{{ \App\CPU\translate('Sign In') }}</h2>
-                            <div>{{ \App\CPU\translate('Welcome Back. Login to your panel') }}</div>
+                            <h2 class="title">Enter the workspace</h2>
+                            <div>Sign in to review cases, decision queues, and Brand Review links.</div>
                         </div>
                     </div>
                     <div class="js-form-message form-group">

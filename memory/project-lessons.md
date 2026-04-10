@@ -1887,6 +1887,104 @@
 - `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
 - `/Users/mikezhang/Desktop/projects/6POS/render-deploy-dossentry.md`
 
+## 2026-04-10 - Marketing root domain and demo subdomain should be verified as separate user journeys
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: confirming that `dossentry.com` serves the public landing page while `demo.dossentry.com` remains the working product login
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Using one Laravel service with host-based routing allowed marketing and product entrypoints to coexist without a second deployment surface.
+- Verifying both domains after TLS/DNS completion closed the loop on the actual user journey instead of stopping at config changes.
+- Treating the root domain and demo subdomain as different products in QA kept the checks concrete and fast.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Deployment can be treated as done before the real public journeys are exercised
+- What happened: the config and DNS work were completed first, but the real launch milestone was only reached after testing both `landing page` and `product login` paths in the browser.
+- Root cause: infra completion is easy to confuse with customer-visible completion.
+- Earlier signal I missed: a successful Render deploy does not prove the root-domain marketing path and app-domain login path both behave correctly.
+- Prevention rule: do not call a domain launch complete until every public hostname has been exercised through its intended entrypoint.
+- Next-time checklist item: define one acceptance test per public hostname before changing DNS.
+
+### Mistake: Product momentum can keep drifting into infrastructure polish after the real launch blocker is gone
+- What happened: once both domains worked, the highest-leverage work was no longer technical, but it would have been easy to keep polishing deployment details.
+- Root cause: technical closure feels productive and safer than market validation.
+- Earlier signal I missed: the product was already usable; the next risk had shifted from uptime to demand.
+- Prevention rule: after public entrypoints are verified, move immediately to sales validation unless there is a live production defect.
+- Next-time checklist item: ask “what is the new top risk now?” after every successful launch action.
+
+## Permanent Rules
+- A live launch is complete only when each public domain is tested as the user will actually experience it.
+- Root-domain marketing and demo-domain product flows should always have separate acceptance checks.
+- Once deployment risk drops, the next highest-risk item becomes the new priority, even if more technical polish is possible.
+
+## Next-Project Checklist
+- [ ] List every public hostname and its intended user journey before launch.
+- [ ] Verify landing path, login path, and one protected page on the correct domains.
+- [ ] Stop deployment work once the real user journeys pass and move to demand validation.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/web.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/render.yaml`
+
+## 2026-04-10 - Promotion readiness requires a real lead path and clean brand surface, not just a working demo
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: fixing the last promotion blockers by removing old POS branding from login and turning the landing page CTA into a real workflow-review capture flow
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Treating `can we promote this?` as a product QA question exposed real blockers instead of assuming the deploy was enough.
+- Adding a minimal lead capture loop into the existing app was faster and safer than waiting for Calendly, CRM, or outbound tooling.
+- Backing the landing page and login cleanup with tests stopped this from being a visual-only change that could regress silently.
+
+## Mistakes To Stop Repeating
+
+### Mistake: A working demo can still be promotion-incompatible if the surrounding surfaces tell the wrong story
+- What happened: the app login still showed old POS-oriented copy, which would have undermined Dossentry's positioning even though the core product flow worked.
+- Root cause: product functionality was validated earlier than the brand surfaces wrapped around it.
+- Earlier signal I missed: the public demo URL was live, but the first thing an external visitor would read was still not aligned with the current product story.
+- Prevention rule: before any public promotion, inspect the full top-of-funnel path from landing page to login and remove legacy narrative residue.
+- Next-time checklist item: run a “first-time visitor” walkthrough before calling a site promotion-ready.
+
+### Mistake: A landing page CTA is not real until it creates an actionable artifact for follow-up
+- What happened: the landing page originally only pushed visitors to the live demo, which created no structured lead record and no clear follow-up path.
+- Root cause: feature completion was mistakenly treated as go-to-market completion.
+- Earlier signal I missed: without a booking tool or stored request, any interest generated by the page would have been fragile and manual.
+- Prevention rule: every public CTA must either capture contact information or route the visitor into a defined next step that the team can act on.
+- Next-time checklist item: ask “where does this lead go?” before shipping any promotional CTA.
+
+### Mistake: Overly strict validation can hurt top-of-funnel conversion without improving lead quality
+- What happened: the first version of the workflow review form used DNS email validation, which is unnecessary friction for an early lead form.
+- Root cause: validation discipline from internal product forms leaked into a marketing capture flow.
+- Earlier signal I missed: top-of-funnel forms optimize for low friction and clean follow-up, not for perfect input certainty.
+- Prevention rule: marketing forms should default to lightweight validation unless a stricter rule clearly improves downstream operations.
+- Next-time checklist item: challenge every validation rule on a public form with “does this protect us, or just reduce submissions?”
+
+## Permanent Rules
+- Promotion readiness requires brand-consistent landing, login, and CTA surfaces, not just a healthy product URL.
+- Public CTAs must create a concrete follow-up artifact inside the system or a connected workflow.
+- Marketing-capture validation should be lighter than operational data-entry validation unless abuse becomes a real problem.
+
+## Next-Project Checklist
+- [ ] Review the full public journey from homepage to login before promotion.
+- [ ] Remove any legacy product/category language from first-touch surfaces.
+- [ ] Ensure the primary CTA creates a stored lead or a scheduled next step.
+- [ ] Add regression tests for login branding and public lead capture flows.
+- [ ] Keep top-of-funnel validation lightweight unless spam or abuse proves otherwise.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/auth/login.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/WorkflowReviewRequestController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/review-requests/index.blade.php`
+
 ## 2026-04-09 - Domain cutover should preserve working infrastructure and only swap the public entrypoint
 
 ## Snapshot

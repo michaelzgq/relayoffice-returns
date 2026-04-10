@@ -464,6 +464,105 @@
             line-height: 1.7;
         }
 
+        .review-form-wrap {
+            display: grid;
+            gap: 18px;
+        }
+
+        .review-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .field label {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: 0.01em;
+        }
+
+        .field input,
+        .field select,
+        .field textarea {
+            width: 100%;
+            border: 1px solid rgba(24, 37, 44, 0.14);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.82);
+            padding: 14px 16px;
+            font: inherit;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+        }
+
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            border-color: rgba(15, 108, 103, 0.55);
+            box-shadow: 0 0 0 4px rgba(15, 108, 103, 0.12);
+            background: #fff;
+        }
+
+        .field textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .field--full {
+            grid-column: 1 / -1;
+        }
+
+        .form-note {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .form-success,
+        .form-errors {
+            border-radius: 18px;
+            padding: 16px 18px;
+            border: 1px solid rgba(24, 37, 44, 0.08);
+        }
+
+        .form-success {
+            background: rgba(220, 238, 233, 0.92);
+            color: var(--accent-deep);
+        }
+
+        .form-errors {
+            background: rgba(245, 223, 210, 0.92);
+            color: #7f3a18;
+        }
+
+        .form-errors ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .cta-meta {
+            display: grid;
+            gap: 8px;
+            align-content: start;
+        }
+
+        .cta-meta strong {
+            display: block;
+            font-size: 15px;
+        }
+
         .footer {
             padding: 0 0 34px;
             color: var(--muted);
@@ -509,7 +608,8 @@
             .proof-banner,
             .faq-grid,
             .audience-grid,
-            .cta-card {
+            .cta-card,
+            .form-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -585,8 +685,8 @@
                         should send one link instead of digging through Slack, spreadsheets, and folders.
                     </p>
                     <div class="hero-actions">
-                        <a class="button button-primary" href="{{ $demoLoginUrl }}">Open Live Demo</a>
-                        <a class="button button-secondary" href="#workflow">See How It Works</a>
+                        <a class="button button-primary" href="#review-request">Request Workflow Review</a>
+                        <a class="button button-secondary" href="{{ $demoLoginUrl }}">Open Live Demo</a>
                     </div>
                     <div class="micro-proof">
                         <div>
@@ -779,17 +879,88 @@
             </div>
         </section>
 
-        <section class="cta" id="cta">
+        <section class="cta" id="review-request">
             <div class="shell">
                 <div class="cta-card fade-up">
-                    <div>
+                    <div class="review-form-wrap">
                         <h2>Start with the live demo, then review one real workflow.</h2>
                         <p>
-                            The fastest next step is not a heavy rollout. Open the live demo, see the Brand Review flow,
-                            and use that to pressure-test whether your team needs better evidence and recommendation records.
+                            The fastest next step is a short workflow review. Tell us how your team currently handles
+                            disputed returns, and we will use that to pressure-test whether Dossentry fits your operation.
                         </p>
+
+                        @if(session('reviewRequestSubmitted'))
+                            <div class="form-success">
+                                <strong>Request received.</strong>
+                                We now have your workflow review request in the workspace. The next step is to open the live demo and compare it to your current process.
+                            </div>
+                        @endif
+
+                        @if($errors->any())
+                            <div class="form-errors">
+                                <strong>We still need a few details.</strong>
+                                <ul>
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form class="review-form" method="post" action="{{ route('workflow-review-requests.store') }}">
+                            @csrf
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label for="full_name">Full name</label>
+                                    <input id="full_name" type="text" name="full_name" value="{{ old('full_name') }}" placeholder="Jane Smith" required>
+                                </div>
+                                <div class="field">
+                                    <label for="work_email">Work email</label>
+                                    <input id="work_email" type="email" name="work_email" value="{{ old('work_email') }}" placeholder="jane@company.com" required>
+                                </div>
+                                <div class="field">
+                                    <label for="company_name">Company</label>
+                                    <input id="company_name" type="text" name="company_name" value="{{ old('company_name') }}" placeholder="North Dock Logistics" required>
+                                </div>
+                                <div class="field">
+                                    <label for="role_title">Role</label>
+                                    <input id="role_title" type="text" name="role_title" value="{{ old('role_title') }}" placeholder="Ops Manager">
+                                </div>
+                                <div class="field">
+                                    <label for="volume_note">Monthly return volume</label>
+                                    <select id="volume_note" name="volume_note">
+                                        <option value="">Choose one</option>
+                                        @foreach(['Under 100', '100-500', '500-1,000', '1,000+'] as $volumeOption)
+                                            <option value="{{ $volumeOption }}" {{ old('volume_note') === $volumeOption ? 'selected' : '' }}>{{ $volumeOption }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="field field--full">
+                                    <label for="workflow_note">What happens today when a brand questions how your warehouse handled a return?</label>
+                                    <textarea id="workflow_note" name="workflow_note" placeholder="Example: our inspector uploads photos to Slack, ops checks the SOP PDF, and then we send screenshots back to the brand.">{{ old('workflow_note') }}</textarea>
+                                </div>
+                                <div class="field" style="display:none" aria-hidden="true">
+                                    <label for="website">Website</label>
+                                    <input id="website" type="text" name="website" tabindex="-1" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="hero-actions">
+                                <button class="button button-primary" type="submit">Request Workflow Review</button>
+                                <a class="button button-secondary" href="{{ $demoLoginUrl }}">Open Live Demo</a>
+                            </div>
+                            <p class="form-note">No heavy rollout. No shopper portal project. Start with one real workflow and one brand challenge scenario.</p>
+                        </form>
                     </div>
-                    <a class="button button-primary" href="{{ $demoLoginUrl }}">Open Live Demo</a>
+                    <div class="cta-meta">
+                        <div>
+                            <strong>What you get back</strong>
+                            A short review of your current evidence flow, where cases break down, and whether Dossentry fits the way your team actually works.
+                        </div>
+                        <div>
+                            <strong>Best fit</strong>
+                            Teams that have already been challenged by a brand and need a cleaner review record than Slack, spreadsheets, or photo folders.
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
