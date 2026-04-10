@@ -1814,6 +1814,53 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/rules/index.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/Returns/ReturnsWorkspaceRoleTest.php`
 
+## 2026-04-10 - Lead-notification workflows must persist delivery state instead of swallowing mail errors
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: debugging missing `Request Workflow Review` emails after successful form submissions on production
+- Outcome: improved
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Writing the lead into the database before attempting email prevented lead loss.
+- Reproducing the flow through tests made it safe to add delivery tracking and resend actions without guessing.
+- Separating notification delivery into a dedicated service reduced duplication between public form submission and admin resend flows.
+
+## Mistakes To Stop Repeating
+
+### Mistake: The app treated "form stored successfully" as good enough even though the operator only cared about inbox delivery
+- What happened: workflow review requests appeared in the admin table, but when email delivery failed or was ambiguous there was no in-product signal about what happened.
+- Root cause: the original implementation optimized for graceful failure and low friction, but did not preserve any delivery state beyond a warning log.
+- Earlier signal I missed: the controller already had a `try/catch` around mail send, which meant delivery problems were expected, but there was no corresponding status field for operators to inspect.
+- Prevention rule: every external notification path must store `pending/sent/failed` state, last attempt time, and the latest error message on the business record itself.
+- Next-time checklist item: when a feature depends on email, add visible delivery telemetry before launch, not after the first support report.
+
+### Mistake: Using the same Gmail mailbox as both sender and notification recipient creates ambiguous operator feedback
+- What happened: production was configured to send from and notify the same Gmail address, which made it harder to tell whether the app failed to send or Gmail simply did not surface the message as a fresh inbox item.
+- Root cause: the notification path was set up for convenience instead of for clear observability.
+- Earlier signal I missed: the desired notification inbox and the SMTP sender were identical from the beginning, which is a poor setup for trustable operational alerts.
+- Prevention rule: do not assume a self-addressed mailbox is a reliable alerting target; either use a different recipient, a tested alias workflow, or a transactional provider with clear delivery reporting.
+- Next-time checklist item: before relying on email alerts, verify who the sender is, who the recipient is, and where the operator expects the message to appear.
+
+## Permanent Rules
+- Email-backed lead capture must expose delivery status in the admin UI, not only in logs.
+- Failed notifications must be manually retryable from the same record.
+- If the alert inbox and SMTP sender are the same mailbox, treat inbox visibility as untrusted until proven.
+
+## Next-Project Checklist
+- [ ] Add `notification_status`, `notification_attempted_at`, and `notification_error` fields for new email-driven workflows.
+- [ ] Provide an operator-visible resend action for any critical lead or alert notification.
+- [ ] Validate production email with one real external inbox before launch.
+- [ ] Confirm whether sender and recipient are the same mailbox and document the tradeoff.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Services/WorkflowReviewNotificationService.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/WorkflowReviewRequestController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/Admin/WorkflowReviewRequestController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/review-requests/index.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/WorkflowReviewRequestFlowTest.php`
+
 ## 2026-04-10 - Root domain launch can look broken even after hosting and DNS are correct
 
 ## Snapshot

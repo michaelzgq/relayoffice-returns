@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowReviewRequest;
+use App\Services\WorkflowReviewNotificationService;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,10 @@ use function App\CPU\translate;
 
 class WorkflowReviewRequestController extends Controller
 {
+    public function __construct(private readonly WorkflowReviewNotificationService $notificationService)
+    {
+    }
+
     public function index(Request $request): View
     {
         abort_unless(Helpers::returns_user_can_view_review_requests(), 403);
@@ -53,6 +58,21 @@ class WorkflowReviewRequestController extends Controller
         ]);
 
         Toastr::success(translate('Workflow review request marked as reviewed'));
+
+        return redirect()->route('admin.returns.review-requests.index', $request->only(['search', 'status', 'page']));
+    }
+
+    public function resendNotification(Request $request, int $id): RedirectResponse
+    {
+        abort_unless(Helpers::returns_user_can_view_review_requests(), 403);
+
+        $resource = WorkflowReviewRequest::query()->findOrFail($id);
+
+        if ($this->notificationService->send($resource)) {
+            Toastr::success('Notification email sent');
+        } else {
+            Toastr::error('Notification email failed. Check the delivery status column for the latest error.');
+        }
 
         return redirect()->route('admin.returns.review-requests.index', $request->only(['search', 'status', 'page']));
     }

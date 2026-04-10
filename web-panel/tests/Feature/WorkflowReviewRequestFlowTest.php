@@ -34,6 +34,7 @@ class WorkflowReviewRequestFlowTest extends TestCase
             'work_email' => 'jordan@dockline.co',
             'company_name' => 'Dockline Fulfillment',
             'status' => 'new',
+            'notification_status' => 'sent',
             'submitted_from_host' => 'dossentry.com',
         ]);
 
@@ -61,6 +62,7 @@ class WorkflowReviewRequestFlowTest extends TestCase
         $this->assertDatabaseHas('workflow_review_requests', [
             'company_name' => 'Dockline Fulfillment',
             'status' => 'new',
+            'notification_status' => 'failed',
         ]);
     }
 
@@ -84,6 +86,7 @@ class WorkflowReviewRequestFlowTest extends TestCase
         $listResponse->assertOk();
         $listResponse->assertSee('Workflow Review Requests');
         $listResponse->assertSee('Dockline Fulfillment');
+        $listResponse->assertSee('Resend email');
 
         $markResponse = $this->actingAs($admin, 'admin')->post(route('admin.returns.review-requests.mark-reviewed', $request->id));
         $markResponse->assertRedirect(route('admin.returns.review-requests.index'));
@@ -92,5 +95,37 @@ class WorkflowReviewRequestFlowTest extends TestCase
             'id' => $request->id,
             'status' => 'reviewed',
         ]);
+    }
+
+    public function test_admin_can_resend_workflow_review_notification(): void
+    {
+        Mail::fake();
+
+        $admin = $this->signInAdmin();
+
+        $request = WorkflowReviewRequest::query()->create([
+            'full_name' => 'Jordan Case',
+            'work_email' => 'jordan@dockline.co',
+            'company_name' => 'Dockline Fulfillment',
+            'role_title' => 'Ops Manager',
+            'volume_note' => '100-500',
+            'workflow_note' => 'We currently send screenshots and notes back to the brand after inspection.',
+            'submitted_from_host' => 'dossentry.com',
+            'submitted_from_url' => 'https://dossentry.com',
+            'status' => 'new',
+            'notification_status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.returns.review-requests.resend-notification', $request->id));
+        $response->assertRedirect(route('admin.returns.review-requests.index'));
+
+        $this->assertDatabaseHas('workflow_review_requests', [
+            'id' => $request->id,
+            'notification_status' => 'sent',
+        ]);
+
+        Mail::assertSent(\App\Mail\WorkflowReviewRequestSubmitted::class, function ($mail) {
+            return $mail->hasTo('solutionsoscommerce@gmail.com');
+        });
     }
 }

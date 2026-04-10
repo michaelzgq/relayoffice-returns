@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\WorkflowReviewRequestSubmitted;
 use App\Models\WorkflowReviewRequest;
+use App\Services\WorkflowReviewNotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Throwable;
 
 class WorkflowReviewRequestController extends Controller
 {
+    public function __construct(private readonly WorkflowReviewNotificationService $notificationService)
+    {
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -35,21 +36,10 @@ class WorkflowReviewRequestController extends Controller
             'submitted_from_host' => $request->getHost(),
             'submitted_from_url' => $request->fullUrl(),
             'status' => 'new',
+            'notification_status' => 'pending',
         ]));
 
-        $notificationEmail = (string) config('dossentry.workflow_review_notification_email');
-
-        if ($notificationEmail !== '') {
-            try {
-                Mail::to($notificationEmail)->send(new WorkflowReviewRequestSubmitted($reviewRequest));
-            } catch (Throwable $exception) {
-                Log::warning('Workflow review request notification email failed', [
-                    'request_id' => $reviewRequest->id,
-                    'notification_email' => $notificationEmail,
-                    'error' => $exception->getMessage(),
-                ]);
-            }
-        }
+        $this->notificationService->send($reviewRequest);
 
         return redirect()->to($request->getSchemeAndHttpHost() . '/#review-request')
             ->with('reviewRequestSubmitted', true);

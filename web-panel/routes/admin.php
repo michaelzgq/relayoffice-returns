@@ -229,6 +229,7 @@ Route::group(['namespace'=>'Admin', 'as' => 'admin.', 'prefix'=>'admin'] ,functi
                 Route::controller(WorkflowReviewRequestController::class)->group(function () {
                     Route::get('review-requests', 'index')->name('review-requests.index');
                     Route::post('review-requests/{id}/mark-reviewed', 'markReviewed')->name('review-requests.mark-reviewed');
+                    Route::post('review-requests/{id}/resend-notification', 'resendNotification')->name('review-requests.resend-notification');
                 });
             });
 

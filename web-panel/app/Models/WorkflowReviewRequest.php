@@ -20,9 +20,15 @@ class WorkflowReviewRequest extends Model
         'submitted_from_url',
         'status',
         'reviewed_at',
+        'notification_status',
+        'notification_attempted_at',
+        'notification_sent_at',
+        'notification_error',
     ];
 
     protected $casts = [
         'reviewed_at' => 'datetime',
+        'notification_attempted_at' => 'datetime',
+        'notification_sent_at' => 'datetime',
     ];
 }

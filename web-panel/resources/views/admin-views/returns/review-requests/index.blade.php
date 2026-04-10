@@ -8,6 +8,11 @@
             'new' => 'badge-soft-warning',
             'reviewed' => 'badge-soft-success',
         ];
+        $notificationBadgeMap = [
+            'pending' => 'badge-soft-secondary',
+            'sent' => 'badge-soft-success',
+            'failed' => 'badge-soft-danger',
+        ];
     @endphp
 
     <div class="content container-fluid">
@@ -54,6 +59,7 @@
                         <th>Volume</th>
                         <th>Workflow note</th>
                         <th>Status</th>
+                        <th>Notification</th>
                         <th>Submitted</th>
                         <th></th>
                     </tr>
@@ -82,27 +88,56 @@
                                     <div class="small text-muted mt-1">{{ $resource->reviewed_at->diffForHumans() }}</div>
                                 @endif
                             </td>
+                            <td style="min-width: 260px;">
+                                <span class="badge {{ $notificationBadgeMap[$resource->notification_status ?? 'pending'] ?? 'badge-soft-secondary' }}">
+                                    {{ ucfirst($resource->notification_status ?? 'pending') }}
+                                </span>
+                                @if($resource->notification_sent_at)
+                                    <div class="small text-muted mt-1">
+                                        Sent {{ $resource->notification_sent_at->format('M j, Y g:i A') }}
+                                    </div>
+                                @elseif($resource->notification_attempted_at)
+                                    <div class="small text-muted mt-1">
+                                        Attempted {{ $resource->notification_attempted_at->format('M j, Y g:i A') }}
+                                    </div>
+                                @endif
+                                @if($resource->notification_error)
+                                    <div class="small text-danger mt-1 text-wrap">
+                                        {{ \Illuminate\Support\Str::limit($resource->notification_error, 180) }}
+                                    </div>
+                                @endif
+                            </td>
                             <td>
                                 <div>{{ $resource->created_at->format('M j, Y') }}</div>
                                 <div class="small text-muted">{{ $resource->created_at->format('g:i A') }}</div>
                             </td>
                             <td class="text-right">
-                                @if($resource->status !== 'reviewed')
-                                    <form method="post" action="{{ route('admin.returns.review-requests.mark-reviewed', $resource->id) }}">
+                                <div class="d-flex flex-column align-items-end gap-2">
+                                    <form method="post" action="{{ route('admin.returns.review-requests.resend-notification', $resource->id) }}">
                                         @csrf
                                         <input type="hidden" name="search" value="{{ request('search') }}">
                                         <input type="hidden" name="status" value="{{ request('status') }}">
                                         <input type="hidden" name="page" value="{{ request('page') }}">
-                                        <button class="btn btn-sm btn-outline-primary" type="submit">Mark reviewed</button>
+                                        <button class="btn btn-sm btn-outline-secondary" type="submit">Resend email</button>
                                     </form>
-                                @else
-                                    <span class="text-muted small">Completed</span>
-                                @endif
+
+                                    @if($resource->status !== 'reviewed')
+                                        <form method="post" action="{{ route('admin.returns.review-requests.mark-reviewed', $resource->id) }}">
+                                            @csrf
+                                            <input type="hidden" name="search" value="{{ request('search') }}">
+                                            <input type="hidden" name="status" value="{{ request('status') }}">
+                                            <input type="hidden" name="page" value="{{ request('page') }}">
+                                            <button class="btn btn-sm btn-outline-primary" type="submit">Mark reviewed</button>
+                                        </form>
+                                    @else
+                                        <span class="text-muted small">Completed</span>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4 text-muted">No workflow review requests yet.</td>
+                            <td colspan="9" class="text-center py-4 text-muted">No workflow review requests yet.</td>
                         </tr>
                     @endforelse
                     </tbody>
