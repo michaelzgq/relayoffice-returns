@@ -451,27 +451,44 @@
 
         .cta-card {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 18px;
-            align-items: center;
-            background: linear-gradient(135deg, rgba(255, 250, 241, 0.9), rgba(220, 238, 233, 0.94));
+            grid-template-columns: minmax(0, 1.25fr) minmax(280px, 360px);
+            gap: 24px;
+            align-items: start;
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(255, 250, 241, 0.94), rgba(220, 238, 233, 0.92));
         }
 
         .cta-card p {
             margin: 10px 0 0;
             color: var(--muted);
-            max-width: 52ch;
+            max-width: 60ch;
             line-height: 1.7;
         }
 
         .review-form-wrap {
             display: grid;
             gap: 18px;
+            min-width: 0;
+        }
+
+        .review-lead {
+            display: grid;
+            gap: 10px;
+            max-width: 58ch;
+        }
+
+        .review-lead p {
+            margin: 0;
         }
 
         .review-form {
             display: grid;
             gap: 14px;
+            padding: 22px;
+            border-radius: 24px;
+            border: 1px solid rgba(24, 37, 44, 0.1);
+            background: rgba(255, 255, 255, 0.76);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
         }
 
         .form-grid {
@@ -490,6 +507,7 @@
             font-weight: 800;
             color: var(--ink);
             letter-spacing: 0.01em;
+            line-height: 1.4;
         }
 
         .field input,
@@ -515,7 +533,7 @@
         }
 
         .field textarea {
-            min-height: 150px;
+            min-height: 144px;
             resize: vertical;
         }
 
@@ -554,13 +572,30 @@
 
         .cta-meta {
             display: grid;
-            gap: 8px;
+            gap: 14px;
             align-content: start;
+            min-width: 0;
         }
 
-        .cta-meta strong {
+        .cta-note {
+            padding: 18px;
+            border-radius: 20px;
+            background: rgba(24, 37, 44, 0.05);
+            border: 1px solid rgba(24, 37, 44, 0.08);
+        }
+
+        .cta-note strong {
             display: block;
+            margin-bottom: 6px;
             font-size: 15px;
+            line-height: 1.35;
+        }
+
+        .cta-note p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.65;
+            max-width: none;
         }
 
         .footer {
@@ -612,6 +647,10 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
+            .cta-meta {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         @media (max-width: 720px) {
@@ -651,6 +690,14 @@
             .footer-inner {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .review-form {
+                padding: 18px;
+            }
+
+            .cta-meta {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -883,11 +930,13 @@
             <div class="shell">
                 <div class="cta-card fade-up">
                     <div class="review-form-wrap">
-                        <h2>Start with the live demo, then review one real workflow.</h2>
-                        <p>
-                            The fastest next step is a short workflow review. Tell us how your team currently handles
-                            disputed returns, and we will use that to pressure-test whether Dossentry fits your operation.
-                        </p>
+                        <div class="review-lead">
+                            <h2>Start with the live demo, then review one real workflow.</h2>
+                            <p>
+                                The fastest next step is a short workflow review. Tell us how your team currently handles
+                                disputed returns, and we will use that to pressure-test whether Dossentry fits your operation.
+                            </p>
+                        </div>
 
                         @if(session('reviewRequestSubmitted'))
                             <div class="form-success">
@@ -952,13 +1001,13 @@
                         </form>
                     </div>
                     <div class="cta-meta">
-                        <div>
+                        <div class="cta-note">
                             <strong>What you get back</strong>
-                            A short review of your current evidence flow, where cases break down, and whether Dossentry fits the way your team actually works.
+                            <p>A short review of your current evidence flow, where cases break down, and whether Dossentry fits the way your team actually works.</p>
                         </div>
-                        <div>
+                        <div class="cta-note">
                             <strong>Best fit</strong>
-                            Teams that have already been challenged by a brand and need a cleaner review record than Slack, spreadsheets, or photo folders.
+                            <p>Teams that have already been challenged by a brand and need a cleaner review record than Slack, spreadsheets, or photo folders.</p>
                         </div>
                     </div>
                 </div>

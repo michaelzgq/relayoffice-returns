@@ -1759,6 +1759,83 @@
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`
 
+## 2026-04-10 - Root-domain outages should be debugged at public DNS first, not in app code
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: diagnosing why `https://dossentry.com` could not be reached after Render and landing-page deployment
+- Outcome: improved
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Public DNS checks (`dig`, `nslookup`) separated the working subdomain (`demo.dossentry.com`) from the broken apex domain quickly.
+- Verifying the live demo login page proved the application and branding deployment were healthy.
+- Checking provider docs after confirming the symptom kept the fix path focused on DNS and Render custom-domain verification.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Treating a root-domain outage like an app/login problem
+- What happened: the reported symptom was “site can't be reached,” but recent work had been on landing-page and login behavior, which made it tempting to keep looking at app routes.
+- Root cause: the first diagnostic pass did not force a public DNS check before thinking about application logic.
+- Earlier signal I missed: `demo.dossentry.com` was healthy while `dossentry.com` failed to resolve at all, which means the request was not reaching Laravel.
+- Prevention rule: when a domain is unreachable, first prove whether the hostname resolves publicly before inspecting app code or middleware.
+- Next-time checklist item: run `dig +short <domain> A`, `dig +short <domain> AAAA`, and `curl -I https://<domain>/` before touching code.
+
+## Permanent Rules
+- “Can't be reached” is a DNS/connectivity symptom until proven otherwise.
+- If a subdomain works and the apex does not, assume DNS or provider custom-domain setup before assuming app regression.
+- Root/apex domains and subdomains must be verified separately in Render and Cloudflare.
+
+## Next-Project Checklist
+- [ ] Check public DNS answers for A/AAAA/CNAME on the exact broken hostname.
+- [ ] Check whether another hostname on the same service is healthy.
+- [ ] Confirm the hostname exists under Render Custom Domains and has passed verification.
+- [ ] Confirm Cloudflare has the correct apex record and no conflicting root records.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/render-deploy-dossentry.md`
+- [Render custom domains](https://render.com/docs/custom-domains)
+
+## 2026-04-10 - External DNS success can still look broken locally if NXDOMAIN is cached
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: finishing the `dossentry.com` root-domain launch and confirming why the site still looked unreachable in the browser
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Public resolver checks against `1.1.1.1`, `8.8.8.8`, and Cloudflare authoritative name servers separated provider-side success from local-machine behavior.
+- Render verification status plus Cloudflare record snapshots gave enough evidence to stop changing app code.
+- Flushing the local macOS DNS cache closed the issue without more infrastructure churn.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Continuing to suspect provider misconfiguration after public resolvers were already healthy
+- What happened: even after Render showed verified domains and public resolvers started returning `dossentry.com`, the browser still showed `ERR_NAME_NOT_RESOLVED`, which kept the debugging loop alive.
+- Root cause: local DNS cache behavior was not treated as a first-class possibility early enough once external DNS started answering correctly.
+- Earlier signal I missed: `1.1.1.1` and `8.8.8.8` both returned healthy apex answers while the browser still failed locally.
+- Prevention rule: once authoritative and public recursive resolvers both return the expected records, stop changing DNS and test local cache flush before touching provider settings again.
+- Next-time checklist item: run a local DNS cache flush immediately after confirming public resolver health.
+
+## Permanent Rules
+- Public DNS truth beats local browser errors when they disagree.
+- After domain cutovers, treat local DNS cache as a likely cause of lingering `ERR_NAME_NOT_RESOLVED`.
+- Do not continue mutating Render or Cloudflare once authoritative and public resolver checks are both green.
+
+## Next-Project Checklist
+- [ ] Check authoritative DNS.
+- [ ] Check at least two public recursive resolvers.
+- [ ] If both are healthy, flush local DNS cache before changing provider config again.
+
+## Open Risks Or Follow-Ups
+- Root-domain launch is working, but future domain migrations should include a standard operator note about browser and OS DNS cache delay.
+
+## Source Artifacts
+- Render custom domain verification screenshots
+- Cloudflare DNS record screenshots
+- Public resolver checks for `dossentry.com`
+
 ## 2026-04-09 - Marketing pages should be introduced without breaking the live demo entrypoint
 
 ## Snapshot
