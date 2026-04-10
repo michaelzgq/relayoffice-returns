@@ -879,7 +879,7 @@
                         <div class="credential-list">
                             <div class="credential-row">
                                 <span>Email</span>
-                                <code>{{ $guestDemo['email'] ?? 'ops@admin.com' }}</code>
+                                <code>{{ $guestDemo['email'] ?? 'guest@dossentry.com' }}</code>
                             </div>
                             <div class="credential-row">
                                 <span>Password</span>
@@ -1116,7 +1116,7 @@
                             <div class="credential-list">
                                 <div class="credential-row">
                                     <span>Email</span>
-                                    <code>{{ $guestDemo['email'] ?? 'ops@admin.com' }}</code>
+                                    <code>{{ $guestDemo['email'] ?? 'guest@dossentry.com' }}</code>
                                 </div>
                                 <div class="credential-row">
                                     <span>Password</span>

@@ -25,7 +25,7 @@ class ReturnsRuleController extends Controller
     public function index(Request $request): View
     {
         $editingProfile = null;
-        if ($request->filled('edit')) {
+        if ($request->filled('edit') && Helpers::returns_user_can_edit_playbooks()) {
             $editingProfile = $this->brandRuleProfile->find($request->integer('edit'));
         }
 
@@ -42,6 +42,11 @@ class ReturnsRuleController extends Controller
 
     public function store(StoreBrandRuleProfileRequest $request): RedirectResponse
     {
+        if (!Helpers::returns_user_can_edit_playbooks()) {
+            Toastr::error(translate('Guest demo users can review playbooks but cannot edit them'));
+            return redirect()->route('admin.returns.rules.index');
+        }
+
         $this->brandRuleProfile->create($this->payload($request));
 
         Toastr::success(translate('Returns rule profile created successfully'));
@@ -50,6 +55,11 @@ class ReturnsRuleController extends Controller
 
     public function update(StoreBrandRuleProfileRequest $request, int $id): RedirectResponse
     {
+        if (!Helpers::returns_user_can_edit_playbooks()) {
+            Toastr::error(translate('Guest demo users can review playbooks but cannot edit them'));
+            return redirect()->route('admin.returns.rules.index');
+        }
+
         $this->brandRuleProfile->findOrFail($id)->update($this->payload($request));
 
         Toastr::success(translate('Returns rule profile updated successfully'));

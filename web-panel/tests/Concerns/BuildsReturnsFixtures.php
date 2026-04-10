@@ -68,6 +68,51 @@ trait BuildsReturnsFixtures
         return $admin;
     }
 
+    protected function signInGuestDemo(): Admin
+    {
+        $this->seedWorkspaceSettings();
+
+        $role = AdminRole::query()->find(4);
+
+        if ($role) {
+            $role->forceFill([
+                'name' => 'Guest Demo',
+                'modules' => json_encode([
+                    'returns_cases_section',
+                    'returns_queue_section',
+                    'returns_ops_board_section',
+                    'returns_playbooks_section',
+                ]),
+                'status' => 1,
+            ])->save();
+        } else {
+            $role = AdminRole::query()->forceCreate([
+                'id' => 4,
+                'name' => 'Guest Demo',
+                'modules' => json_encode([
+                    'returns_cases_section',
+                    'returns_queue_section',
+                    'returns_ops_board_section',
+                    'returns_playbooks_section',
+                ]),
+                'status' => 1,
+            ]);
+        }
+
+        $admin = Admin::query()->forceCreate([
+            'f_name' => 'Guest',
+            'l_name' => 'Demo',
+            'email' => 'guest+' . uniqid() . '@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $admin->forceFill(['role_id' => $role->id])->save();
+
+        $this->actingAs($admin, 'admin');
+
+        return $admin;
+    }
+
     protected function seedWorkspaceSettings(): void
     {
         DB::table('business_settings')->updateOrInsert(

@@ -28,6 +28,13 @@ class AdminTableSeeder extends Seeder
             'returns_cases_section',
         ]);
 
+        $guestDemoModules = json_encode([
+            'returns_cases_section',
+            'returns_queue_section',
+            'returns_ops_board_section',
+            'returns_playbooks_section',
+        ]);
+
         DB::table('admin_roles')->updateOrInsert(
             ['id' => 1],
             [
@@ -55,6 +62,17 @@ class AdminTableSeeder extends Seeder
             [
                 'name' => 'Inspector',
                 'modules' => $inspectorModules,
+                'status' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('admin_roles')->updateOrInsert(
+            ['id' => 4],
+            [
+                'name' => 'Guest Demo',
+                'modules' => $guestDemoModules,
                 'status' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -97,6 +115,20 @@ class AdminTableSeeder extends Seeder
                 'l_name' => 'Inspector',
                 'password' => bcrypt('12345678'),
                 'role_id' => 3,
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('admins')->updateOrInsert(
+            ['email' => 'guest@dossentry.com'],
+            [
+                'id' => 4,
+                'f_name' => 'Guest',
+                'l_name' => 'Demo',
+                'password' => bcrypt('12345678'),
+                'role_id' => 4,
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),

@@ -10,6 +10,7 @@
             'needs_review' => 'badge-soft-danger',
             'released' => 'badge-soft-success',
         ];
+        $canInspect = \App\CPU\Helpers::admin_has_module('returns_inspect_section');
     @endphp
     <div class="content container-fluid">
         <div class="row align-items-center mb-3">
@@ -21,9 +22,11 @@
                         : 'Track every inspection, evidence gap, and refund decision from one queue.' }}
                 </p>
             </div>
-            <div class="col-sm-auto mt-3 mt-sm-0">
-                <a href="{{ route('admin.returns.inspect') }}" class="btn btn-primary">New inspection</a>
-            </div>
+            @if($canInspect)
+                <div class="col-sm-auto mt-3 mt-sm-0">
+                    <a href="{{ route('admin.returns.inspect') }}" class="btn btn-primary">New inspection</a>
+                </div>
+            @endif
         </div>
 
         <div class="card mb-3">

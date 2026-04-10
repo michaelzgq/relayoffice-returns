@@ -28,6 +28,7 @@
 @endpush
 
 @section('content')
+    @php($canInspect = \App\CPU\Helpers::admin_has_module('returns_inspect_section'))
     <div class="content container-fluid">
         <div class="row align-items-center mb-3">
             <div class="col-sm">
@@ -38,7 +39,9 @@
                 <div class="d-flex gap-2 flex-wrap">
                     <a class="btn btn-light" href="{{ route('admin.returns.cases.index') }}">Open cases</a>
                     <a class="btn btn-light" href="{{ route('admin.returns.queue.index') }}">Open queue</a>
-                    <a class="btn btn-primary" href="{{ route('admin.returns.inspect') }}">Start inspection</a>
+                    @if($canInspect)
+                        <a class="btn btn-primary" href="{{ route('admin.returns.inspect') }}">Start inspection</a>
+                    @endif
                 </div>
             </div>
         </div>

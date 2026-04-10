@@ -13,6 +13,7 @@ use App\Models\ReturnCaseEvent;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
@@ -50,7 +51,7 @@ class ReturnCaseController extends Controller
         return view('admin-views.returns.cases.show', [
             'resource' => $resource,
             'refundStatusOptions' => ReturnCase::refundStatusOptions(),
-            'canManageRefundGate' => Helpers::admin_has_module('returns_queue_section'),
+            'canManageRefundGate' => Helpers::returns_user_can_update_decision_queue(),
             'inspectorView' => Helpers::returns_user_is_inspector(),
             'shareExpiryDays' => $shareDays,
             'shareExpiryOptions' => ReturnCase::shareExpiryOptions(),
@@ -146,6 +147,11 @@ class ReturnCaseController extends Controller
 
     public function updateRefundDecision(UpdateRefundDecisionRequest $request, int $id): RedirectResponse
     {
+        if (!Helpers::returns_user_can_update_decision_queue()) {
+            Toastr::error('Guest demo users can review queue records but cannot change decision states.');
+            return redirect()->route('admin.returns.queue.index');
+        }
+
         $resource = $this->returnCase->findOrFail($id);
 
         DB::transaction(function () use ($request, $resource) {
@@ -169,6 +175,11 @@ class ReturnCaseController extends Controller
 
     public function batchUpdateRefundDecision(BatchUpdateRefundDecisionRequest $request): RedirectResponse
     {
+        if (!Helpers::returns_user_can_update_decision_queue()) {
+            Toastr::error('Guest demo users can review queue records but cannot change decision states.');
+            return redirect()->route('admin.returns.queue.index');
+        }
+
         $resources = $request->returnCases();
         $targetStatus = (string) $request->input('refund_status');
         $decisionNote = $request->filled('decision_note') ? (string) $request->input('decision_note') : null;
@@ -263,6 +274,10 @@ class ReturnCaseController extends Controller
 
     private function slaAgeSql(): string
     {
+        if (FacadesDB::connection()->getDriverName() === 'sqlite') {
+            return 'CAST((julianday("now") - julianday(COALESCE(received_at, created_at))) * 24 AS INTEGER)';
+        }
+
         return 'TIMESTAMPDIFF(HOUR, COALESCE(received_at, created_at), NOW())';
     }
 }

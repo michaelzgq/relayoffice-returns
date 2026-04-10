@@ -1636,4 +1636,5 @@
   'return_case_detail' => 'Return case detail',
   'Refund gate decision updated' => 'Refund gate decision updated',
   'Workflow review request marked as reviewed' => 'Workflow review request marked as reviewed',
+  'Guest demo users can review playbooks but cannot edit them' => 'Guest demo users can review playbooks but cannot edit them',
 );

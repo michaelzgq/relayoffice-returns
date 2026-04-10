@@ -1,6 +1,7 @@
 @php
     $shopLogo = \App\Models\BusinessSetting::where(['key' => 'shop_logo'])->first()->value;
     $inspectorView = \App\CPU\Helpers::returns_user_is_inspector();
+    $guestDemoView = \App\CPU\Helpers::returns_user_is_guest_demo();
     $showInspect = \App\CPU\Helpers::admin_has_module('returns_inspect_section');
     $showCases = \App\CPU\Helpers::admin_has_module('returns_cases_section');
     $showQueue = \App\CPU\Helpers::admin_has_module('returns_queue_section');
@@ -65,7 +66,7 @@
                             </li>
                         @endif
 
-                        @if($showOpsBoard && !$inspectorView)
+                        @if($showOpsBoard && !$inspectorView && !$guestDemoView)
                             <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/returns/review-requests*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('admin.returns.review-requests.index') }}" title="Review requests">
                                     <i class="fi fi-sr-envelope nav-icon"></i>

@@ -478,11 +478,39 @@ class Helpers
         ]);
     }
 
+    public static function returns_user_is_guest_demo(): bool
+    {
+        if (!auth('admin')->check() || !auth('admin')->user()) {
+            return false;
+        }
+
+        return strtolower((string) auth('admin')->user()->role?->name) === 'guest demo';
+    }
+
     public static function returns_user_is_inspector(): bool
     {
         return self::admin_has_module('returns_inspect_section')
             && self::admin_has_module('returns_cases_section')
             && !self::returns_user_can_manage_ops();
+    }
+
+    public static function returns_user_can_update_decision_queue(): bool
+    {
+        return self::admin_has_module('returns_queue_section')
+            && !self::returns_user_is_guest_demo();
+    }
+
+    public static function returns_user_can_edit_playbooks(): bool
+    {
+        return self::admin_has_module('returns_playbooks_section')
+            && !self::returns_user_is_guest_demo();
+    }
+
+    public static function returns_user_can_view_review_requests(): bool
+    {
+        return self::admin_has_module('returns_ops_board_section')
+            && !self::returns_user_is_inspector()
+            && !self::returns_user_is_guest_demo();
     }
 
     public static function returns_home_route(): string

@@ -4,6 +4,7 @@
 
 @section('content')
     @php
+        $readOnly = \App\CPU\Helpers::returns_user_is_guest_demo();
         $selectedConditions = old('allowed_conditions', $editingProfile?->allowed_conditions ?? []);
         $selectedDispositions = old('allowed_dispositions', $editingProfile?->allowed_dispositions ?? []);
         $recommendedDispositions = old('recommended_dispositions', $editingProfile?->recommended_dispositions ?? []);
@@ -21,27 +22,32 @@
             <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header border-0">
-                        <h4 class="mb-0">{{ $editingProfile ? 'Edit Playbook' : 'New Playbook' }}</h4>
+                        <h4 class="mb-0">{{ $readOnly ? 'Playbook Snapshot' : ($editingProfile ? 'Edit Playbook' : 'New Playbook') }}</h4>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="{{ $editingProfile ? route('admin.returns.rules.update', $editingProfile->id) : route('admin.returns.rules.store') }}">
-                            @csrf
-                            <div class="form-group">
-                                <label class="title">Brand <span class="text-danger">*</span></label>
-                                <select class="form-control" name="brand_id" required>
-                                    <option value="">Select brand</option>
-                                    @foreach($brands as $brand)
-                                        <option value="{{ $brand->id }}" {{ (string) old('brand_id', $editingProfile?->brand_id) === (string) $brand->id ? 'selected' : '' }}>
-                                            {{ $brand->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                        @if($readOnly)
+                            <div class="alert alert-soft-info mb-0">
+                                Guest demo access is read-only. Use this page to inspect how each client playbook structures evidence, conditions, and default decision guidance without changing warehouse rules.
                             </div>
+                        @else
+                            <form method="post" action="{{ $editingProfile ? route('admin.returns.rules.update', $editingProfile->id) : route('admin.returns.rules.store') }}">
+                                @csrf
+                                <div class="form-group">
+                                    <label class="title">Brand <span class="text-danger">*</span></label>
+                                    <select class="form-control" name="brand_id" required>
+                                        <option value="">Select brand</option>
+                                        @foreach($brands as $brand)
+                                            <option value="{{ $brand->id }}" {{ (string) old('brand_id', $editingProfile?->brand_id) === (string) $brand->id ? 'selected' : '' }}>
+                                                {{ $brand->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                            <div class="form-group">
-                                <label class="title">Playbook Name</label>
-                                <input class="form-control" type="text" name="profile_name" value="{{ old('profile_name', $editingProfile?->profile_name) }}" placeholder="Apparel returns v1" required>
-                            </div>
+                                <div class="form-group">
+                                    <label class="title">Playbook Name</label>
+                                    <input class="form-control" type="text" name="profile_name" value="{{ old('profile_name', $editingProfile?->profile_name) }}" placeholder="Apparel returns v1" required>
+                                </div>
 
                             <div class="row">
                                 <div class="col-sm-6">
@@ -157,13 +163,14 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex gap-2 justify-content-end">
-                                @if($editingProfile)
-                                    <a class="btn btn-light" href="{{ route('admin.returns.rules.index') }}">Cancel edit</a>
-                                @endif
-                                <button class="btn btn-primary" type="submit">{{ $editingProfile ? 'Update playbook' : 'Save playbook' }}</button>
-                            </div>
-                        </form>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    @if($editingProfile)
+                                        <a class="btn btn-light" href="{{ route('admin.returns.rules.index') }}">Cancel edit</a>
+                                    @endif
+                                    <button class="btn btn-primary" type="submit">{{ $editingProfile ? 'Update playbook' : 'Save playbook' }}</button>
+                                </div>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -207,7 +214,9 @@
                                         </span>
                                     </td>
                                     <td class="text-right">
-                                        <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.returns.rules.index', ['edit' => $profile->id]) }}">Edit</a>
+                                        @unless($readOnly)
+                                            <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.returns.rules.index', ['edit' => $profile->id]) }}">Edit</a>
+                                        @endunless
                                     </td>
                                 </tr>
                             @empty

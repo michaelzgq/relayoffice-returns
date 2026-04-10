@@ -4,6 +4,7 @@
         $canViewCases = \App\CPU\Helpers::admin_has_module('returns_cases_section');
         $canManageQueue = \App\CPU\Helpers::admin_has_module('returns_queue_section');
         $inspectorView = \App\CPU\Helpers::returns_user_is_inspector();
+        $guestDemoView = \App\CPU\Helpers::returns_user_is_guest_demo();
     @endphp
     <header id="header" class="navbar navbar-expand-lg navbar-fixed navbar-height navbar-flush navbar-container navbar-bordered header-style">
         <div class="navbar-nav-wrap">
@@ -106,11 +107,13 @@
                                     </div>
                                 </div>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{route('admin.settings')}}">
-                                    <span class="text-truncate pr-2"
-                                          title="{{\App\CPU\translate('settings')}}">{{\App\CPU\translate('settings')}}</span>
-                                </a>
-                                <div class="dropdown-divider"></div>
+                                @unless($guestDemoView)
+                                    <a class="dropdown-item" href="{{route('admin.settings')}}">
+                                        <span class="text-truncate pr-2"
+                                              title="{{\App\CPU\translate('settings')}}">{{\App\CPU\translate('settings')}}</span>
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                @endunless
                                 <a class="dropdown-item" href="javascript:" id="logoutLink">
                                     <span class="text-truncate pr-2" title="Sign out">{{\App\CPU\translate('sign_out')}}</span>
                                 </a>

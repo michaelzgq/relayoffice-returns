@@ -1759,6 +1759,61 @@
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`
 
+## 2026-04-10 - Shared demo workspaces must be intentionally constrained, not reused from an internal ops role
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: converting the public guest demo from a full ops-style admin account into a curated read-only demo workspace
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Converting the guest path into a dedicated role was faster and safer than trying to retrofit every existing ops role with conditional UI hacks.
+- Server-side guards on write actions prevented shared-demo abuse even if a hidden button or route was discovered.
+- Role-focused tests caught both permission leaks and route-level write access before the changes reached production.
+
+## Mistakes To Stop Repeating
+
+### Mistake: A shared demo account was initially pointed at the same experience as a real ops user
+- What happened: the landing page guest demo credentials exposed an account with far more functionality than a first-time prospect should see.
+- Root cause: demo access was treated as a shortcut for “let them log in and explore” instead of a deliberately designed conversion surface.
+- Earlier signal I missed: the guest demo was using the ops manager account and the same menu structure, which meant the environment was optimized for internal use rather than external evaluation.
+- Prevention rule: every public demo must start from a dedicated demo role with explicit read/write boundaries, not from a reused internal role.
+- Next-time checklist item: before publishing a demo login, ask “what exact actions should a stranger be allowed to take?”
+
+### Mistake: Read access and write access were coupled too closely under the same returns modules
+- What happened: guest users could reach queue and playbook pages that mixed reference information with mutation controls.
+- Root cause: module checks were originally good enough for internal staff, but not fine-grained enough for an external shared workspace.
+- Earlier signal I missed: the queue and playbook screens were built as hybrid read/write work surfaces, so reusing them for public demo access would always require stronger capability checks.
+- Prevention rule: any screen intended for shared demo use must have explicit capability helpers for `view`, `edit`, and `admin-only` actions.
+- Next-time checklist item: when introducing a new public or semi-public role, audit every POST route first, then trim the UI second.
+
+### Mistake: Local test assumptions hid environment-specific failures until role tests were expanded
+- What happened: the first guest-demo test pass failed on sqlite date math and on a validation branch firing before the controller guard.
+- Root cause: controller logic was written with MySQL behavior in mind, and the test originally hit a create path that could fail validation before the permission guard was evaluated.
+- Earlier signal I missed: any new permission layer touching dashboards and CRUD flows should be expected to expose environment-specific SQL and routing behavior.
+- Prevention rule: when adding a new role or auth boundary, run role tests against the same lightweight test database used in CI and choose assertions that exercise the actual authorization path.
+- Next-time checklist item: include one read-path test and one blocked write-path test per protected module, and check sqlite compatibility for any computed SQL fragment.
+
+## Permanent Rules
+- Public demo access must always use a dedicated demo role, never a production-like ops or admin account.
+- Shared demo users may view curated value surfaces, but all state-changing routes must be blocked server-side even if the UI hides them.
+- Guest demo environments should emphasize evidence review, decision context, and playbook snapshots rather than full workspace administration.
+
+## Next-Project Checklist
+- [ ] Create a dedicated demo role before exposing any shared login.
+- [ ] Audit POST/PATCH/DELETE routes for that role before polishing the UI.
+- [ ] Hide settings, lead inboxes, and admin-only surfaces from any public demo.
+- [ ] Run role-based tests on the target lightweight test database.
+- [ ] Confirm the landing page shows demo credentials for the demo role, not an internal staff account.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/CPU/Helpers.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/migrations/2026_04_10_000002_create_guest_demo_role_and_admin.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/queue/index.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/rules/index.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/Returns/ReturnsWorkspaceRoleTest.php`
+
 ## 2026-04-10 - Root domain launch can look broken even after hosting and DNS are correct
 
 ## Snapshot

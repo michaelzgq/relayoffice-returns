@@ -12,6 +12,7 @@
         ];
         $statusLabels = \App\Models\ReturnCase::decisionStatusLabels();
         $statusHelp = \App\Models\ReturnCase::decisionStatusHelp();
+        $canInspect = \App\CPU\Helpers::admin_has_module('returns_inspect_section');
     @endphp
     <div class="content container-fluid">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
@@ -20,7 +21,9 @@
                 <p class="text-muted mb-0">Return ID {{ $resource->return_id }}</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <a href="{{ route('admin.returns.inspect', ['case_id' => $resource->id]) }}" class="btn btn-light">Edit inspection</a>
+                @if($canInspect)
+                    <a href="{{ route('admin.returns.inspect', ['case_id' => $resource->id]) }}" class="btn btn-light">Edit inspection</a>
+                @endif
                 <a href="{{ route('admin.returns.cases.export', $resource->id) }}" class="btn btn-primary" target="_blank">Open Brand Defense Pack</a>
                 <a href="{{ route('admin.returns.cases.export', ['id' => $resource->id, 'download' => 'pdf']) }}" class="btn btn-outline-primary">Download PDF</a>
             </div>

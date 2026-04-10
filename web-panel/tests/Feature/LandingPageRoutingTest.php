@@ -27,7 +27,7 @@ class LandingPageRoutingTest extends TestCase
         $response->assertSee('Brand Review Link');
         $response->assertSee('View Sample Brand Review Link');
         $response->assertSee('Shared guest workspace');
-        $response->assertSee('ops@admin.com');
+        $response->assertSee('guest@dossentry.com');
     }
 
     public function test_demo_domain_root_redirects_to_login(): void

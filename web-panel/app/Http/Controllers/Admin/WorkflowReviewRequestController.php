@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowReviewRequest;
 use Brian2694\Toastr\Facades\Toastr;
@@ -14,6 +15,8 @@ class WorkflowReviewRequestController extends Controller
 {
     public function index(Request $request): View
     {
+        abort_unless(Helpers::returns_user_can_view_review_requests(), 403);
+
         $resources = WorkflowReviewRequest::query()
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = (string) $request->input('search');
@@ -40,6 +43,8 @@ class WorkflowReviewRequestController extends Controller
 
     public function markReviewed(Request $request, int $id): RedirectResponse
     {
+        abort_unless(Helpers::returns_user_can_view_review_requests(), 403);
+
         $resource = WorkflowReviewRequest::query()->findOrFail($id);
 
         $resource->update([

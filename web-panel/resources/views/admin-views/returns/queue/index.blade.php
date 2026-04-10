@@ -45,6 +45,7 @@
     @php
         $grouped = $resources->getCollection()->groupBy('refund_status');
         $statusLabels = \App\Models\ReturnCase::decisionStatusLabels();
+        $queueReadOnly = \App\CPU\Helpers::returns_user_is_guest_demo();
         $statusBadgeMap = [
             'hold' => 'badge-soft-warning',
             'ready_to_release' => 'badge-soft-info',
@@ -118,61 +119,70 @@
             </div>
         </div>
 
-        <div class="card queue-toolbar-card mb-3">
-            <div class="card-body">
-                <div class="d-flex flex-column flex-xl-row align-items-xl-center justify-content-between gap-3">
-                    <div>
-                        <h4 class="mb-1">Bulk action</h4>
-                        <p class="text-muted mb-0">Select visible cases, then move them together with one note for the audit trail.</p>
+        @unless($queueReadOnly)
+            <div class="card queue-toolbar-card mb-3">
+                <div class="card-body">
+                    <div class="d-flex flex-column flex-xl-row align-items-xl-center justify-content-between gap-3">
+                        <div>
+                            <h4 class="mb-1">Bulk action</h4>
+                            <p class="text-muted mb-0">Select visible cases, then move them together with one note for the audit trail.</p>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <button class="btn btn-outline-secondary" type="button" id="queue-select-all">Select shown</button>
+                            <button class="btn btn-outline-secondary" type="button" id="queue-clear-selection">Clear</button>
+                            <span class="badge badge-soft-dark" id="queue-selection-count">0 selected</span>
+                        </div>
                     </div>
 
-                    <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <button class="btn btn-outline-secondary" type="button" id="queue-select-all">Select shown</button>
-                        <button class="btn btn-outline-secondary" type="button" id="queue-clear-selection">Clear</button>
-                        <span class="badge badge-soft-dark" id="queue-selection-count">0 selected</span>
-                    </div>
+                    <form method="post" action="{{ route('admin.returns.queue.refund-decision') }}" class="mt-3" id="queue-bulk-form">
+                        @csrf
+                        <div id="queue-selected-case-ids"></div>
+                        @if(request()->filled('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+                        @if(request()->filled('brand_id'))
+                            <input type="hidden" name="brand_id" value="{{ request('brand_id') }}">
+                        @endif
+                        @if(request()->boolean('evidence_missing'))
+                            <input type="hidden" name="evidence_missing" value="1">
+                        @endif
+                        @if(request()->filled('filter_status'))
+                            <input type="hidden" name="filter_status" value="{{ request('filter_status') }}">
+                        @endif
+                        @if(request()->filled('min_sla_hours'))
+                            <input type="hidden" name="min_sla_hours" value="{{ request('min_sla_hours') }}">
+                        @endif
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-lg-3">
+                                <label class="title">Move selected to</label>
+                                <select class="form-control" name="refund_status" required>
+                                    <option value="">Choose status</option>
+                                    @foreach($refundStatusOptions as $status)
+                                        <option value="{{ $status }}">{{ $statusLabels[$status] ?? str_replace('_', ' ', ucfirst($status)) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-7">
+                                <label class="title">Batch note</label>
+                                <input class="form-control" type="text" name="decision_note" maxlength="1000" placeholder="Explain why these cases are moving. Required for needs review.">
+                            </div>
+                            <div class="col-lg-2">
+                                <button class="btn btn-primary btn-block" type="submit" id="queue-bulk-submit" disabled>Apply</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-                <form method="post" action="{{ route('admin.returns.queue.refund-decision') }}" class="mt-3" id="queue-bulk-form">
-                    @csrf
-                    <div id="queue-selected-case-ids"></div>
-                    @if(request()->filled('search'))
-                        <input type="hidden" name="search" value="{{ request('search') }}">
-                    @endif
-                    @if(request()->filled('brand_id'))
-                        <input type="hidden" name="brand_id" value="{{ request('brand_id') }}">
-                    @endif
-                    @if(request()->boolean('evidence_missing'))
-                        <input type="hidden" name="evidence_missing" value="1">
-                    @endif
-                    @if(request()->filled('filter_status'))
-                        <input type="hidden" name="filter_status" value="{{ request('filter_status') }}">
-                    @endif
-                    @if(request()->filled('min_sla_hours'))
-                        <input type="hidden" name="min_sla_hours" value="{{ request('min_sla_hours') }}">
-                    @endif
-
-                    <div class="row g-3 align-items-end">
-                        <div class="col-lg-3">
-                            <label class="title">Move selected to</label>
-                            <select class="form-control" name="refund_status" required>
-                                <option value="">Choose status</option>
-                                @foreach($refundStatusOptions as $status)
-                                    <option value="{{ $status }}">{{ $statusLabels[$status] ?? str_replace('_', ' ', ucfirst($status)) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-lg-7">
-                            <label class="title">Batch note</label>
-                            <input class="form-control" type="text" name="decision_note" maxlength="1000" placeholder="Explain why these cases are moving. Required for needs review.">
-                        </div>
-                        <div class="col-lg-2">
-                            <button class="btn btn-primary btn-block" type="submit" id="queue-bulk-submit" disabled>Apply</button>
-                        </div>
-                    </div>
-                </form>
             </div>
-        </div>
+        @else
+            <div class="card queue-toolbar-card mb-3">
+                <div class="card-body">
+                    <h4 class="mb-1">Shared demo mode</h4>
+                    <p class="text-muted mb-0">This workspace stays read-only for guests. Open cases, review evidence, and inspect the decision trail without changing queue state.</p>
+                </div>
+            </div>
+        @endunless
 
         <div class="row g-3">
             @foreach(['hold', 'ready_to_release', 'needs_review'] as $status)
@@ -195,14 +205,16 @@
                                 <div class="queue-card {{ $resource->evidence_complete ? '' : 'evidence-risk' }} p-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-start gap-2">
                                         <div class="d-flex gap-2">
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input queue-case-checkbox"
-                                                       type="checkbox"
-                                                       id="queue-case-{{ $resource->id }}"
-                                                       value="{{ $resource->id }}"
-                                                       data-return-id="{{ $resource->return_id }}">
-                                                <label class="custom-control-label" for="queue-case-{{ $resource->id }}"></label>
-                                            </div>
+                                            @unless($queueReadOnly)
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input queue-case-checkbox"
+                                                           type="checkbox"
+                                                           id="queue-case-{{ $resource->id }}"
+                                                           value="{{ $resource->id }}"
+                                                           data-return-id="{{ $resource->return_id }}">
+                                                    <label class="custom-control-label" for="queue-case-{{ $resource->id }}"></label>
+                                                </div>
+                                            @endunless
                                             <div>
                                                 <div class="font-weight-bold">{{ $resource->return_id }}</div>
                                                 <div class="queue-meta">{{ $resource->brand?->name ?? 'N/A' }} | {{ $resource->product_sku ?: 'No SKU' }}</div>
@@ -240,53 +252,64 @@
                                         </div>
                                     @endif
 
-                                    <form method="post" action="{{ route('admin.returns.cases.refund-decision', $resource->id) }}" class="mt-3 pt-3 border-top">
-                                        @csrf
-                                        <input type="hidden" name="redirect_to" value="queue">
-                                        @if(request()->filled('search'))
-                                            <input type="hidden" name="search" value="{{ request('search') }}">
-                                        @endif
-                                        @if(request()->filled('brand_id'))
-                                            <input type="hidden" name="brand_id" value="{{ request('brand_id') }}">
-                                        @endif
-                                        @if(request()->boolean('evidence_missing'))
-                                            <input type="hidden" name="evidence_missing" value="1">
-                                        @endif
-                                        @if(request()->filled('filter_status'))
-                                            <input type="hidden" name="filter_status" value="{{ request('filter_status') }}">
-                                        @endif
-                                        @if(request()->filled('min_sla_hours'))
-                                            <input type="hidden" name="min_sla_hours" value="{{ request('min_sla_hours') }}">
-                                        @endif
-
-                                        <div class="form-group mb-2">
-                                            <label class="title">Move to</label>
-                                            <select class="form-control form-control-sm" name="refund_status">
-                                                @foreach($refundStatusOptions as $option)
-                                                    @php($blocked = !$resource->evidence_complete && in_array($option, ['ready_to_release', 'released'], true))
-                                                    <option value="{{ $option }}"
-                                                            {{ $resource->refund_status === $option ? 'selected' : '' }}
-                                                            {{ $blocked ? 'disabled' : '' }}>
-                                                        {{ $statusLabels[$option] ?? str_replace('_', ' ', ucfirst($option)) }}{{ $blocked ? ' - needs evidence' : '' }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                    @if($queueReadOnly)
+                                        <div class="mt-3 pt-3 border-top">
+                                            <div class="text-muted small mb-2">Recommendation</div>
+                                            <div class="font-weight-bold">{{ $statusLabels[$resource->refund_status] ?? str_replace('_', ' ', ucfirst($resource->refund_status)) }}</div>
+                                            <div class="text-muted small mt-2">Guest demo users can inspect the evidence trail here, but decision changes stay disabled.</div>
+                                            <div class="d-flex gap-2 mt-3">
+                                                <a class="btn btn-light btn-sm btn-block" href="{{ route('admin.returns.cases.show', $resource->id) }}">Open case</a>
+                                            </div>
                                         </div>
+                                    @else
+                                        <form method="post" action="{{ route('admin.returns.cases.refund-decision', $resource->id) }}" class="mt-3 pt-3 border-top">
+                                            @csrf
+                                            <input type="hidden" name="redirect_to" value="queue">
+                                            @if(request()->filled('search'))
+                                                <input type="hidden" name="search" value="{{ request('search') }}">
+                                            @endif
+                                            @if(request()->filled('brand_id'))
+                                                <input type="hidden" name="brand_id" value="{{ request('brand_id') }}">
+                                            @endif
+                                            @if(request()->boolean('evidence_missing'))
+                                                <input type="hidden" name="evidence_missing" value="1">
+                                            @endif
+                                            @if(request()->filled('filter_status'))
+                                                <input type="hidden" name="filter_status" value="{{ request('filter_status') }}">
+                                            @endif
+                                            @if(request()->filled('min_sla_hours'))
+                                                <input type="hidden" name="min_sla_hours" value="{{ request('min_sla_hours') }}">
+                                            @endif
 
-                                        <div class="form-group mb-2">
-                                            <label class="title">Decision note</label>
-                                            <input class="form-control form-control-sm"
-                                                   type="text"
-                                                   name="decision_note"
-                                                   maxlength="1000"
-                                                   placeholder="Required for needs review">
-                                        </div>
+                                            <div class="form-group mb-2">
+                                                <label class="title">Move to</label>
+                                                <select class="form-control form-control-sm" name="refund_status">
+                                                    @foreach($refundStatusOptions as $option)
+                                                        @php($blocked = !$resource->evidence_complete && in_array($option, ['ready_to_release', 'released'], true))
+                                                        <option value="{{ $option }}"
+                                                                {{ $resource->refund_status === $option ? 'selected' : '' }}
+                                                                {{ $blocked ? 'disabled' : '' }}>
+                                                            {{ $statusLabels[$option] ?? str_replace('_', ' ', ucfirst($option)) }}{{ $blocked ? ' - needs evidence' : '' }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
 
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-primary btn-sm btn-block" type="submit">Update</button>
-                                            <a class="btn btn-light btn-sm btn-block" href="{{ route('admin.returns.cases.show', $resource->id) }}">Open case</a>
-                                        </div>
-                                    </form>
+                                            <div class="form-group mb-2">
+                                                <label class="title">Decision note</label>
+                                                <input class="form-control form-control-sm"
+                                                       type="text"
+                                                       name="decision_note"
+                                                       maxlength="1000"
+                                                       placeholder="Required for needs review">
+                                            </div>
+
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-primary btn-sm btn-block" type="submit">Update</button>
+                                                <a class="btn btn-light btn-sm btn-block" href="{{ route('admin.returns.cases.show', $resource->id) }}">Open case</a>
+                                            </div>
+                                        </form>
+                                    @endif
                                 </div>
                             @empty
                                 <div class="text-muted">No cards for this column on the current page.</div>
@@ -304,6 +327,7 @@
 @endsection
 
 @push('script_2')
+    @unless($queueReadOnly)
     <script>
         "use strict";
 
@@ -359,4 +383,5 @@
             syncSelectionUi();
         });
     </script>
+    @endunless
 @endpush

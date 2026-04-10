@@ -23,8 +23,13 @@ class SystemController extends Controller
     /**
      * @return Application|Factory|View
      */
-    public function settings(): View|Factory|Application
+    public function settings(): View|Factory|Application|RedirectResponse
     {
+        if (Helpers::returns_user_is_guest_demo()) {
+            Toastr::info('Guest demo users cannot open workspace settings.');
+            return redirect()->route('admin.returns.dashboard.index');
+        }
+
         return view('admin-views.settings');
     }
 
@@ -34,6 +39,11 @@ class SystemController extends Controller
      */
     public function settingsUpdate(SettingUpdateRequest $request): RedirectResponse
     {
+        if (Helpers::returns_user_is_guest_demo()) {
+            Toastr::info('Guest demo users cannot update workspace settings.');
+            return redirect()->route('admin.returns.dashboard.index');
+        }
+
         $admin = $this->admin->find(auth('admin')->id());
         $admin->f_name = $request->f_name;
         $admin->l_name = $request->l_name;
@@ -52,6 +62,11 @@ class SystemController extends Controller
      */
     public function settingsPasswordUpdate(Request $request): RedirectResponse
     {
+        if (Helpers::returns_user_is_guest_demo()) {
+            Toastr::info('Guest demo users cannot update the shared password.');
+            return redirect()->route('admin.returns.dashboard.index');
+        }
+
         $request->validate([
             'password' => 'required|same:confirm_password|min:8',
             'confirm_password' => 'required',
