@@ -66,6 +66,27 @@
     width: 100%;
     margin: 0 auto;
 }
+.auth-wrapper-right .auth-legal-footer {
+    max-width: 452px;
+    width: 100%;
+    margin: 18px auto 0;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #b0b8c5;
+}
+.auth-wrapper-right .auth-legal-footer a {
+    color: #94a3b8;
+    font-weight: 500;
+    text-decoration: none;
+}
+.auth-wrapper-right .auth-legal-footer a:hover {
+    color: #64748b;
+}
+.auth-wrapper-right .auth-legal-separator {
+    margin: 0 8px;
+    color: #cbd5e1;
+}
 @media (min-width: 1550px) {
     .auth-wrapper-right .auth-wrapper-form {
         transform: translateX(-30px);
