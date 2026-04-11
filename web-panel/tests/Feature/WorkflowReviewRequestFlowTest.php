@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\WorkflowReviewRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Config;
 use Tests\Concerns\BuildsReturnsFixtures;
 use Tests\TestCase;
 
@@ -128,4 +129,24 @@ class WorkflowReviewRequestFlowTest extends TestCase
             return $mail->hasTo('solutionsoscommerce@gmail.com');
         });
     }
+    public function test_admin_can_view_notification_diagnostics_and_send_a_test_email(): void
+    {
+        Mail::fake();
+
+        Config::set('dossentry.workflow_review_notification_email', 'solutionsoscommerce@gmail.com');
+        Config::set('mail.from.address', 'solutionsoscommerce@gmail.com');
+
+        $admin = $this->signInAdmin();
+
+        $listResponse = $this->actingAs($admin, 'admin')->get(route('admin.returns.review-requests.index'));
+        $listResponse->assertOk();
+        $listResponse->assertSee('Notification diagnostics');
+        $listResponse->assertSee('Send test email');
+        $listResponse->assertSee('Gmail self-send detected');
+
+        $sendResponse = $this->actingAs($admin, 'admin')->post(route('admin.returns.review-requests.test-notification'));
+        $sendResponse->assertRedirect(route('admin.returns.review-requests.index'));
+    }
+
 }
+

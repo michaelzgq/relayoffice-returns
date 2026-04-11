@@ -2480,3 +2480,51 @@
 
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`
+
+
+## 2026-04-10 - Workflow lead notifications need in-product diagnostics, not blind SMTP guessing
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: debugging why workflow review requests were stored but notification emails were not visibly arriving
+- Outcome: improved
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Separating database write success from mail delivery success avoided treating a stored lead as proof that notification worked.
+- Adding admin-side diagnostics for recipient, sender, and mailer settings made the problem inspectable without SSH or Render logs.
+- Adding `Resend email` and `Send test email` actions turns future mail debugging into a product workflow instead of guesswork.
+
+## Mistakes To Stop Repeating
+
+### Mistake: We treated silent mail failure as a secondary issue instead of a promotion blocker
+- What happened: the public form stored leads correctly, but the team still could not rely on inbox notifications.
+- Root cause: exceptions were intentionally swallowed to avoid losing leads, but there was no visible diagnostic layer in the product.
+- Earlier signal I missed: the app had no admin-page display of current recipient/from settings or the last delivery error.
+- Prevention rule: any lead form that claims to send a notification must expose delivery status and test tooling in the admin UI before promotion.
+- Next-time checklist item: verify stored lead, delivery status, and inbox visibility separately.
+
+### Mistake: Gmail self-send behavior was not treated as a real operational edge case
+- What happened: notifications were configured to send from and to the same Gmail mailbox, which can make messages appear in `Sent`, `All Mail`, or an existing thread instead of surfacing like a normal inbound alert.
+- Root cause: we optimized for the simplest config, not the clearest operator experience.
+- Earlier signal I missed: the sender and recipient were identical, so inbox visibility was never guaranteed even when SMTP worked.
+- Prevention rule: if the sender and recipient are the same Gmail mailbox, show a warning in-product and prefer a different recipient or provider for operational alerts.
+- Next-time checklist item: compare `MAIL_FROM_ADDRESS` and notification recipient before calling email alerts done.
+
+## Permanent Rules
+- A successful lead notification system needs both durable storage and operator-visible delivery diagnostics.
+- Silent mail failure handling is good for lead retention, but only if the UI surfaces status and retry actions.
+- Self-sent Gmail alerts are operationally ambiguous and should never be the default assumption for reliable notifications.
+
+## Next-Project Checklist
+- [ ] Show notification recipient, sender, and mailer in the admin lead view.
+- [ ] Show per-lead delivery status, attempted time, and last error.
+- [ ] Provide resend and test-email actions before promotion.
+- [ ] If sender and recipient are the same Gmail mailbox, test `All Mail`, `Sent`, and `Spam`, or switch recipients.
+- [ ] Validate one real lead end-to-end before calling the funnel promotion-ready.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/Admin/WorkflowReviewRequestController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/review-requests/index.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/admin.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/WorkflowReviewRequestFlowTest.php`

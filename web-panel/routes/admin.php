@@ -233,6 +233,7 @@ Route::group(['namespace'=>'Admin', 'as' => 'admin.', 'prefix'=>'admin', 'middle
                     Route::get('review-requests', 'index')->name('review-requests.index');
                     Route::post('review-requests/{id}/mark-reviewed', 'markReviewed')->name('review-requests.mark-reviewed');
                     Route::post('review-requests/{id}/resend-notification', 'resendNotification')->name('review-requests.resend-notification');
+                    Route::post('review-requests/test-notification', 'sendTestNotification')->name('review-requests.test-notification');
                 });
             });
 

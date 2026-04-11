@@ -28,6 +28,30 @@
         </div>
 
         <div class="card mb-3">
+            <div class="card-body d-flex flex-column flex-lg-row justify-content-between gap-3">
+                <div>
+                    <h4 class="mb-2">Notification diagnostics</h4>
+                    <div class="small text-muted mb-1">Recipient: <span class="text-dark">{{ $mailDiagnostics['notificationEmail'] ?: 'Not configured' }}</span></div>
+                    <div class="small text-muted mb-1">From address: <span class="text-dark">{{ $mailDiagnostics['mailFromAddress'] ?: 'Not configured' }}</span></div>
+                    <div class="small text-muted">Mailer: <span class="text-dark">{{ $mailDiagnostics['mailMailer'] ?: 'Not configured' }}</span></div>
+                    @if($mailDiagnostics['sameGmailMailbox'])
+                        <div class="alert alert-warning mt-3 mb-0">
+                            Gmail self-send detected. If the notification recipient matches the Gmail sender, the message may appear in
+                            <strong>All Mail</strong>, <strong>Sent</strong>, or an existing thread instead of surfacing like a fresh inbox alert.
+                        </div>
+                    @endif
+                </div>
+                <div class="d-flex flex-column align-items-lg-end justify-content-center gap-2">
+                    <form method="post" action="{{ route('admin.returns.review-requests.test-notification') }}">
+                        @csrf
+                        <button class="btn btn-outline-primary" type="submit">Send test email</button>
+                    </form>
+                    <div class="small text-muted text-lg-right">Use this before testing the public form again.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
             <div class="card-body">
                 <form method="get" class="row g-2">
                     <div class="col-md-6">

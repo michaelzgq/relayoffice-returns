@@ -9,7 +9,10 @@ use App\Services\WorkflowReviewNotificationService;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Throwable;
 use function App\CPU\translate;
 
 class WorkflowReviewRequestController extends Controller
@@ -43,6 +46,15 @@ class WorkflowReviewRequestController extends Controller
                 ->selectRaw('status, count(*) as total')
                 ->groupBy('status')
                 ->pluck('total', 'status'),
+            'mailDiagnostics' => [
+                'notificationEmail' => trim((string) config('dossentry.workflow_review_notification_email')),
+                'mailFromAddress' => trim((string) config('mail.from.address')),
+                'mailMailer' => trim((string) config('mail.default')),
+                'sameGmailMailbox' => $this->isSameGmailMailbox(
+                    trim((string) config('dossentry.workflow_review_notification_email')),
+                    trim((string) config('mail.from.address'))
+                ),
+            ],
         ]);
     }
 
@@ -75,5 +87,69 @@ class WorkflowReviewRequestController extends Controller
         }
 
         return redirect()->route('admin.returns.review-requests.index', $request->only(['search', 'status', 'page']));
+    }
+
+    public function sendTestNotification(Request $request): RedirectResponse
+    {
+        abort_unless(Helpers::returns_user_can_view_review_requests(), 403);
+
+        $notificationEmail = trim((string) config('dossentry.workflow_review_notification_email'));
+        $mailFromAddress = trim((string) config('mail.from.address'));
+        $mailMailer = trim((string) config('mail.default'));
+
+        if ($notificationEmail === '') {
+            Toastr::error('Notification email is not configured.');
+
+            return redirect()->route('admin.returns.review-requests.index', $request->only(['search', 'status', 'page']));
+        }
+
+        try {
+            Mail::raw(
+                implode(PHP_EOL, [
+                    'Dossentry workflow notification test',
+                    '',
+                    'Notification recipient: ' . $notificationEmail,
+                    'Mail from address: ' . ($mailFromAddress ?: 'not configured'),
+                    'Mailer: ' . ($mailMailer ?: 'not configured'),
+                    'Sent at: ' . now()->format('Y-m-d H:i:s T'),
+                    '',
+                    'If this message does not appear in the inbox, check All Mail, Sent, and Spam.',
+                    'When a Gmail account sends to itself, Google may file the message differently than a normal inbound alert.',
+                ]),
+                function ($message) use ($notificationEmail) {
+                    $message->to($notificationEmail)
+                        ->subject('Dossentry workflow notification test');
+                }
+            );
+
+            Log::info('Workflow review notification test email sent', [
+                'notification_email' => $notificationEmail,
+                'mail_from_address' => $mailFromAddress,
+                'mail_mailer' => $mailMailer,
+            ]);
+
+            Toastr::success('Test email sent. If it does not appear, check All Mail, Sent, or Spam.');
+        } catch (Throwable $exception) {
+            Log::warning('Workflow review notification test email failed', [
+                'notification_email' => $notificationEmail,
+                'mail_from_address' => $mailFromAddress,
+                'mail_mailer' => $mailMailer,
+                'error' => $exception->getMessage(),
+            ]);
+
+            Toastr::error('Test email failed: ' . $exception->getMessage());
+        }
+
+        return redirect()->route('admin.returns.review-requests.index', $request->only(['search', 'status', 'page']));
+    }
+
+    private function isSameGmailMailbox(string $notificationEmail, string $mailFromAddress): bool
+    {
+        if ($notificationEmail === '' || $mailFromAddress === '') {
+            return false;
+        }
+
+        return strcasecmp($notificationEmail, $mailFromAddress) === 0
+            && str_ends_with(strtolower($notificationEmail), '@gmail.com');
     }
 }
