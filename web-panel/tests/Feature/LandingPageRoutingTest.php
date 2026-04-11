@@ -28,6 +28,8 @@ class LandingPageRoutingTest extends TestCase
         $response->assertSee('View Sample Brand Review Link');
         $response->assertSee('Shared guest workspace');
         $response->assertSee('guest@dossentry.com');
+        $response->assertSee(route('privacy-policy'));
+        $response->assertSee(route('terms-of-service'));
     }
 
     public function test_demo_domain_root_redirects_to_login(): void

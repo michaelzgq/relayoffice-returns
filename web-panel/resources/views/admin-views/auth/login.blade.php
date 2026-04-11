@@ -177,6 +177,12 @@
 
             </div>
 
+            <div class="mt-4 text-center small text-muted">
+                <a href="{{ route('privacy-policy') }}" class="mx-2">Privacy Policy</a>
+                <span>&middot;</span>
+                <a href="{{ route('terms-of-service') }}" class="mx-2">Terms of Service</a>
+            </div>
+
         </div>
     </div>
 </main>

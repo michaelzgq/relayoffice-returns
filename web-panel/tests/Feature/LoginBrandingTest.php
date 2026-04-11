@@ -20,6 +20,8 @@ class LoginBrandingTest extends TestCase
         $response->assertOk();
         $response->assertSee('Dossentry');
         $response->assertSee('Brand-ready return evidence and decision workflows.');
+        $response->assertSee(route('privacy-policy'));
+        $response->assertSee(route('terms-of-service'));
         $response->assertDontSee('The Ultimate');
         $response->assertDontSee('POS Solution');
     }

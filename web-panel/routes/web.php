@@ -57,6 +57,9 @@ Route::get('/', function (Request $request) {
 Route::post('workflow-review-request', [WorkflowReviewRequestController::class, 'store'])
     ->name('workflow-review-requests.store');
 
+Route::view('privacy-policy', 'legal.privacy')->name('privacy-policy');
+Route::view('terms-of-service', 'legal.terms')->name('terms-of-service');
+
 Route::middleware('signed')->group(function () {
     Route::controller(EvidenceExportController::class)->group(function () {
         Route::get('brand-review/{id}', 'brandReview')->name('returns.brand-review');

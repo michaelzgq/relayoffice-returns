@@ -913,6 +913,17 @@
             font-size: 14px;
         }
 
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
         @media (max-width: 1120px) {
             .hero-card,
             .audience-panel,
@@ -1375,7 +1386,11 @@
     <footer class="footer">
         <div class="shell footer-inner">
             <div>{{ $appName }}. Brand-ready return evidence and decision workflows.</div>
-            <a href="{{ $demoLoginUrl }}">Live demo</a>
+            <div class="footer-links">
+                <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
+                <a href="{{ route('terms-of-service') }}">Terms of Service</a>
+                <a href="{{ $demoLoginUrl }}">Live demo</a>
+            </div>
         </div>
     </footer>
 </body>
