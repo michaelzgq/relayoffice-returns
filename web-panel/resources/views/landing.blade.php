@@ -248,18 +248,19 @@
         .micro-proof {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 14px;
+            gap: 16px;
             margin-top: 26px;
+            align-items: stretch;
         }
 
         .micro-proof-card {
-            min-height: 170px;
-            padding: 18px 18px 20px;
-            border-radius: 20px;
+            min-height: 0;
+            padding: 20px 20px 22px;
+            border-radius: 22px;
             border: 1px solid rgba(24, 37, 44, 0.08);
             display: grid;
             align-content: start;
-            gap: 10px;
+            gap: 12px;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
@@ -299,15 +300,17 @@
             display: block;
             color: var(--ink);
             font-family: "Fraunces", serif;
-            font-size: 28px;
-            line-height: 1.02;
+            font-size: clamp(22px, 2.2vw, 28px);
+            line-height: 1.06;
             letter-spacing: -0.035em;
+            max-width: 11ch;
+            text-wrap: balance;
         }
 
         .micro-proof p {
             margin: 0;
-            font-size: 14px;
-            line-height: 1.68;
+            font-size: 15px;
+            line-height: 1.6;
             color: var(--muted);
         }
 
@@ -852,6 +855,10 @@
             .cta-meta {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
+
+            .micro-proof {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         @media (max-width: 720px) {
@@ -883,6 +890,10 @@
             .topnav,
             .micro-proof {
                 grid-template-columns: 1fr;
+            }
+
+            .hero-actions {
+                flex-direction: column;
             }
 
             .button {

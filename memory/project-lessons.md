@@ -214,6 +214,15 @@
 - Financially sensitive state changes need server-side rule checks, not only disabled controls in Blade.
 - Shared workflow requests must carry explicit redirect context when multiple entry screens exist.
 
+## 2026-04-11 - Landing Page Responsive Proof Cards
+
+### Mistake: Designed homepage proof cards for desktop, but let them stay three-up too long on tablet widths
+- What happened: The homepage micro-proof cards looked acceptable on a wide desktop canvas, but at tablet and share-preview widths they became narrow, overly tall columns with oversized serif headlines.
+- Root cause: I treated the cards like static marketing tiles instead of a responsive content block with its own breakpoint needs.
+- Earlier signal I missed: The card titles were long and semantic, which meant a three-column layout would collapse visually long before the rest of the hero section needed to.
+- Prevention rule: Any marketing card row with long proof statements must have its own tablet breakpoint and reduced headline scale, independent of the main page grid.
+- Next-time checklist item: Before shipping a landing page section, check the layout at desktop, tablet, and narrow laptop widths, not just full desktop and phone.
+
 ## Next-Project Checklist
 - [ ] Confirm each queue or board page has at least one direct single-item action.
 - [ ] Add batch action support only after single-item action and validation are already working.
