@@ -24,20 +24,8 @@
                 @php($guestDemoLoginUrl = $guestDemoLoginUrl ?? \App\CPU\Helpers::dossentry_guest_demo_login_url())
                 @php($guestDemo = $guestDemo ?? config('dossentry.guest_demo'))
                 @php($workspaceNotice = request('notice'))
-
-                @php($shop_logo=\App\Models\BusinessSetting::where(['key'=>'shop_logo'])->first()->value)
     <div class="auth-wrapper">
-        <div class="auth-wrapper-left" style="background: url('{{asset('/assets/admin/img/auth-bg.png')}}') no-repeat center left/cover">
-            <div class="auth-left-cont">
-                <img class="onerror-image"
-                    src="{{onErrorImage($shop_logo,asset('storage/shop').'/' . $shop_logo,asset('assets/admin/img/160x160/img2.jpg') ,'shop/')}}"
-                    alt="{{\App\CPU\translate('Logo')}}">
-                <h2 class="title">
-                    <span class="d-block text-primary">{{ $workspaceName }}</span>
-                    <strong class="color-EC255A">Brand-ready return evidence and decision workflows.</strong>
-                </h2>
-            </div>
-        </div>
+        <div class="auth-wrapper-left auth-wrapper-left--image" aria-hidden="true"></div>
         <div class="auth-wrapper-right">
             <label class="badge badge-soft-danger __login-badge color-EC255A">
                 {{\App\CPU\translate('Software version')}}: {{ env('SOFTWARE_VERSION') }}

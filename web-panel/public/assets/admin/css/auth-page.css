@@ -176,34 +176,14 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
 }
-.auth-wrapper-left .auth-left-cont {
-    -webkit-margin-start: auto;
-    margin-inline-start: auto;
-    -webkit-margin-end: auto;
-    margin-inline-end: auto;
-}
-.auth-wrapper-left .auth-left-cont img {
-    max-width: 240px;
-    height: 65px;
-    margin-bottom: 20px;
-    -o-object-fit: contain;
-    object-fit: contain;
-    -o-object-position: left center;
-    object-position: left center;
-}
-.auth-wrapper-left .auth-left-cont .title {
-    font-size: 70px;
-    line-height: 1.3;
-    font-weight: 300;
-}
-.auth-wrapper-left .auth-left-cont .title strong {
-    font-weight: 700;
+.auth-wrapper-left--image {
+    background-image: url("../../dossentry/login-hero.png");
 }
 @media (max-width: 1549px) {
-    .auth-wrapper-left .auth-left-cont .title {
-        font-size: 55px;
-    }
     .auth-wrapper-right .auth-header {
         font-size: 16px;
         margin-bottom: 35px;
@@ -223,12 +203,6 @@
     }
 }
 @media (max-width: 1300px) {
-    .auth-wrapper-left .auth-left-cont img {
-        max-width: 90px;
-    }
-    .auth-wrapper-left .auth-left-cont .title {
-        font-size: 45px;
-    }
     .auth-wrapper-right {
         max-width: 560px;
     }
