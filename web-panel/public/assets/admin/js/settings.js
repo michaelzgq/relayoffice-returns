@@ -14,3 +14,12 @@
                 scrollTop: $("#passwordDiv").offset().top
             }, 2000);
         });
+
+        $("#workspaceAccessSection").on('click',function() {
+            $("#generalSection").removeClass("active");
+            $("#passwordSection").removeClass("active");
+            $("#workspaceAccessSection").addClass("active");
+            $('html, body').animate({
+                scrollTop: $("#workspaceAccessDiv").offset().top
+            }, 2000);
+        });

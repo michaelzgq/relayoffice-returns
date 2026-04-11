@@ -3,6 +3,11 @@
 @section('title',\App\CPU\translate('profile_settings'))
 
 @section('content')
+    @php
+        $canManageWorkspaceAccess = \App\CPU\Helpers::returns_user_is_master_admin();
+        $workspaceAdmins = $workspaceAdmins ?? collect();
+        $workspaceRoles = $workspaceRoles ?? collect();
+    @endphp
     <div class="content container-fluid">
         <div class="page-header">
             <div class="row align-items-end">
@@ -48,6 +53,14 @@
                                     <i class="tio-lock-outlined nav-icon"></i> {{\App\CPU\translate('password')}}
                                 </a>
                             </li>
+
+                            @if($canManageWorkspaceAccess)
+                                <li class="nav-item">
+                                    <a class="text-black-50 nav-link" href="javascript:" id="workspaceAccessSection">
+                                        <i class="tio-user-add-outlined nav-icon"></i> Workspace Access
+                                    </a>
+                                </li>
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -175,6 +188,120 @@
                         </form>
                     </div>
                 </div>
+
+                @if($canManageWorkspaceAccess)
+                    <div id="workspaceAccessDiv" class="card mb-3 mb-lg-5">
+                        <div class="card-header">
+                            <h4 class="card-title">Workspace Access</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-soft-info mb-4">
+                                Use this section to create staff accounts after a self-hosted installation. Only master admin accounts can manage workspace access.
+                            </div>
+
+                            <form action="{{ route('admin.settings.workspace-access.store') }}" method="post" class="mb-4">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="input-label">First name</label>
+                                        <input type="text" class="form-control" name="workspace_f_name" placeholder="Taylor" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="input-label">Last name</label>
+                                        <input type="text" class="form-control" name="workspace_l_name" placeholder="Ops" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="input-label">Email</label>
+                                        <input type="email" class="form-control" name="workspace_email" placeholder="ops@company.com" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="input-label">Role</label>
+                                        <select class="form-control" name="workspace_role_id" required>
+                                            @foreach($workspaceRoles as $workspaceRole)
+                                                <option value="{{ $workspaceRole->id }}">{{ $workspaceRole->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <label class="input-label">Temporary password</label>
+                                        <input type="password" class="form-control" name="workspace_password" placeholder="At least 8 characters" required>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <label class="input-label">Confirm password</label>
+                                        <input type="password" class="form-control" name="workspace_password_confirmation" placeholder="Repeat password" required>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button type="submit" class="btn btn-primary">Create workspace account</button>
+                                </div>
+                            </form>
+
+                            <div class="mb-3">
+                                <h5 class="mb-1">Current accounts</h5>
+                                <p class="text-muted mb-0">Reset passwords here or add new staff after the first install.</p>
+                            </div>
+
+                            @foreach($workspaceAdmins as $workspaceAdmin)
+                                <form action="{{ route('admin.settings.workspace-access.update', $workspaceAdmin->id) }}" method="post" class="border rounded p-3 mb-3">
+                                    @csrf
+                                    <div class="row align-items-end">
+                                        <div class="col-md-2">
+                                            <label class="input-label">First name</label>
+                                            <input type="text" class="form-control" name="workspace_f_name" value="{{ $workspaceAdmin->f_name }}" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="input-label">Last name</label>
+                                            <input type="text" class="form-control" name="workspace_l_name" value="{{ $workspaceAdmin->l_name }}" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="input-label">Email</label>
+                                            <input type="email" class="form-control" name="workspace_email" value="{{ $workspaceAdmin->email }}" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="input-label">Role</label>
+                                            <select class="form-control" name="workspace_role_id" {{ auth('admin')->id() === $workspaceAdmin->id ? 'disabled' : '' }}>
+                                                @foreach($workspaceRoles as $workspaceRole)
+                                                    <option value="{{ $workspaceRole->id }}" {{ (int) $workspaceAdmin->role_id === (int) $workspaceRole->id ? 'selected' : '' }}>
+                                                        {{ $workspaceRole->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @if(auth('admin')->id() === $workspaceAdmin->id)
+                                                <input type="hidden" name="workspace_role_id" value="{{ $workspaceAdmin->role_id }}">
+                                            @endif
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="input-label">New password (optional)</label>
+                                            <input type="password" class="form-control" name="workspace_password" placeholder="Leave blank to keep current password">
+                                        </div>
+                                        <div class="col-md-3 mt-3">
+                                            <label class="input-label">Confirm password</label>
+                                            <input type="password" class="form-control" name="workspace_password_confirmation" placeholder="Repeat new password">
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <div class="text-muted small">
+                                                Role: <strong>{{ $workspaceAdmin->role?->name ?? 'Unassigned' }}</strong>
+                                                @if(auth('admin')->id() === $workspaceAdmin->id)
+                                                    · Current session
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mt-3 text-right">
+                                            <button type="submit" class="btn btn-primary btn-block">Save account</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                @if(auth('admin')->id() !== $workspaceAdmin->id)
+                                    <form action="{{ route('admin.settings.workspace-access.delete', $workspaceAdmin->id) }}" method="post" class="mb-4" onsubmit="return confirm('Remove this workspace account?');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Remove {{ $workspaceAdmin->email }}</button>
+                                    </form>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
                 <div id="stickyBlockEndPoint"></div>
             </div>
         </div>

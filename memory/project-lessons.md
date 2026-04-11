@@ -1759,6 +1759,64 @@
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/brand-naming-shortlist-v1.md`
 
+## 2026-04-10 - Formal self-hosted readiness must be verified against a blank install, not inferred from the demo environment
+
+## Snapshot
+- Date: 2026-04-10
+- Scope: verifying formal customer install flow, customer-owned accounts, and homepage claims before promotion
+- Outcome: improved
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Treating the self-hosted flow as a separate product surface exposed gaps that the hosted demo never would have shown.
+- Feature tests for blank bootstrap and workspace access caught regressions quickly while the actual install path was being hardened.
+- Replaying the blank install logic against a temporary database gave a real signal even when Docker build networking became a distraction.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I assumed “self-hosted exists” meant “formal customer install is promotion-ready”
+- What happened: the self-hosted pack still seeded demo-style accounts and the guest demo role into installs that were supposed to be customer-owned blank workspaces.
+- Root cause: the original self-hosted package was validated from a deployment perspective, not from a customer handoff perspective.
+- Earlier signal I missed: the docs still implied default accounts on install, which contradicted the promise of a clean production handoff.
+- Prevention rule: any production/self-hosted claim must be validated in the exact target mode (`blank`, not `demo`) before it appears on the homepage.
+- Next-time checklist item: test blank install outputs, not just startup health, before shipping self-hosted messaging.
+
+### Mistake: I left account management as an implicit assumption instead of an explicit product capability
+- What happened: a customer could install the app, but there was no clean returns-focused way for a master admin to create new staff accounts after setup.
+- Root cause: the admin management model from the inherited codebase was never fully translated into the narrowed product workflow.
+- Earlier signal I missed: the settings page only exposed profile/password, which is not enough for a customer-owned deployment.
+- Prevention rule: every customer-owned deployment must have a clearly documented path for creating and managing staff accounts after install.
+- Next-time checklist item: verify “how does the customer add their second user?” before claiming install readiness.
+
+### Mistake: I let infrastructure noise slow down product verification
+- What happened: the first real self-hosted check got stuck on creating a temporary `.env.self-hosted`, which delayed the actual question: what accounts and roles does a blank install create?
+- Root cause: the verification plan was too dependent on the compose happy path and not enough on isolating the exact business invariant to prove.
+- Earlier signal I missed: the real risk was seeded data and workspace ownership, not Docker syntax.
+- Prevention rule: when verifying install readiness, prove the business invariant first, then prove the packaging path.
+- Next-time checklist item: separate “does the packaged deploy boot?” from “does the customer get the right workspace state?”
+
+## Permanent Rules
+- Never market a self-hosted mode until a blank install has been verified to produce customer-owned data and customer-owned accounts only.
+- “Production install” and “demo install” must be explicit modes with different seeded outputs and different docs.
+- Customer-owned deployment claims require an in-product path for creating additional workspace users.
+- When install verification gets blocked by tooling noise, switch to the narrowest environment that can still prove the production invariant.
+
+## Next-Project Checklist
+- [ ] Run a blank install verification before updating self-hosted homepage copy.
+- [ ] Confirm default/demo accounts are absent from blank mode.
+- [ ] Confirm guest/demo roles are absent from blank mode.
+- [ ] Confirm a master admin can create, update, and remove workspace users after install.
+- [ ] Verify the docs match the actual bootstrap mode outputs.
+- [ ] Separate packaging validation from product-state validation when debugging installers.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/seeders/AdminTableSeeder.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/Admin/SystemController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/settings.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/SelfHostedBootstrapTest.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/WorkspaceAccessManagementTest.php`
+- `/Users/mikezhang/Desktop/projects/6POS/self-hosted-web-delivery-pack.md`
+
 ## 2026-04-10 - Role permissions are not enough when public demo and internal staff share one backend
 
 ## Snapshot

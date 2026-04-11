@@ -52,6 +52,9 @@ Route::group(['namespace'=>'Admin', 'as' => 'admin.', 'prefix'=>'admin', 'middle
             Route::post('settings', 'settingsUpdate');
             Route::get('settings-password', 'settings')->name('settings.password');
             Route::post('settings-password', 'settingsPasswordUpdate')->name('settings-password');
+            Route::post('settings/workspace-access', 'workspaceAccessStore')->name('settings.workspace-access.store');
+            Route::post('settings/workspace-access/{id}', 'workspaceAccessUpdate')->name('settings.workspace-access.update');
+            Route::post('settings/workspace-access/{id}/delete', 'workspaceAccessDelete')->name('settings.workspace-access.delete');
         });
 
         Route::group(['prefix' => 'custom-role', 'as' => 'custom-role.', 'middleware' => ['module:employee_role_section']], function () {

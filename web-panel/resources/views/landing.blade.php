@@ -785,6 +785,7 @@
                 <nav class="topnav">
                     <a href="#problem">Problem</a>
                     <a href="#workflow">Workflow</a>
+                    <a href="#deployment">Deployment</a>
                     <a href="#fit">Who It Fits</a>
                     <a href="#faq">FAQ</a>
                 </nav>
@@ -821,8 +822,8 @@
                             Each client can enforce its own evidence rules.
                         </div>
                         <div>
-                            <strong>Brand Review Link</strong>
-                            Share one clean case record instead of stitching proof together later.
+                            <strong>Customer-owned deployment</strong>
+                            Formal production use runs in your own Docker environment and keeps data under your control.
                         </div>
                     </div>
                 </article>
@@ -1002,6 +1003,36 @@
             </div>
         </section>
 
+        <section class="section" id="deployment">
+            <div class="shell">
+                <div class="section-heading fade-up">
+                    <h2>Production runs on the customer side, not in a shared vendor workspace</h2>
+                    <p>
+                        The live demo is hosted so you can evaluate the workflow quickly. Formal production use is delivered as a
+                        self-hosted Docker package, so the customer controls the database, uploaded evidence, and staff accounts.
+                    </p>
+                </div>
+
+                <div class="signals-grid">
+                    <article class="signal-card fade-up">
+                        <span class="kicker">Production deployment</span>
+                        <h3>Install with Docker on your own infrastructure</h3>
+                        <p>We provide a self-hosted web package for formal customer use. Your team runs the app in its own environment instead of sharing data with our demo server.</p>
+                    </article>
+                    <article class="signal-card fade-up delay-1">
+                        <span class="kicker">Workspace control</span>
+                        <h3>Create your own staff accounts after install</h3>
+                        <p>The first master admin is configured during installation, then that admin can create additional ops and inspector accounts from the workspace settings page.</p>
+                    </article>
+                    <article class="signal-card fade-up delay-2">
+                        <span class="kicker">Optional Pro add-on</span>
+                        <h3>Managed local knowledge workspace with your own AI keys</h3>
+                        <p>For teams that want faster SOP lookup and internal Q&A, we can install a local knowledge workspace on the customer side and connect the customer’s own OpenAI-compatible API keys.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
         <section class="section" id="faq">
             <div class="shell">
                 <div class="section-heading fade-up">
@@ -1023,6 +1054,14 @@
                     <article class="faq-item fade-up delay-1">
                         <h3>What makes it different?</h3>
                         <p>Brand-specific playbooks, evidence completeness, one clean Brand Review Link, and a defensible record that survives after the warehouse floor has moved on.</p>
+                    </article>
+                    <article class="faq-item fade-up">
+                        <h3>Is production data shared with Dossentry?</h3>
+                        <p>No. Formal customer deployments can run as a self-hosted Docker package, so the database and uploaded evidence stay in the customer’s own environment.</p>
+                    </article>
+                    <article class="faq-item fade-up delay-1">
+                        <h3>Can we add our own local knowledge base later?</h3>
+                        <p>Yes, as a Pro add-on. The most practical version is a customer-owned local knowledge workspace with the customer’s own OpenAI-compatible API keys, not a shared vendor AI service.</p>
                     </article>
                 </div>
             </div>

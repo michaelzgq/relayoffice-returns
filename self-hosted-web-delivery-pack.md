@@ -41,13 +41,14 @@
 
 会初始化：
 
-- admin accounts
+- customer-owned admin accounts
 - 基础 business settings
 
 不会初始化：
 
 - demo return cases
 - demo evidence images
+- guest demo account
 
 ### 2. Demo Workspace
 
@@ -94,6 +95,7 @@ openssl rand -base64 32
 - `MYSQL_ROOT_PASSWORD`
 - `APP_HOST_PORT`
 - `SELF_HOSTED_BOOTSTRAP_MODE`
+- `SELF_HOSTED_PRIMARY_ADMIN_*`
 
 ### Recommended Defaults
 
@@ -113,6 +115,24 @@ APP_URL=https://their-domain.example
 FORCE_HTTPS=true
 APP_HOST_PORT=8080
 SELF_HOSTED_BOOTSTRAP_MODE=blank
+```
+
+推荐同时设置：
+
+```env
+SELF_HOSTED_PRIMARY_ADMIN_FIRST_NAME=Workspace
+SELF_HOSTED_PRIMARY_ADMIN_LAST_NAME=Owner
+SELF_HOSTED_PRIMARY_ADMIN_EMAIL=owner@your-company.example
+SELF_HOSTED_PRIMARY_ADMIN_PASSWORD=use-a-real-password-here
+```
+
+可选：
+
+```env
+SELF_HOSTED_OPS_ADMIN_EMAIL=ops@your-company.example
+SELF_HOSTED_OPS_ADMIN_PASSWORD=use-a-real-password-here
+SELF_HOSTED_INSPECTOR_EMAIL=inspector@your-company.example
+SELF_HOSTED_INSPECTOR_PASSWORD=use-a-real-password-here
 ```
 
 ### Step 4
@@ -147,16 +167,39 @@ http://localhost:8080
 http://localhost:8080/admin/auth/login
 ```
 
-## Default Login Accounts
+## Login Accounts After Install
+
+### Blank Workspace
+
+使用你在 `.env.self-hosted` 里配置的首个管理员账号登录。
+
+如果你填了可选的 ops / inspector 账号，也会一并创建。
+
+### Demo Workspace
 
 - `admin@admin.com / 12345678`
 - `ops@admin.com / 12345678`
 - `inspector@admin.com / 12345678`
+- `guest@dossentry.com / 12345678`
 
 登录页当前默认会显示一个本地图形验证码。  
 这不是部署异常，是后台默认登录保护流程的一部分。
 
 第一次登录后必须立刻改密码。
+
+## Creating More Accounts After Install
+
+正式客户环境安装完成后，`Master Admin` 可以在：
+
+- `Settings -> Workspace Access`
+
+里新增、重置、删除工作区账号。
+
+当前支持的正式角色：
+
+- `Master Admin`
+- `Ops Manager`
+- `Inspector`
 
 ## Upgrade Flow
 
@@ -194,6 +237,7 @@ docker compose --env-file .env.self-hosted -f docker-compose.self-hosted.yml --p
 - automated upgrade channel
 - self-service installer
 - tenant isolation
+- local knowledge base add-on provisioning
 
 ## Pricing Recommendation
 

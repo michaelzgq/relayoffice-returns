@@ -47,6 +47,7 @@ case "$BOOTSTRAP_MODE" in
   blank)
     php artisan db:seed --class=AdminTableSeeder --force
     php artisan db:seed --class=DemoBootstrapSeeder --force
+    echo "Blank workspace bootstrapped with customer-owned accounts."
     ;;
   demo)
     php artisan db:seed --class=AdminTableSeeder --force

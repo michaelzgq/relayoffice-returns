@@ -544,6 +544,15 @@ class Helpers
         return strtolower((string) auth('admin')->user()->role?->name) === 'guest demo';
     }
 
+    public static function returns_user_is_master_admin(): bool
+    {
+        if (!auth('admin')->check() || !auth('admin')->user()) {
+            return false;
+        }
+
+        return (int) auth('admin')->user()->role_id === 1;
+    }
+
     public static function returns_user_is_inspector(): bool
     {
         return self::admin_has_module('returns_inspect_section')
