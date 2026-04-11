@@ -223,6 +223,15 @@
 - Prevention rule: Any marketing card row with long proof statements must have its own tablet breakpoint and reduced headline scale, independent of the main page grid.
 - Next-time checklist item: Before shipping a landing page section, check the layout at desktop, tablet, and narrow laptop widths, not just full desktop and phone.
 
+## 2026-04-11 - Landing Page Visual Direction Drift
+
+### Mistake: Let the homepage accumulate multiple partial style directions instead of resetting to one coherent marketing layout
+- What happened: The landing page picked up several rounds of piecemeal tweaks, which left the page with mixed visual language, uneven density, and CSS that solved one screenshot while hurting another.
+- Root cause: I optimized for local fixes instead of reasserting a single reference layout and rebuilding the affected sections around it.
+- Earlier signal I missed: The page had already started showing “good component, bad page” symptoms, which is a sign the issue is layout direction, not isolated spacing.
+- Prevention rule: When a user asks to match a reference landing page, stop stacking incremental style patches and reset the full section to one explicit visual system.
+- Next-time checklist item: For landing-page redesigns, define the target layout pattern first (nav, hero, proof cards, workflow, CTA) before touching individual card spacing or colors.
+
 ## Next-Project Checklist
 - [ ] Confirm each queue or board page has at least one direct single-item action.
 - [ ] Add batch action support only after single-item action and validation are already working.
