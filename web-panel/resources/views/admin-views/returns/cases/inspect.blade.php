@@ -48,6 +48,170 @@
             font-size: 12px;
             font-weight: 600;
         }
+
+        .scan-intake {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(55, 125, 255, 0.14);
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(55, 125, 255, 0.06), rgba(0, 201, 219, 0.05));
+        }
+        .scan-intake-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #1d4ed8;
+            margin-bottom: 6px;
+        }
+        .scan-intake-copy {
+            color: #52637a;
+            margin: 0;
+            max-width: 320px;
+            line-height: 1.5;
+        }
+        .scan-status {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        .scan-status.is-visible {
+            display: block;
+        }
+        .scan-status--info {
+            background: #eef5ff;
+            color: #1d4ed8;
+        }
+        .scan-status--success {
+            background: #ecfdf3;
+            color: #0f8a4b;
+        }
+        .scan-status--warning {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+        .scan-input-row {
+            display: flex;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .scan-input-row .form-control {
+            flex: 1 1 auto;
+        }
+        .scan-action-btn {
+            border-radius: 12px;
+            white-space: nowrap;
+            min-width: 96px;
+        }
+        .scan-helper {
+            font-size: 12px;
+            color: #6c7a91;
+            margin-top: 8px;
+        }
+        .scan-sheet {
+            position: fixed;
+            inset: 0;
+            z-index: 2050;
+            display: none;
+        }
+        .scan-sheet.is-open {
+            display: block;
+        }
+        .scan-sheet__backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.72);
+        }
+        .scan-sheet__dialog {
+            position: relative;
+            max-width: 460px;
+            margin: 4vh auto 0;
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.32);
+            overflow: hidden;
+        }
+        .scan-sheet__header,
+        .scan-sheet__footer {
+            padding: 18px 20px;
+        }
+        .scan-sheet__body {
+            padding: 0 20px 20px;
+        }
+        .scan-sheet__eyebrow {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #1d4ed8;
+            margin-bottom: 8px;
+        }
+        .scan-sheet__copy {
+            color: #6b7280;
+            margin-bottom: 14px;
+        }
+        .scan-viewport {
+            position: relative;
+            border-radius: 18px;
+            background: #0f172a;
+            min-height: 360px;
+            overflow: hidden;
+        }
+        .scan-viewport video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .scan-viewport::after {
+            content: '';
+            position: absolute;
+            inset: 15% 10%;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            border-radius: 18px;
+            box-shadow: 0 0 0 999px rgba(15, 23, 42, 0.18);
+            pointer-events: none;
+        }
+        .scan-manual-help {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .scan-target-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(55, 125, 255, 0.12);
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+        @media (max-width: 767.98px) {
+            .scan-intake,
+            .scan-input-row {
+                flex-direction: column;
+            }
+            .scan-action-btn {
+                width: 100%;
+            }
+            .scan-sheet__dialog {
+                margin: 0;
+                min-height: 100vh;
+                border-radius: 0;
+            }
+            .scan-viewport {
+                min-height: 50vh;
+            }
+        }
     </style>
 @endpush
 
@@ -82,13 +246,27 @@
                             <h4 class="mb-0">1. Return Reference</h4>
                         </div>
                         <div class="card-body">
+                            <div class="scan-intake">
+                                <div>
+                                    <div class="scan-intake-label">Fastest path</div>
+                                    <p class="scan-intake-copy">Scan the return label first. Dossentry will try to pull the return ID, SKU / barcode, and serial in one pass before you touch the keyboard.</p>
+                                </div>
+                                <button class="btn btn-primary scan-action-btn" type="button" data-scan-mode="label">Scan return label</button>
+                            </div>
+
+                            <div class="scan-status scan-status--info" id="scan-status-banner" role="status" aria-live="polite"></div>
+
                             <div class="form-group">
                                 <label class="title">Return ID</label>
-                                <input class="form-control form-control-lg" type="text" name="return_id" value="{{ old('return_id', $currentCase?->return_id) }}" placeholder="Scan or type return ID" required>
+                                <div class="scan-input-row">
+                                    <input class="form-control form-control-lg" id="return-id-input" type="text" name="return_id" value="{{ old('return_id', $currentCase?->return_id) }}" placeholder="Scan or type return ID" required>
+                                    <button class="btn btn-outline-primary scan-action-btn" type="button" data-scan-mode="field" data-scan-target="return_id">Scan</button>
+                                </div>
+                                <div class="scan-helper">Works with camera scan, USB/Bluetooth barcode scanners, or manual typing.</div>
                             </div>
                             <div class="form-group">
                                 <label class="title">Client / Brand</label>
-                                <select class="form-control form-control-lg" name="brand_id" required>
+                                <select class="form-control form-control-lg" id="brand-select-input" name="brand_id" required>
                                     <option value="">Choose the client playbook</option>
                                     @foreach($brands as $brand)
                                         <option value="{{ $brand->id }}" {{ (string) old('brand_id', $currentCase?->brand_id) === (string) $brand->id ? 'selected' : '' }}>
@@ -99,11 +277,17 @@
                             </div>
                             <div class="form-group">
                                 <label class="title">SKU / Barcode <span class="text-danger {{ $initialProfile?->sku_required ? '' : 'd-none' }}" id="sku-required-indicator">*</span></label>
-                                <input class="form-control form-control-lg" id="product-sku-input" type="text" name="product_sku" value="{{ old('product_sku', $currentCase?->product_sku) }}" placeholder="Scan or type SKU">
+                                <div class="scan-input-row">
+                                    <input class="form-control form-control-lg" id="product-sku-input" type="text" name="product_sku" value="{{ old('product_sku', $currentCase?->product_sku) }}" placeholder="Scan or type SKU">
+                                    <button class="btn btn-outline-primary scan-action-btn" type="button" data-scan-mode="field" data-scan-target="product_sku">Scan</button>
+                                </div>
                             </div>
                             <div class="form-group mb-0">
                                 <label class="title">Serial Number <span class="text-danger {{ $initialProfile?->serial_required ? '' : 'd-none' }}" id="serial-required-indicator">*</span></label>
-                                <input class="form-control form-control-lg" id="serial-number-input" type="text" name="serial_number" value="{{ old('serial_number', $currentCase?->serial_number) }}" placeholder="Only if this playbook requires it">
+                                <div class="scan-input-row">
+                                    <input class="form-control form-control-lg" id="serial-number-input" type="text" name="serial_number" value="{{ old('serial_number', $currentCase?->serial_number) }}" placeholder="Only if this playbook requires it">
+                                    <button class="btn btn-outline-primary scan-action-btn" type="button" data-scan-mode="field" data-scan-target="serial_number">Scan</button>
+                                </div>
                             </div>
 
                             <div class="alert alert-soft-primary mt-3 mb-0 rule-summary" id="rule-summary"
@@ -272,6 +456,27 @@
                 </div>
             </div>
         </form>
+
+        <div class="scan-sheet d-none" id="scan-sheet" aria-hidden="true">
+            <div class="scan-sheet__backdrop" data-scan-close></div>
+            <div class="scan-sheet__dialog" role="dialog" aria-modal="true" aria-labelledby="scan-sheet-title">
+                <div class="scan-sheet__header">
+                    <div class="scan-sheet__eyebrow">Warehouse scan</div>
+                    <h3 class="mb-1" id="scan-sheet-title">Scan return label</h3>
+                    <div class="small text-muted" id="scan-sheet-subtitle">Point the camera at a QR code or barcode.</div>
+                </div>
+                <div class="scan-sheet__body">
+                    <div class="scan-viewport" id="scan-viewport">
+                        <video id="scan-video" playsinline muted></video>
+                    </div>
+                    <div class="scan-manual-help" id="scan-manual-help">Tip: if the browser does not support camera scanning, focus the field and use a USB or Bluetooth scanner instead.</div>
+                </div>
+                <div class="scan-sheet__footer d-flex justify-content-between align-items-center">
+                    <div class="small text-muted">Target <span class="scan-target-pill" id="scan-target-pill">Return label</span></div>
+                    <button class="btn btn-light" type="button" data-scan-close>Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -291,10 +496,16 @@
             const existingEvidence = Number(summary.dataset.existingEvidence || 0);
             const isEditMode = Boolean(form.querySelector('[name="case_id"]'));
 
-            const brandSelect = form.querySelector('[name="brand_id"]');
+            const fieldInputs = {
+                return_id: document.getElementById('return-id-input'),
+                product_sku: document.getElementById('product-sku-input'),
+                serial_number: document.getElementById('serial-number-input'),
+            };
+
+            const brandSelect = document.getElementById('brand-select-input');
             const refundSelect = document.getElementById('refund-status-input');
-            const skuInput = document.getElementById('product-sku-input');
-            const serialInput = document.getElementById('serial-number-input');
+            const skuInput = fieldInputs.product_sku;
+            const serialInput = fieldInputs.serial_number;
             const notesInput = document.getElementById('notes-input');
 
             const skuRequiredIndicator = document.getElementById('sku-required-indicator');
@@ -314,11 +525,30 @@
             const recommendationCopy = document.getElementById('recommendation-copy');
             const conditionInputs = Array.from(form.querySelectorAll('.condition-input'));
             const dispositionInputs = Array.from(form.querySelectorAll('.disposition-input'));
+            const scanStatusBanner = document.getElementById('scan-status-banner');
+            const scanSheet = document.getElementById('scan-sheet');
+            const scanVideo = document.getElementById('scan-video');
+            const scanTitle = document.getElementById('scan-sheet-title');
+            const scanSubtitle = document.getElementById('scan-sheet-subtitle');
+            const scanTargetPill = document.getElementById('scan-target-pill');
+            const scanManualHelp = document.getElementById('scan-manual-help');
+            const scanButtons = Array.from(document.querySelectorAll('[data-scan-mode]'));
+            const scanClosers = Array.from(document.querySelectorAll('[data-scan-close]'));
 
             const statusLabels = @json(\App\Models\ReturnCase::decisionStatusLabels());
             const humanize = (value) => statusLabels[value] || String(value || '').replaceAll('_', ' ');
             const humanizeList = (values) => (values || []).map((value) => humanize(value)).join(', ');
             const mapToHumanList = (mapping) => Object.entries(mapping || {}).map(([condition, disposition]) => `${humanize(condition)} -> ${humanize(disposition)}`).join(', ');
+
+            const scanState = {
+                active: false,
+                mode: 'label',
+                target: 'return_id',
+                stream: null,
+                detector: null,
+                rafId: null,
+                lastRawValue: null,
+            };
 
             const setRequiredState = (input, indicator, required) => {
                 if (!input || !indicator) {
@@ -327,6 +557,15 @@
 
                 input.required = required;
                 indicator.classList.toggle('d-none', !required);
+            };
+
+            const setScanStatus = (message, tone = 'info') => {
+                if (!scanStatusBanner) {
+                    return;
+                }
+
+                scanStatusBanner.textContent = message;
+                scanStatusBanner.className = `scan-status scan-status--${tone} is-visible`;
             };
 
             const syncOptionGroup = (selector, allowedValues) => {
@@ -447,6 +686,300 @@
                 }
             };
 
+            const normalizeKey = (key) => String(key || '')
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '');
+
+            const parseUrlPayload = (rawValue) => {
+                try {
+                    const url = new URL(rawValue);
+                    const payload = {};
+                    url.searchParams.forEach((value, key) => {
+                        payload[key] = value;
+                    });
+                    return Object.keys(payload).length ? payload : null;
+                } catch (error) {
+                    return null;
+                }
+            };
+
+            const parseDelimitedPayload = (rawValue) => {
+                const payload = {};
+                String(rawValue || '').split(/[\n;|]+/).forEach((segment) => {
+                    const trimmed = segment.trim();
+                    if (!trimmed) {
+                        return;
+                    }
+
+                    const match = trimmed.match(/^([^:=]+)\s*[:=]\s*(.+)$/);
+                    if (match) {
+                        payload[match[1].trim()] = match[2].trim();
+                    }
+                });
+                return Object.keys(payload).length ? payload : null;
+            };
+
+            const normalizePayload = (rawValue) => {
+                const trimmed = String(rawValue || '').trim();
+                if (!trimmed) {
+                    return null;
+                }
+
+                const candidates = [];
+                try {
+                    const json = JSON.parse(trimmed);
+                    if (json && typeof json === 'object' && !Array.isArray(json)) {
+                        candidates.push(json);
+                    }
+                } catch (error) {
+                    // no-op
+                }
+
+                const urlPayload = parseUrlPayload(trimmed);
+                if (urlPayload) {
+                    candidates.push(urlPayload);
+                }
+
+                const delimitedPayload = parseDelimitedPayload(trimmed);
+                if (delimitedPayload) {
+                    candidates.push(delimitedPayload);
+                }
+
+                const normalized = {};
+                for (const payload of candidates) {
+                    Object.entries(payload).forEach(([key, value]) => {
+                        const normalizedKey = normalizeKey(key);
+                        if (!normalizedKey || value === null || value === undefined || value === '') {
+                            return;
+                        }
+
+                        if (['return_id', 'returnid', 'return_reference', 'rma', 'rma_id'].includes(normalizedKey)) {
+                            normalized.return_id = String(value).trim();
+                        }
+
+                        if (['sku', 'barcode', 'product_sku', 'productsku', 'item_sku'].includes(normalizedKey)) {
+                            normalized.product_sku = String(value).trim();
+                        }
+
+                        if (['serial', 'serial_number', 'serialnumber', 'sn'].includes(normalizedKey)) {
+                            normalized.serial_number = String(value).trim();
+                        }
+
+                        if (['brand', 'client', 'merchant'].includes(normalizedKey)) {
+                            normalized.brand_label = String(value).trim();
+                        }
+
+                        if (['brand_id', 'client_id', 'merchant_id'].includes(normalizedKey)) {
+                            normalized.brand_id = String(value).trim();
+                        }
+                    });
+                }
+
+                return Object.keys(normalized).length ? normalized : null;
+            };
+
+            const applyBrandSelection = (parsedPayload) => {
+                if (!parsedPayload) {
+                    return false;
+                }
+
+                let matched = false;
+                const normalizedBrandLabel = String(parsedPayload.brand_label || '').trim().toLowerCase();
+                const normalizedBrandId = String(parsedPayload.brand_id || '').trim();
+
+                Array.from(brandSelect.options).forEach((option) => {
+                    const optionLabel = option.textContent.trim().toLowerCase();
+                    const matchesId = normalizedBrandId !== '' && option.value === normalizedBrandId;
+                    const matchesLabel = normalizedBrandLabel !== '' && optionLabel === normalizedBrandLabel;
+
+                    if (!matched && (matchesId || matchesLabel)) {
+                        brandSelect.value = option.value;
+                        matched = true;
+                    }
+                });
+
+                if (matched) {
+                    syncRuleProfile();
+                }
+
+                return matched;
+            };
+
+            const focusField = (target) => {
+                const input = fieldInputs[target] || fieldInputs.return_id;
+                input?.focus();
+            };
+
+            const applyRawFieldValue = (target, rawValue) => {
+                const input = fieldInputs[target] || fieldInputs.return_id;
+                if (!input) {
+                    return;
+                }
+                input.value = String(rawValue || '').trim();
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                focusField(target);
+            };
+
+            const applyParsedPayload = (rawValue) => {
+                const parsedPayload = normalizePayload(rawValue);
+                if (!parsedPayload) {
+                    return false;
+                }
+
+                if (parsedPayload.return_id) {
+                    applyRawFieldValue('return_id', parsedPayload.return_id);
+                }
+                if (parsedPayload.product_sku) {
+                    applyRawFieldValue('product_sku', parsedPayload.product_sku);
+                }
+                if (parsedPayload.serial_number) {
+                    applyRawFieldValue('serial_number', parsedPayload.serial_number);
+                }
+
+                const matchedBrand = applyBrandSelection(parsedPayload);
+                setScanStatus(`Label scanned. Filled ${[
+                    parsedPayload.return_id ? 'return ID' : null,
+                    parsedPayload.product_sku ? 'SKU / barcode' : null,
+                    parsedPayload.serial_number ? 'serial' : null,
+                    matchedBrand ? 'brand' : null,
+                ].filter(Boolean).join(', ')}.`, 'success');
+                focusField(parsedPayload.serial_number ? 'serial_number' : (parsedPayload.product_sku ? 'product_sku' : 'return_id'));
+                return true;
+            };
+
+            const closeScanner = () => {
+                scanState.active = false;
+                if (scanState.rafId) {
+                    cancelAnimationFrame(scanState.rafId);
+                    scanState.rafId = null;
+                }
+                if (scanState.stream) {
+                    scanState.stream.getTracks().forEach((track) => track.stop());
+                    scanState.stream = null;
+                }
+                if (scanVideo) {
+                    scanVideo.pause();
+                    scanVideo.srcObject = null;
+                }
+                scanSheet.classList.add('d-none');
+                scanSheet.classList.remove('is-open');
+                scanSheet.setAttribute('aria-hidden', 'true');
+            };
+
+            const handleDetectedCode = (rawValue) => {
+                if (!rawValue || rawValue === scanState.lastRawValue) {
+                    return;
+                }
+
+                scanState.lastRawValue = rawValue;
+                closeScanner();
+
+                if (scanState.mode === 'label') {
+                    if (applyParsedPayload(rawValue)) {
+                        return;
+                    }
+
+                    applyRawFieldValue('return_id', rawValue);
+                    setScanStatus('Scanned one code. Added it to Return ID because the label did not include structured fields.', 'warning');
+                    return;
+                }
+
+                applyRawFieldValue(scanState.target, rawValue);
+                setScanStatus(`${String(scanState.target).replace('_', ' ')} captured from scanner.`, 'success');
+            };
+
+            const scanLoop = async () => {
+                if (!scanState.active || !scanState.detector || !scanVideo || scanVideo.readyState < 2) {
+                    scanState.rafId = requestAnimationFrame(scanLoop);
+                    return;
+                }
+
+                try {
+                    const barcodes = await scanState.detector.detect(scanVideo);
+                    if (barcodes.length > 0) {
+                        const rawValue = barcodes.find((item) => item.rawValue)?.rawValue;
+                        if (rawValue) {
+                            handleDetectedCode(rawValue);
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    setScanStatus('Camera scanning failed on this browser. Use Chrome or Edge on mobile, or use a hardware scanner in the active field.', 'warning');
+                    closeScanner();
+                    return;
+                }
+
+                scanState.rafId = requestAnimationFrame(scanLoop);
+            };
+
+            const getSupportedFormats = async () => {
+                const fallbackFormats = ['qr_code', 'code_128', 'code_39', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'itf', 'codabar'];
+                if (!window.BarcodeDetector) {
+                    return fallbackFormats;
+                }
+
+                try {
+                    const supported = await window.BarcodeDetector.getSupportedFormats();
+                    return fallbackFormats.filter((format) => supported.includes(format));
+                } catch (error) {
+                    return fallbackFormats;
+                }
+            };
+
+            const openScanner = async (mode, target = 'return_id') => {
+                if (scanState.active) {
+                    closeScanner();
+                }
+
+                scanState.mode = mode;
+                scanState.target = target;
+                scanState.lastRawValue = null;
+
+                if (!window.BarcodeDetector || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    focusField(target);
+                    setScanStatus('Camera scan is not available in this browser. Focus the field and use a USB/Bluetooth scanner, or open Dossentry in Chrome on mobile.', 'warning');
+                    return;
+                }
+
+                try {
+                    const formats = await getSupportedFormats();
+                    scanState.detector = new window.BarcodeDetector({ formats: formats.length ? formats : undefined });
+                    scanState.stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: { ideal: 'environment' },
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                        },
+                        audio: false,
+                    });
+                } catch (error) {
+                    focusField(target);
+                    setScanStatus('Camera access was blocked. Allow camera access and try again, or use a USB/Bluetooth scanner in the active field.', 'warning');
+                    return;
+                }
+
+                scanSheet.classList.remove('d-none');
+                scanSheet.classList.add('is-open');
+                scanSheet.setAttribute('aria-hidden', 'false');
+
+                scanTitle.textContent = mode === 'label' ? 'Scan return label' : 'Scan field value';
+                scanSubtitle.textContent = mode === 'label'
+                    ? 'Point the camera at the return label. Structured QR codes will auto-fill multiple fields.'
+                    : 'Point the camera at the barcode or QR code for this field.';
+                scanTargetPill.textContent = mode === 'label' ? 'Return label' : humanize(target);
+                scanManualHelp.textContent = mode === 'label'
+                    ? 'Best result: QR code or barcode that includes return ID, SKU/barcode, or serial. If your browser does not support camera scan, use a Bluetooth scanner while the cursor is in Return ID.'
+                    : 'If camera scan is unavailable, close this sheet and use a USB/Bluetooth scanner while the cursor is in the target field.';
+
+                scanVideo.srcObject = scanState.stream;
+                await scanVideo.play();
+                scanState.active = true;
+                scanLoop();
+            };
+
             if (refundSelect) {
                 refundSelect.addEventListener('change', function () {
                     refundSelect.dataset.userTouched = '1';
@@ -464,6 +997,24 @@
                     syncRecommendedDisposition(profiles[brandSelect.value] || null, true);
                 });
             });
+
+            scanButtons.forEach((button) => {
+                button.addEventListener('click', function () {
+                    openScanner(button.dataset.scanMode, button.dataset.scanTarget || 'return_id');
+                });
+            });
+
+            scanClosers.forEach((button) => {
+                button.addEventListener('click', closeScanner);
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && scanState.active) {
+                    closeScanner();
+                }
+            });
+
+            window.addEventListener('beforeunload', closeScanner);
 
             brandSelect.addEventListener('change', syncRuleProfile);
             syncRuleProfile();

@@ -54,6 +54,8 @@ class ReturnsWorkspaceRoleTest extends TestCase
         $response = $this->actingAs($inspector, 'admin')->get(route('admin.returns.inspect'));
 
         $response->assertOk();
+        $response->assertSee('Scan return label');
+        $response->assertSee('Works with camera scan, USB/Bluetooth barcode scanners, or manual typing.');
         $response->assertSee('Decision state will be set automatically');
         $response->assertDontSee('name="refund_status"', false);
         $response->assertDontSee('name="received_at"', false);
