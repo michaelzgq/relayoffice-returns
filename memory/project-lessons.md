@@ -2528,3 +2528,13 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/review-requests/index.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/admin.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/WorkflowReviewRequestFlowTest.php`
+
+## 2026-04-10 - Marketing advantages must be visible above the fold
+- 错误: 已经决定把“本地部署、数据留在客户环境、可选本地知识库”作为核心差异化，但首页最醒目的区域仍然在讲通用卖点。
+- 根因: 只补了说明文案，没有把商业优势做成视觉层级最高的展示。
+- 预警信号: 用户主动指出“希望用特别字体或颜色标注”，说明现有页面没有把优势传达出去。
+- 新规则: 任何首页主卖点如果是商业定位差异，不允许只埋在 FAQ 或中段说明里，必须在 hero 首屏以高对比组件直接展示。
+- Checklist:
+  - 首屏是否在 3 秒内看出和竞品/SaaS 的差异
+  - 差异化卖点是否同时出现在 hero 和详细 section
+  - 关键信息是否使用更高层级的字体、色块或 badge，而不是普通正文
