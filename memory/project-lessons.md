@@ -2538,3 +2538,13 @@
   - 首屏是否在 3 秒内看出和竞品/SaaS 的差异
   - 差异化卖点是否同时出现在 hero 和详细 section
   - 关键信息是否使用更高层级的字体、色块或 badge，而不是普通正文
+
+## 2026-04-10 - Workflow review mail failures need to be separated into auth vs visibility
+- 错误: 一开始把“Gmail 自发自收不可见”和“SMTP 根本认证失败”混在一起判断。
+- 根因: 没有先看 SMTP provider 的明确错误信息，就过早给出收件箱可见性推断。
+- 预警信号: 后台已经显示 `Failed to authenticate on SMTP server`，这类错误优先级高于任何收件箱分类猜测。
+- 新规则: 邮件问题先按顺序排查 `认证 -> 发件成功但不可见 -> 投递被拦截`，不能跳步。
+- Checklist:
+  - 先看后台或日志里的原始 SMTP 错误
+  - 认证失败时，优先核对 username / app password / 2FA
+  - 只有 `sent` 状态下，才讨论 Gmail 的 All Mail / Sent / Spam 可见性

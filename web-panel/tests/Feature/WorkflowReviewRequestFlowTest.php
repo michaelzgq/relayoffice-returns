@@ -40,7 +40,7 @@ class WorkflowReviewRequestFlowTest extends TestCase
         ]);
 
         Mail::assertSent(\App\Mail\WorkflowReviewRequestSubmitted::class, function ($mail) {
-            return $mail->hasTo('solutionsoscommerce@gmail.com');
+            return $mail->hasTo('michael.zgq@gmail.com');
         });
     }
 
@@ -126,15 +126,15 @@ class WorkflowReviewRequestFlowTest extends TestCase
         ]);
 
         Mail::assertSent(\App\Mail\WorkflowReviewRequestSubmitted::class, function ($mail) {
-            return $mail->hasTo('solutionsoscommerce@gmail.com');
+            return $mail->hasTo('michael.zgq@gmail.com');
         });
     }
     public function test_admin_can_view_notification_diagnostics_and_send_a_test_email(): void
     {
         Mail::fake();
 
-        Config::set('dossentry.workflow_review_notification_email', 'solutionsoscommerce@gmail.com');
-        Config::set('mail.from.address', 'solutionsoscommerce@gmail.com');
+        Config::set('dossentry.workflow_review_notification_email', 'michael.zgq@gmail.com');
+        Config::set('mail.from.address', 'michael.zgq@gmail.com');
 
         $admin = $this->signInAdmin();
 

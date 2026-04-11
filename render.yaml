@@ -52,7 +52,7 @@ services:
       - key: APP_URL
         value: https://demo.dossentry.com
       - key: WORKFLOW_REVIEW_NOTIFICATION_EMAIL
-        value: solutionsoscommerce@gmail.com
+        value: michael.zgq@gmail.com
       - key: APP_KEY_BASE64
         generateValue: true
       - key: LOG_CHANNEL
