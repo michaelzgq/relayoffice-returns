@@ -2877,7 +2877,7 @@
 - [ ] Re-run live production QA after Render finishes deploying
 
 ## Open Risks Or Follow-Ups
-- The final confidence still depends on a post-deploy live mobile pass, because production includes the sample review CTA state that blank self-hosted does not.
+- Production mobile QA passed after Render finished deploying: the homepage sample CTA layout held at `390x844`, compare page showed the swipe hint, the comparison surface remained horizontally scrollable, and browser console noise was cleared.
 
 ## Source Artifacts
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
@@ -2885,3 +2885,5 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/public/assets/dossentry/favicon.svg`
 - `/Users/mikezhang/Desktop/projects/6POS/output/playwright/local-mobile-home.png`
 - `/Users/mikezhang/Desktop/projects/6POS/output/playwright/local-mobile-compare-full.png`
+- `/Users/mikezhang/Desktop/projects/6POS/output/playwright/live-mobile-home.png`
+- `/Users/mikezhang/Desktop/projects/6POS/output/playwright/live-mobile-compare-full.png`
