@@ -158,6 +158,12 @@
             box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
         }
 
+        .button-tertiary {
+            background: transparent;
+            color: var(--accent);
+            border-color: rgba(37, 99, 235, 0.14);
+        }
+
         .hero {
             padding: 42px 0 52px;
         }
@@ -1052,11 +1058,14 @@
                 <nav class="topnav">
                     <a href="#workflow">Products</a>
                     <a href="#deployment">Solutions</a>
-                    <a href="#faq">Resources</a>
+                    <a href="{{ route('compare.generic-inspection-apps') }}">Compare</a>
+                    <a href="#faq">FAQ</a>
                 </nav>
                 <div class="topbar-actions">
                     <a class="login-link" href="{{ $demoLoginUrl }}">Log in</a>
-                    <a class="button button-primary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
+                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl ?: $demoLoginUrl }}">
+                        {{ $sampleBrandReviewUrl ? 'View Sample Review' : 'Enter Guest Demo' }}
+                    </a>
                 </div>
             </div>
         </div>
@@ -1068,20 +1077,28 @@
                 <div class="hero-card">
                     <div class="hero-grid">
                         <article class="hero-copy">
-                            <span class="eyebrow">Brand-ready review workflow</span>
-                            <h1>Defensible Return <span class="hero-accent">Evidence</span>, Generated Instantly.</h1>
+                            <span class="eyebrow">Brand-ready return evidence</span>
+                            <h1>Defensible return <span class="hero-accent">evidence</span>, generated on the warehouse floor.</h1>
                             <p>
-                                Stop reconstruction guesswork. Capture brand-ready photo evidence, playbooks,
-                                and recommendations in one clean, shareable review link.
+                                Capture the close-ups, serials, packaging damage, timeline, and recommendation brands
+                                actually ask for, then send one clean Brand Review Link instead of reconstructing the
+                                case from Slack threads and photo folders.
                             </p>
                             <div class="hero-actions">
-                                <a class="button button-primary" href="#review-request">Request Workflow Review</a>
-                                <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
+                                @if($sampleBrandReviewUrl)
+                                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}">View Sample Brand Review Link</a>
+                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
+                                    <a class="button button-tertiary" href="#review-request">Request Workflow Review</a>
+                                @else
+                                    <a class="button button-primary" href="#review-request">Request Workflow Review</a>
+                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
+                                @endif
                             </div>
                             <div class="hero-proof">
-                                <span class="hero-proof-pill">No station cameras</span>
-                                <span class="hero-proof-pill">No warehouse rebuild</span>
-                                <span class="hero-proof-pill">Customer-side Docker deployment</span>
+                                <span class="hero-proof-pill">No station rebuild</span>
+                                <span class="hero-proof-pill">Phone-first evidence capture</span>
+                                <span class="hero-proof-pill">Brand Review Link</span>
+                                <span class="hero-proof-pill">Docker self-hosted</span>
                             </div>
                         </article>
 
@@ -1387,6 +1404,7 @@
         <div class="shell footer-inner">
             <div>{{ $appName }}. Brand-ready return evidence and decision workflows.</div>
             <div class="footer-links">
+                <a href="{{ route('compare.generic-inspection-apps') }}">Compare</a>
                 <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
                 <a href="{{ route('terms-of-service') }}">Terms of Service</a>
                 <a href="{{ $demoLoginUrl }}">Live demo</a>

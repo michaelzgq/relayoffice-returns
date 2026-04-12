@@ -2656,3 +2656,173 @@
   - 部署和 rollout 成本是否同级
   - 客户会不会在同一个采购决策里真的二选一
   - 如果不会，只能算 substitute 或 adjacent，不能叫 direct
+
+## 2026-04-11 - 首页首屏 CTA 必须先推 proof artifact，再推 guest demo
+
+## Snapshot
+- Date: 2026-04-11
+- Scope: 把 Dossentry 首页首屏从 `guest demo` 优先调整成 `sample Brand Review Link` 优先
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- 在真正修改首页前先核对了 `landing.blade.php` 和 `routes/web.php`，确认 `sampleBrandReviewUrl` 已经存在，所以可以直接把首屏 CTA 改成指向真实 proof artifact，而不是先造新功能。
+- 只改首屏层级，不碰中下段结构，避免把“定位修正”扩大成一次不必要的 landing page 全面重写。
+
+## Mistakes To Stop Repeating
+
+### Mistake: 把 authenticated workspace 当成首次转化入口，而不是 proof artifact
+- What happened: 首页顶部按钮和 hero 主 CTA 之前都优先把人送到 `Enter Guest Demo` 或 `Request Workflow Review`，但真正最能解释产品价值的 sample `Brand Review Link` 只出现在页面更靠下的位置。
+- Root cause: 把“可登录的 live demo”误当成最强 first-touch asset，而不是先判断外部访客 30 秒内最容易理解什么。
+- Earlier signal I missed: 页面本身已经有 sample Brand Review Link 区块，且之前的复盘已经明确写过“public product pages must show one non-login proof artifact before any authenticated experience”。
+- Prevention rule: 对外首页如果同时存在 `proof artifact` 和 `authenticated demo`，首屏主 CTA 默认必须先指向 proof artifact，除非真实转化数据证明相反。
+- Next-time checklist item: 在改任何 B2B 产品首页前，先写出 `first-touch CTA priority order: proof artifact -> low-friction proof action -> authenticated product -> form fill`。
+
+### Mistake: 差异化卖点写进页面了，却没有占据最高点击层级
+- What happened: 首屏已经部分在讲 `Brand Review Link`、`phone-first inspection flow` 等差异化，但按钮顺序和 chip 组合仍然没有把这些优势变成最直接的操作引导。
+- Root cause: 只调整了文案内容，没有同步调整 CTA hierarchy 和 proof chips。
+- Earlier signal I missed: 用户已经明确把 `Brand Review Link`、`phone-first close-up evidence`、`no station rebuild`、`customer-owned deployment` 定为首页主卖点，这意味着按钮和 support chips 也必须同层对齐。
+- Prevention rule: 首页 hero 改定位时，不允许只改标题和副标题；必须同步改 CTA 顺序、support chips、顶部按钮入口。
+- Next-time checklist item: 任何 hero 改稿都要逐项核对 `headline / subheadline / primary CTA / secondary CTA / proof chips / topbar CTA` 是否讲的是同一件事。
+
+## Permanent Rules
+- 对外首屏先展示最强 proof artifact，再展示需要登录的产品入口。
+- B2B workflow 产品的 CTA 层级必须和差异化卖点一一对应，不能只靠中下段解释补救。
+
+## Next-Project Checklist
+- [ ] 首屏主 CTA 是否先指向最强 proof artifact
+- [ ] 顶部按钮是否与 hero 主 CTA 保持同一优先级
+- [ ] support chips 是否准确反映当前主定位，而不是旧卖点残留
+- [ ] 如果 sample asset 已存在，优先复用，不要为 CTA 另开一轮新开发
+
+## Open Risks Or Follow-Ups
+- compare 页面还没上线，后续需要让 `/compare/generic-inspection-apps` 成为首页次级承接页，而不是继续堆在文档里。
+- 还没有做浏览器级 QA，当前只完成了模板与路由级自检。
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/web.php`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-hero-copy-v3.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-vs-generic-inspection-copy.md`
+
+## 2026-04-11 - Compare page should be a secondary proof asset, not a substitute for the homepage
+
+## Snapshot
+- Date: 2026-04-11
+- Scope: turning the generic-inspection comparison copy into a real marketing page and wiring it into the live landing surface
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- The compare page was implemented only after the homepage hero had already been refocused around the strongest proof artifact, which kept the traffic flow coherent instead of splitting attention too early.
+- Reusing the same marketing variables already available in `routes/web.php` (`appName`, `demoLoginUrl`, `sampleBrandReviewUrl`) let the compare page ship as a real route without inventing a second content pipeline.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Strategy docs can feel finished before their best page exists in the product
+- What happened: the positioning and comparison thinking had already been written into markdown deliverables, but until the compare page existed as a route and the landing page linked to it, the argument still was not part of the actual user journey.
+- Root cause: strong internal docs can create a false sense of go-to-market completion.
+- Earlier signal I missed: the new comparison language was already stable enough to ship, but the site still had no dedicated `/compare/...` destination.
+- Prevention rule: once a comparison or positioning asset is stable enough to guide homepage copy, it is stable enough to become a real page in the product.
+- Next-time checklist item: after any positioning memo is approved, ask whether it should become a route, a section, or both before starting another doc.
+
+### Mistake: Compare pages are easy to overvalue relative to the homepage
+- What happened: the compare page was clearly worth building, but only after the homepage CTA hierarchy had already been corrected toward the strongest proof artifact.
+- Root cause: comparison pages feel strategically sophisticated, which makes it tempting to treat them as the main conversion surface.
+- Earlier signal I missed: the homepage still had the highest-leverage CTA mismatch, so shipping compare first would have polished a secondary page while the main entrypoint still underperformed.
+- Prevention rule: supporting pages should amplify the homepage's core argument, not compensate for an unfixed homepage.
+- Next-time checklist item: before building a compare page, confirm the homepage already points to the correct primary proof artifact and CTA order.
+
+### Mistake: File-level validation can be mistaken for runtime validation when the local toolchain is missing
+- What happened: the compare route and landing links were verified through file inspection and route references, but `php` was not available in the shell, so runtime route-list validation could not be executed.
+- Root cause: the workspace did not provide the runtime binary needed for the normal Laravel verification loop.
+- Earlier signal I missed: the first route check failed immediately with `php: command not found`, which means validation confidence must be described more narrowly.
+- Prevention rule: if framework runtime tools are unavailable, explicitly downgrade verification language to file-level or template-level checks instead of implying full route validation.
+- Next-time checklist item: when shipping Laravel marketing routes, record whether validation was `runtime`, `template-level`, or `source-only`.
+
+## Permanent Rules
+- A comparison argument is not shipped until it has a live page or section in the product.
+- Compare pages are secondary proof assets; the homepage still owns primary conversion.
+- Validation claims must match the strongest verification actually performed.
+
+## Next-Project Checklist
+- [ ] Turn stable comparison copy into a real route before calling the asset done
+- [ ] Verify the homepage already uses the right CTA priority before building a support page
+- [ ] Record whether the verification was runtime, template-level, or source-only
+- [ ] Add at least one visible homepage entry point for every new supporting proof page
+
+## Open Risks Or Follow-Ups
+- The compare page has not yet been browser-QA'd; current confidence is based on source-level checks and route wiring review.
+- The new page still needs real traffic or sales-call usage to prove whether it materially improves conversion or objection handling.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/web.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-vs-generic-inspection-copy.md`
+
+## 2026-04-11 - Marketing routes must survive blank self-hosted installs, not assume seeded demo data
+
+## Snapshot
+- Date: 2026-04-11
+- Scope: validating the updated landing page and compare page inside the local self-hosted Docker environment
+- Outcome: success with concerns
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- The first `500` root cause was found quickly by checking the actual container environment instead of guessing from the browser alone: `APP_KEY_BASE64` had been double-encoded, so Laravel encryption failed before any page logic ran.
+- Once the environment issue was cleared, a second pass against Laravel logs exposed the real product-level problem: the marketing payload queried `return_cases` before a blank self-hosted install had created the table.
+- Browser snapshots on the running site caught a real UX regression that source review would have missed: when no sample review link exists, the hero CTA logic duplicated `Request Workflow Review`.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I let marketing routes depend on seeded operational tables
+- What happened: the landing route tried to build `sampleBrandReviewUrl` by querying `return_cases` unconditionally, so a blank self-hosted install crashed before the homepage could render.
+- Root cause: I treated a marketing proof artifact as always-available application data instead of optional data.
+- Earlier signal I missed: blank self-hosted mode is explicitly part of the product story, which means homepage routes must tolerate an empty operational database.
+- Prevention rule: any public marketing route must degrade gracefully when optional demo data is absent.
+- Next-time checklist item: for each homepage/compare payload field, mark it as `required` or `optional`; optional fields must fail closed to `null`, never `500`.
+
+### Mistake: CTA fallback logic was written as a shortcut instead of a real state machine
+- What happened: when `sampleBrandReviewUrl` was null, both the primary and tertiary hero CTAs collapsed into `Request Workflow Review`, creating duplicate buttons on the landing and compare pages.
+- Root cause: I used terse fallback expressions (`?:`) for buttons that actually had multiple UI states.
+- Earlier signal I missed: the CTA order was deliberately strategic, so any fallback case should have been explicitly enumerated rather than compressed into one line.
+- Prevention rule: when CTA hierarchy changes by state, implement explicit conditional branches instead of string/URL fallbacks.
+- Next-time checklist item: QA every CTA state at least once: `sample exists`, `sample missing`, and `guest demo only`.
+
+### Mistake: I assumed "Docker app is up" meant "self-hosted install is complete"
+- What happened: after the web container responded, `/admin/auth/login` still returned `500` because the database had not been initialized and even the migrations table was missing.
+- Root cause: container health was treated as installation health.
+- Earlier signal I missed: `migrate:status` immediately reported `Migration table not found`, which means the runtime was only partially started, not usable.
+- Prevention rule: self-hosted readiness is not proven until homepage, compare page, and login page all return `200`, and migrations are confirmed as applied.
+- Next-time checklist item: after local Docker boot, always run `migrate:status` or the setup script before calling the environment ready.
+
+### Mistake: I relied on image rebuilds for QA even when BuildKit feedback was unreliable
+- What happened: the local Docker build output stalled, so the running container kept old route files until I copied the changed marketing files into the container to finish verification.
+- Root cause: I treated a partially-observed build as a completed deployment.
+- Earlier signal I missed: route listing inside the container still reflected the old route set, which proved the new image had not actually been swapped in.
+- Prevention rule: when runtime QA is blocked by a flaky local build loop, first verify what code is actually present in the running container before trusting the rebuild.
+- Next-time checklist item: compare container file contents or route output against the repo before starting QA on a rebuilt local image.
+
+## Permanent Rules
+- Public marketing pages must render even when operational demo data does not exist.
+- CTA fallback states are product behavior and must be modeled explicitly.
+- Self-hosted validation is incomplete until install/setup has created the schema and the login page works.
+- Runtime QA claims only count against the code actually loaded in the running container.
+
+## Next-Project Checklist
+- [ ] Guard optional marketing proof assets behind null-safe or table-safe checks
+- [ ] Test CTA behavior when sample proof assets are absent
+- [ ] Run setup/init before QA on blank self-hosted installs
+- [ ] Verify homepage, compare page, and login page all return `200`
+- [ ] Confirm the running container actually contains the latest route/template files before browser QA
+
+## Open Risks Or Follow-Ups
+- The local container was hot-synced with updated route/view files for verification because the image rebuild feedback loop was unreliable; a clean rebuild should still be rechecked before treating the Docker path as fully clean.
+- Blank mode intentionally has no sample review record, so the strongest homepage CTA in that environment is necessarily downgraded to workflow review instead of a live proof artifact.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/web.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/.env.self-hosted`
