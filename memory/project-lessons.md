@@ -2644,3 +2644,15 @@
   - 右侧内容是否通过不对称内边距微调，而不是 transform 硬推
   - 超大屏和普通桌面是否使用同一套布局逻辑
   - 平板和手机断点是否保持原行为不受桌面微调影响
+
+## 2026-04-11 - 竞品分析不能把“替代方案”和“直接对手”混成一类
+- 错误: 早期几版分析容易把通用 inspection 工具、returns portals、reverse-logistics suites、warehouse-side direct rivals 放在同一层比较，导致定位边界不够清楚。
+- 根因: 看到功能重叠就归为竞品，没有先按 buyer、主工作流、部署方式、争议处理链路做分层。
+- 预警信号: 一份竞品图里同时出现“inspection template tools”“shopper returns platforms”“warehouse claims tools”，但没有明确谁是 direct、谁是 substitute、谁是 upstream ecosystem。
+- 新规则: 竞品地图至少分四层：`direct rival / heavy adjacent / generic substitute / upstream ecosystem`，否则首页文案和销售对比页会失焦。
+- Checklist:
+  - 这个产品的 primary workflow 是否与我们同层
+  - buyer 是否相同或强重叠
+  - 部署和 rollout 成本是否同级
+  - 客户会不会在同一个采购决策里真的二选一
+  - 如果不会，只能算 substitute 或 adjacent，不能叫 direct
