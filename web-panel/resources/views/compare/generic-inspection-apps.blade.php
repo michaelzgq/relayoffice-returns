@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $appName }} | Compare Dossentry vs Generic Inspection Apps</title>
     <meta name="description" content="See why generic inspection apps stop at checklists while Dossentry creates a brand-ready return record for disputed warehouse-side returns.">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/dossentry/favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -89,6 +90,7 @@
         .footer-links {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 24px;
             color: #475569;
             font-size: 14px;
@@ -308,10 +310,22 @@
 
         .comparison-scroll {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
+        }
+
+        .comparison-hint {
+            display: none;
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.5;
         }
 
         table {
             width: 100%;
+            min-width: 760px;
             border-collapse: collapse;
         }
 
@@ -519,6 +533,21 @@
                 width: min(var(--max), calc(100% - 24px));
             }
 
+            .topbar-inner {
+                align-items: flex-start;
+            }
+
+            .topbar-actions {
+                width: 100%;
+                display: grid;
+                grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+                gap: 10px;
+            }
+
+            .topbar-actions .button {
+                width: 100%;
+            }
+
             .hero-card,
             .section-card,
             .cta-panel,
@@ -527,7 +556,17 @@
             }
 
             h1 {
-                font-size: clamp(36px, 12vw, 50px);
+                font-size: clamp(32px, 10vw, 44px);
+                max-width: 10ch;
+            }
+
+            .topnav {
+                gap: 12px;
+                font-size: 13px;
+            }
+
+            .comparison-hint {
+                display: block;
             }
         }
     </style>
@@ -620,6 +659,7 @@
                         Dossentry is for a different moment: when a returned item becomes a disputed case and your warehouse needs
                         to explain and defend what happened next.
                     </p>
+                    <div class="comparison-hint">On mobile, swipe sideways to compare the columns.</div>
                 </div>
                 <div class="comparison-card comparison-scroll">
                     <table>

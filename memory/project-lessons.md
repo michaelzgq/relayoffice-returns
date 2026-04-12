@@ -2826,3 +2826,62 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/.env.self-hosted`
+
+## 2026-04-11 - Mobile QA must happen on the real marketing state, not only desktop or source review
+
+## Snapshot
+- Date: 2026-04-11
+- Scope: mobile visual QA and polish for the landing page and `/compare/generic-inspection-apps`, then redeploying to Render
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Running a real `390x844` browser pass on the local self-hosted build immediately exposed layout problems that desktop review had hidden, especially the compare table compression and the topbar action stack.
+- The homepage and compare page were already structurally close enough that a small CSS pass fixed the mobile issues without reopening the product story or CTA strategy.
+- Verifying the compare container with DOM measurements (`scrollWidth > clientWidth`) proved the table was truly swipeable on mobile, not just visually narrower.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I treated the compare table like a normal responsive table instead of a deliberate horizontal comparison surface
+- What happened: on mobile, the three-column compare table compressed into narrow unreadable columns instead of encouraging a sideways swipe.
+- Root cause: I kept `width: 100%` but forgot to define a minimum comparison width, so the browser optimized for squeeze instead of comparison clarity.
+- Earlier signal I missed: the page itself is called "compare", which means preserving column contrast matters more than keeping everything inside the viewport.
+- Prevention rule: comparison tables on mobile should default to intentional horizontal scrolling with a minimum width and a visible swipe hint.
+- Next-time checklist item: for every multi-column marketing table, verify `scrollWidth > clientWidth` at one mobile breakpoint before shipping.
+
+### Mistake: I left low-signal console noise in a polished marketing surface
+- What happened: both live pages logged a `favicon.ico 404`, which was not user-breaking but made the deployed experience look unfinished during QA.
+- Root cause: I shipped new marketing pages without checking whether the public asset baseline included a favicon.
+- Earlier signal I missed: browser console review was already part of the QA pass, and the missing favicon was an easy asset-level fix.
+- Prevention rule: polished public pages ship with a favicon and zero avoidable console noise.
+- Next-time checklist item: include a console check and asset-baseline check for every landing or compare page release.
+
+### Mistake: I validated the first pass against the blank local state, not the strongest live proof state
+- What happened: local self-hosted validation used the fallback CTA state because blank installs have no sample review record, while production uses the stronger sample-proof state.
+- Root cause: I initially treated "the page renders" as sufficient before rechecking the live state that sales traffic actually sees.
+- Earlier signal I missed: CTA hierarchy was explicitly tied to whether a sample Brand Review Link exists.
+- Prevention rule: when CTA logic changes by data state, QA both the fallback state and the strongest live state before closing the task.
+- Next-time checklist item: record which environments represent `sample present` and `sample missing`, then test both on every CTA-related release.
+
+## Permanent Rules
+- Mobile QA is mandatory for every public marketing page before claiming it is ready.
+- Comparison layouts should preserve column meaning first and viewport fit second.
+- Public-facing pages should ship with zero trivial console errors.
+- CTA changes are not fully verified until both fallback and proof-rich states are tested.
+
+## Next-Project Checklist
+- [ ] Take at least one real mobile screenshot for every new marketing page
+- [ ] Confirm comparison tables are horizontally scrollable on mobile when readability requires it
+- [ ] Check browser console for favicon and other asset noise
+- [ ] Verify both `sample present` and `sample missing` CTA states
+- [ ] Re-run live production QA after Render finishes deploying
+
+## Open Risks Or Follow-Ups
+- The final confidence still depends on a post-deploy live mobile pass, because production includes the sample review CTA state that blank self-hosted does not.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/public/assets/dossentry/favicon.svg`
+- `/Users/mikezhang/Desktop/projects/6POS/output/playwright/local-mobile-home.png`
+- `/Users/mikezhang/Desktop/projects/6POS/output/playwright/local-mobile-compare-full.png`

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $appName }} | Brand-Ready Return Evidence</title>
     <meta name="description" content="Dossentry helps multi-brand 3PLs and operators turn disputed return cases into brand-ready evidence, review links, and decision-ready case records.">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/dossentry/favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -103,6 +104,7 @@
         .topnav {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 32px;
             color: #475569;
             font-size: 14px;
@@ -974,6 +976,7 @@
 
             .topbar-inner {
                 gap: 18px;
+                align-items: flex-start;
             }
 
             .topnav,
@@ -981,8 +984,14 @@
                 width: 100%;
             }
 
+            .topnav {
+                gap: 10px 18px;
+            }
+
             .topbar-actions {
-                justify-content: flex-start;
+                display: grid;
+                grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+                gap: 12px;
             }
 
             .product-window {
@@ -1010,9 +1019,25 @@
             .button {
                 width: 100%;
             }
+
+            .login-link {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 48px;
+                padding: 0 16px;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                background: rgba(255, 255, 255, 0.84);
+                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+            }
         }
 
         @media (max-width: 560px) {
+            .topbar {
+                padding-top: 18px;
+            }
+
             .hero-card,
             .audience-panel,
             .deployment-panel,
@@ -1025,11 +1050,17 @@
             }
 
             h1 {
-                font-size: clamp(38px, 12vw, 52px);
+                font-size: clamp(32px, 10vw, 44px);
+                max-width: 10ch;
             }
 
             h2 {
                 font-size: 34px;
+            }
+
+            .topnav {
+                gap: 8px 16px;
+                font-size: 13px;
             }
 
             .credential-row {
