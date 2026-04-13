@@ -121,7 +121,10 @@
             font-size: 14px;
             font-weight: 800;
             border: 1px solid transparent;
+            line-height: 1.25;
             text-align: center;
+            white-space: normal;
+            overflow-wrap: anywhere;
             transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
         }
 
@@ -581,6 +584,10 @@
                 font-size: 13px;
             }
 
+            .topbar-actions {
+                grid-template-columns: 1fr;
+            }
+
             .comparison-hint {
                 display: block;
             }
@@ -592,10 +599,6 @@
         }
 
         @media (max-width: 420px) {
-            .topbar-actions {
-                grid-template-columns: 1fr;
-            }
-
             .hero-card,
             .section-card,
             .cta-panel,
