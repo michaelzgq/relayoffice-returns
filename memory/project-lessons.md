@@ -2887,3 +2887,63 @@
 - `/Users/mikezhang/Desktop/projects/6POS/output/playwright/local-mobile-compare-full.png`
 - `/Users/mikezhang/Desktop/projects/6POS/output/playwright/live-mobile-home.png`
 - `/Users/mikezhang/Desktop/projects/6POS/output/playwright/live-mobile-compare-full.png`
+
+## 2026-04-12 - Mobile QA tools must be calibrated before trusting responsive conclusions
+
+## Snapshot
+- Date: 2026-04-12
+- Scope: second mobile visual QA and polish pass for the public homepage, compare page, and login entry
+- Outcome: success with concerns
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- The real user-facing issue was narrowed to mobile action-area pressure: long CTA labels and multi-button rows were the first places where the layout started to feel unstable.
+- Moving the marketing topbar actions to a single-column stack earlier and allowing button labels to wrap gave the public pages a more defensive mobile posture without changing the message hierarchy.
+- Production verification at Chrome headless's effective `500px` CSS viewport showed the homepage, compare page, and login page rendering cleanly after the patch.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I trusted a browser automation path before calibrating what viewport it was actually testing
+- What happened: the earlier `playwright-cli` screenshots looked like mobile captures, but the page snapshot stayed in a desktop-style layout; then Chrome headless screenshots looked clipped in a way that was partly caused by Chrome enforcing a minimum `500px` CSS viewport.
+- Root cause: I treated the screenshot width as the same thing as the CSS layout viewport and started drawing responsive conclusions too early.
+- Earlier signal I missed: `playwright-cli` snapshots still showed desktop navigation structure after a supposed mobile resize, which was a direct sign that the tool was not exercising real mobile breakpoints.
+- Prevention rule: before trusting any responsive QA tool, explicitly measure the reported CSS viewport (`window.innerWidth`) and compare it to the intended breakpoint.
+- Next-time checklist item: run a calibration page or inline viewport check before using a new browser path for mobile QA.
+
+### Mistake: I let CTA content define layout width for too long
+- What happened: long labels like `View Sample Review` and `View Sample Brand Review Link` put the highest pressure on narrow layouts and exposed that the top action rows needed to collapse earlier.
+- Root cause: the layout assumed buttons could stay horizontally compact longer than the real copy allowed.
+- Earlier signal I missed: the strongest marketing CTA is also the longest label, so it should have been treated as the limiting case from the beginning.
+- Prevention rule: when a CTA is both strategically primary and text-heavy, design the narrow layout around that longest label first.
+- Next-time checklist item: test the longest CTA label at the smallest supported breakpoint before calling a hero or topbar done.
+
+### Mistake: I waited too long to separate tool limitations from product bugs
+- What happened: time was spent chasing whether the page was broken when part of the weirdness came from the QA toolchain itself, including Chrome headless anchor screenshots returning blank frames and Docker being unavailable for local rebuild validation.
+- Root cause: I mixed environment instability, rendering-tool limits, and actual UI defects into one bucket.
+- Earlier signal I missed: blank anchor screenshots and fixed `500px` headless viewport behavior were not normal product bugs; they were verification-path constraints.
+- Prevention rule: when QA artifacts behave inconsistently, isolate toolchain constraints before changing product code.
+- Next-time checklist item: label each issue as either `product bug`, `deploy state`, or `tooling artifact` before deciding the next edit.
+
+## Permanent Rules
+- Responsive QA is not real until the tested CSS viewport is known.
+- Long CTA copy must be treated as the width budget, not average copy.
+- Public mobile action rows should collapse earlier rather than trying to preserve horizontal compactness.
+- Verification notes must distinguish true UI bugs from browser-tool quirks.
+
+## Next-Project Checklist
+- [ ] Measure `window.innerWidth` before trusting a new screenshot path for breakpoint QA
+- [ ] Test the longest CTA label in the smallest target layout first
+- [ ] Prefer stacked public action rows once copy pressure becomes visible
+- [ ] Record whether validation came from real device emulation, calibrated headless browser, or source-level review
+- [ ] Re-check one login or secondary public entry page after major marketing CTA changes
+
+## Open Risks Or Follow-Ups
+- True sub-`500px` CSS viewport verification was not directly reproduced in Chrome headless because this environment clamps layout width to `500px`; confidence below that width comes from the source rules (`max-width: 560px` and `max-width: 420px`) rather than a perfect live screenshot.
+- Local Docker rebuild validation was unavailable in this pass because the Docker daemon was not running.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/output/chrome/mobile-home-500.png`
+- `/Users/mikezhang/Desktop/projects/6POS/output/chrome/mobile-compare-500.png`
+- `/Users/mikezhang/Desktop/projects/6POS/output/chrome/mobile-login-500.png`
