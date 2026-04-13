@@ -3086,3 +3086,102 @@
 - `/Users/mikezhang/Desktop/projects/6POS/dossentry-hero-copy-v3.md`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+
+## 2026-04-13 - Pushed to main is not the same as deployed on the public domain
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: committing the CTA tracking + doc-sync batch, pushing `main`, and checking whether production public domains picked up the new tracking hooks
+- Outcome: success with concerns
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- The commit boundary was clean: code, tests, docs, and retrospectives were all captured without pulling in the intentionally isolated `returns-positioning-pricing-discovery-v2.md`.
+- `git push origin main` succeeded cleanly, so the remote source of truth is correct.
+- Public smoke-check logic based on the presence of new tracking hooks made it obvious whether production had actually updated, instead of assuming a push implied a live deploy.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I was still one step away from saying “shipped” too early
+- What happened: after the push succeeded, the public `dossentry.com` pages still served the pre-tracking version even though the new commit was already on GitHub.
+- Root cause: deployment status was not directly observable from git alone, and I still needed one real public-domain check before calling the release complete.
+- Earlier signal I missed: the current environment has no Render CLI or deploy hook configured locally, so a successful push does not prove a Render redeploy actually happened.
+- Prevention rule: separate `pushed`, `deploy started`, and `public domain updated` as three different states.
+- Next-time checklist item: after every production push, verify one newly added HTML marker on the public domain before saying the deploy is done.
+
+### Mistake: I almost relied on remembered infra assumptions again
+- What happened: local verification had already shown the stack can move between ports and runtime shapes, and production added another version of the same lesson: environment assumptions expire quickly.
+- Root cause: deployment paths change faster than product code, so yesterday's deploy behavior is not a guarantee for today's release.
+- Earlier signal I missed: Render automation was assumed from prior workflow memory, but there was no local command path to confirm or trigger it directly.
+- Prevention rule: if deployment automation is not inspectable from the terminal, treat release verification as incomplete until the public artifact changes.
+- Next-time checklist item: keep one concrete production marker per release so the deploy state can be checked externally without dashboard access.
+
+## Permanent Rules
+- `git push` is source publication, not proof of deploy completion.
+- Production release claims need a public-domain marker check, not just remote branch confirmation.
+- Keep intentionally isolated strategy files out of release commits unless the user explicitly folds them in.
+
+## Next-Project Checklist
+- [ ] Confirm the staged set excludes intentionally isolated files
+- [ ] Push first, then verify a new public HTML marker
+- [ ] Do not call a deploy complete until the public domain reflects the new marker
+- [ ] Record whether missing production changes are a code issue or a deployment-state issue
+
+## Open Risks Or Follow-Ups
+- `main` is updated on GitHub, but the public `dossentry.com` and compare page had not yet exposed the new tracking hooks during this check window.
+- `demo.dossentry.com/admin/auth/login` remained reachable, so the concern is deployment freshness on the public marketing surface, not total production outage.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/partials/marketing-click-tracking.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+- Git commit `1e7e9f7`
+
+## 2026-04-13 - Production smoke should include asset noise, not just successful navigation
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: post-deploy production smoke checks for `dossentry.com`, compare page, guest demo handoff, and sample Brand Review flow after the CTA tracking release
+- Outcome: success with a small production defect found and fixed
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- The production smoke pass checked real user paths instead of stopping at `200` responses: homepage, compare page, guest demo handoff, and signed sample Brand Review link all rendered and navigated correctly.
+- Checking page console output surfaced a small but real customer-visible polish issue that functional checks alone would have missed.
+- The fix was low-risk because the favicon pattern already existed on the landing and compare templates, so the Brand Review page could be brought into line with one targeted template change.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I treated “flow works” as almost good enough for production smoke
+- What happened: the sample Brand Review page loaded and the signed-review flow worked, but the browser still logged a `favicon.ico 404`.
+- Root cause: the smoke routine prioritized navigation and CTA behavior before checking low-noise console cleanliness on the final destination page.
+- Earlier signal I missed: the Brand Review template was outside the marketing template cluster, so it did not automatically inherit the same head metadata and favicon wiring.
+- Prevention rule: production smoke for public-facing flows must include one console scan on the final rendered page, not only HTTP status and click success.
+- Next-time checklist item: when a new public proof flow spans multiple templates, compare the `<head>` assets across all destination pages before release.
+
+### Mistake: Shared branding assets were still being verified page-by-page instead of by pattern
+- What happened: landing and compare already carried the SVG favicon, but Brand Review lagged behind until a browser complaint exposed it.
+- Root cause: the public pages were treated as separate deliverables instead of one shared surface that should follow a consistent asset checklist.
+- Earlier signal I missed: the Brand Review template had its own standalone HTML shell rather than reusing the marketing layout.
+- Prevention rule: any standalone public Blade template needs an explicit head-asset parity check against the main marketing pages.
+- Next-time checklist item: add `favicon`, `viewport`, and core social/meta assets to the public-template review checklist.
+
+## Permanent Rules
+- Production smoke is not complete until one real browser run confirms both navigation and console cleanliness on the last page in the user flow.
+- Standalone public templates must be checked for head-asset parity with the main marketing pages.
+- Small asset 404s count as real polish defects once the main product flow is already stable.
+
+## Next-Project Checklist
+- [ ] Click through the full public flow, not just entry pages
+- [ ] Inspect the browser console on the last destination page
+- [ ] Compare favicon and head assets across every standalone public template
+- [ ] Fix small asset noise before declaring the release clean
+
+## Open Risks Or Follow-Ups
+- After the favicon fix ships, the sample Brand Review page should be rechecked once on production to confirm the `favicon.ico 404` is gone.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/cases/brand-review.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+- Production sample Brand Review page on `dossentry.com`
