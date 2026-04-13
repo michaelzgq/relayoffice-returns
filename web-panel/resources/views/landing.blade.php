@@ -46,6 +46,7 @@
             margin: 0;
             font-family: "Inter", sans-serif;
             color: var(--ink);
+            overflow-x: hidden;
             background:
                 radial-gradient(circle at top center, rgba(219, 234, 254, 0.44) 0%, rgba(255, 255, 255, 0.94) 36%, #ffffff 68%),
                 linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
@@ -133,12 +134,14 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            min-width: 0;
             min-height: 48px;
             padding: 0 22px;
             border-radius: 14px;
             font-size: 15px;
             font-weight: 800;
             border: 1px solid transparent;
+            text-align: center;
             transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
             cursor: pointer;
         }
@@ -225,6 +228,14 @@
             color: var(--muted);
             font-size: 19px;
             line-height: 1.75;
+        }
+
+        .hero-copy,
+        .hero-visual,
+        .hero-actions > *,
+        .cta-actions > *,
+        .topbar-actions > * {
+            min-width: 0;
         }
 
         .hero-actions {
@@ -1018,6 +1029,7 @@
 
             .button {
                 width: 100%;
+                padding: 12px 18px;
             }
 
             .login-link {
@@ -1074,6 +1086,26 @@
             .footer-inner {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .topbar-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-card,
+            .audience-panel,
+            .deployment-panel,
+            .cta-panel {
+                padding: 20px;
+            }
+
+            .hero-copy p,
+            .section-head p,
+            .faq-intro p,
+            .cta-copy p {
+                font-size: 16px;
             }
         }
     </style>

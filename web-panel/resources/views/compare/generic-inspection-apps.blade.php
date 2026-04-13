@@ -36,6 +36,7 @@
             margin: 0;
             font-family: "Inter", sans-serif;
             color: var(--ink);
+            overflow-x: hidden;
             background:
                 radial-gradient(circle at top center, rgba(219, 234, 254, 0.56) 0%, rgba(255, 255, 255, 0.94) 36%, #f8fafc 72%),
                 linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
@@ -113,12 +114,14 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            min-width: 0;
             min-height: 46px;
             padding: 0 20px;
             border-radius: 14px;
             font-size: 14px;
             font-weight: 800;
             border: 1px solid transparent;
+            text-align: center;
             transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
         }
 
@@ -213,6 +216,14 @@
             margin: 20px 0 0;
             max-width: 34rem;
             font-size: 18px;
+        }
+
+        .hero-copy,
+        .hero-panel,
+        .hero-actions > *,
+        .cta-actions > *,
+        .topbar-actions > * {
+            min-width: 0;
         }
 
         .hero-actions,
@@ -548,6 +559,11 @@
                 width: 100%;
             }
 
+            .hero-actions,
+            .cta-actions {
+                flex-direction: column;
+            }
+
             .hero-card,
             .section-card,
             .cta-panel,
@@ -567,6 +583,33 @@
 
             .comparison-hint {
                 display: block;
+            }
+
+            .button {
+                width: 100%;
+                padding: 12px 18px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .topbar-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-card,
+            .section-card,
+            .cta-panel,
+            .faq-panel {
+                padding: 20px;
+            }
+
+            .hero-copy p,
+            .section-head p,
+            .section-copy p,
+            .cta-copy p,
+            .faq-intro p,
+            .faq-answer {
+                font-size: 16px;
             }
         }
     </style>
