@@ -1,6 +1,6 @@
 # Dossentry Competitive Map v2
 
-最后更新时间：2026-04-11 America/Los_Angeles
+最后更新时间：2026-04-13 America/Los_Angeles
 
 ## Executive Conclusion
 
@@ -22,6 +22,24 @@
 - 多品牌规则与证据要求
 - 可分享的 Brand Review Link
 - 自托管 / Docker / 客户数据留在客户环境
+
+## Current Status
+
+这份 map 最初是为了帮助决定“hero 先改还是 compare 先做”。
+
+截至现在，两个动作都已经完成：
+
+- 首页 hero 已经按这个方向落地
+- `/compare/generic-inspection-apps` 已经是正式页面
+- first-party CTA click tracking 已经接到当前代码和 admin `Review Requests` 页面里
+
+所以现在不该再把这份文档当成“是否要这么做”的讨论稿。
+
+更准确的用途是：
+
+- 对齐竞品层级
+- 固定 positioning guardrails
+- 帮后续外联和 demo 不要跑偏
 
 ## Competitive Map
 
@@ -157,16 +175,17 @@
 - [AfterShip Returns](https://www.aftership.com/returns)
 - [AfterShip returned item grading](https://support.aftership.com/en/returns/article/returned-item-grading-168nmhr)
 
-### Tier 5: Useful Benchmark
+## Benchmark Note
 
 #### Claimlane
 
-这是更值得认真对标的 claims / evidence trail 产品。
+这更适合放在 benchmark / adjacent reference，而不是再单独拉出第五层。
 
 为什么：
 
 - 官方直接讲 claims、photos、videos、serial numbers、evidence trail
 - 和 Dossentry 的 `Brand Review Link`、争议记录逻辑更接近
+- 但它不该打乱当前已经收好的四层竞品框架
 
 官方参考：
 
@@ -254,16 +273,29 @@ Dossentry 记录：
 - `customer-hosted`
 - `close-up evidence mobile teams can capture on the floor`
 
-## Immediate Next Moves
+## Shipped Since This Draft
 
-1. 首页 hero 从“扫码/inspection”再收口到：
+1. 首页 hero 已经收口到：
    - `phone-first evidence`
    - `brand-ready review`
    - `no station rebuild`
-2. 做一页对比：
-   - `Dossentry vs generic inspection apps`
-3. 在 demo 和销售话术里，把主卖点固定成：
-   - `capture`
-   - `playbook`
-   - `review link`
+   - `customer-owned deployment`
+2. compare 页面已经落地：
+   - `/compare/generic-inspection-apps`
+3. CTA measurement 已经补上：
+   - public CTA clicks 现在能进 first-party event table
+   - admin `Review Requests` 页面能看 summary 和 recent clicks
+
+## Immediate Next Moves
+
+1. 不再争论 hero 和 compare 先做哪个，转去看真实 CTA 数据：
+   - `sample review`
+   - `guest demo`
+   - `workflow review`
+   - `compare`
+2. 用现有 homepage + compare page 去做外联和 discovery，而不是继续写定位文档
+3. 只有当真实对话反复推翻当前 thesis 时，才回头重写 positioning：
+   - `warehouse-side evidence`
+   - `Brand Review Link`
+   - `no station rebuild`
    - `customer-owned deployment`

@@ -13,6 +13,14 @@
             'sent' => 'badge-soft-success',
             'failed' => 'badge-soft-danger',
         ];
+        $trackedCtas = [
+            'sample_review' => 'Sample review',
+            'guest_demo' => 'Guest demo',
+            'workflow_review' => 'Workflow review',
+            'compare' => 'Compare',
+            'login' => 'Log in',
+            'back_to_site' => 'Back to site',
+        ];
     @endphp
 
     <div class="content container-fluid">
@@ -69,6 +77,65 @@
                         <button class="btn btn-primary" type="submit">Apply filters</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                    <div>
+                        <h4 class="mb-2">CTA Click Tracking</h4>
+                        <p class="text-muted mb-0">First-party click events from public landing and compare pages.</p>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-start">
+                        @foreach($trackedCtas as $ctaKey => $ctaLabel)
+                            <span class="badge badge-soft-secondary p-2">
+                                {{ $ctaLabel }} {{ $clickSummary['ctaCounts30Days'][$ctaKey] ?? 0 }}
+                            </span>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <div class="small text-muted mb-1">Last 7 days</div>
+                            <div class="h3 mb-0">{{ $clickSummary['last7Days'] ?? 0 }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <div class="small text-muted mb-1">Last 30 days</div>
+                            <div class="h3 mb-0">{{ $clickSummary['last30Days'] ?? 0 }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <div class="small text-muted mb-1">Unique clients (30d)</div>
+                            <div class="h3 mb-0">{{ $clickSummary['uniqueClients30Days'] ?? 0 }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="mb-2">Top CTA combinations (30d)</h5>
+                    @if(($clickSummary['topCtas30Days'] ?? collect())->isNotEmpty())
+                        <div class="d-flex flex-column gap-2">
+                            @foreach($clickSummary['topCtas30Days'] as $row)
+                                <div class="d-flex flex-column flex-lg-row justify-content-between border rounded px-3 py-2 gap-2">
+                                    <div>
+                                        <strong>{{ \Illuminate\Support\Str::of($row->cta_key)->replace('_', ' ')->title() }}</strong>
+                                        <span class="text-muted">on {{ \Illuminate\Support\Str::of($row->page_key)->replace('_', ' ')->title() }}</span>
+                                        <span class="text-muted">/ {{ $row->placement ?: 'unknown placement' }}</span>
+                                    </div>
+                                    <div class="font-weight-bold">{{ $row->total }}</div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-muted">No CTA click events yet.</div>
+                    @endif
+                </div>
             </div>
         </div>
 
@@ -169,6 +236,70 @@
             </div>
             <div class="card-footer border-0">
                 {{ $resources->links() }}
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header border-0 pb-0">
+                <h4 class="mb-1">Recent CTA clicks</h4>
+                <p class="text-muted mb-0">Latest public click events recorded before a workflow review request is submitted.</p>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-align-middle mb-0">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>CTA</th>
+                        <th>Page</th>
+                        <th>Source</th>
+                        <th>Target</th>
+                        <th>UTM</th>
+                        <th>When</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @forelse($clickSummary['recentClicks'] as $click)
+                        <tr>
+                            <td>
+                                <div class="font-weight-bold">{{ \Illuminate\Support\Str::of($click->cta_key)->replace('_', ' ')->title() }}</div>
+                                <div class="small text-muted">{{ $click->cta_label ?: 'No label captured' }}</div>
+                            </td>
+                            <td>
+                                <div>{{ \Illuminate\Support\Str::of($click->page_key)->replace('_', ' ')->title() }}</div>
+                                <div class="small text-muted">{{ $click->placement ?: 'unknown placement' }}</div>
+                            </td>
+                            <td>
+                                <div class="small">{{ $click->source_host ?: 'unknown host' }}</div>
+                                <div class="small text-muted text-wrap">{{ $click->landing_path ?: $click->source_path ?: '/' }}</div>
+                            </td>
+                            <td>
+                                <div class="small">{{ $click->target_host ?: 'unknown host' }}</div>
+                                <div class="small text-muted text-wrap">{{ $click->target_path ?: '/' }}</div>
+                            </td>
+                            <td style="min-width: 200px;">
+                                <div class="small text-wrap">
+                                    @if($click->utm_source || $click->utm_medium || $click->utm_campaign)
+                                        {{ collect([
+                                            $click->utm_source ? 'src=' . $click->utm_source : null,
+                                            $click->utm_medium ? 'med=' . $click->utm_medium : null,
+                                            $click->utm_campaign ? 'cmp=' . $click->utm_campaign : null,
+                                        ])->filter()->implode(' · ') }}
+                                    @else
+                                        <span class="text-muted">No UTM</span>
+                                    @endif
+                                </div>
+                            </td>
+                            <td>
+                                <div>{{ $click->created_at->format('M j, Y') }}</div>
+                                <div class="small text-muted">{{ $click->created_at->format('g:i A') }}</div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No CTA click events yet.</td>
+                        </tr>
+                    @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

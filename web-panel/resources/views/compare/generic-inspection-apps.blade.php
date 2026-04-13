@@ -631,11 +631,11 @@
                     <a href="#faq">FAQ</a>
                 </nav>
                 <div class="topbar-actions">
-                    <a class="button button-secondary" href="{{ route('landing') }}">Back to site</a>
+                    <a class="button button-secondary" href="{{ route('landing') }}" data-track-page="compare" data-track-placement="topbar" data-track-cta="back_to_site">Back to site</a>
                     @if($sampleBrandReviewUrl)
-                        <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}">View Sample Review</a>
+                        <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}" data-track-page="compare" data-track-placement="topbar" data-track-cta="sample_review">View Sample Review</a>
                     @else
-                        <a class="button button-primary" href="{{ route('landing') }}#review-request">Request Workflow Review</a>
+                        <a class="button button-primary" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="topbar" data-track-cta="workflow_review">Request Workflow Review</a>
                     @endif
                 </div>
             </div>
@@ -657,12 +657,12 @@
                             </p>
                             <div class="hero-actions">
                                 @if($sampleBrandReviewUrl)
-                                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}">View Sample Brand Review Link</a>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
-                                    <a class="button button-quiet" href="{{ route('landing') }}#review-request">Request Workflow Review</a>
+                                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}" data-track-page="compare" data-track-placement="hero" data-track-cta="sample_review">View Sample Brand Review Link</a>
+                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
+                                    <a class="button button-quiet" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
                                 @else
-                                    <a class="button button-primary" href="{{ route('landing') }}#review-request">Request Workflow Review</a>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
+                                    <a class="button button-primary" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
+                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
                                 @endif
                             </div>
                             <div class="hero-proof">
@@ -894,12 +894,12 @@
                             </p>
                         <div class="cta-actions">
                             @if($sampleBrandReviewUrl)
-                                <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}">View Sample Brand Review Link</a>
-                                <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
-                                <a class="button button-quiet" href="{{ route('landing') }}#review-request">Request Workflow Review</a>
+                                <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}" data-track-page="compare" data-track-placement="cta" data-track-cta="sample_review">View Sample Brand Review Link</a>
+                                <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="cta" data-track-cta="guest_demo">Enter Guest Demo</a>
+                                <a class="button button-quiet" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="cta" data-track-cta="workflow_review">Request Workflow Review</a>
                             @else
-                                <a class="button button-primary" href="{{ route('landing') }}#review-request">Request Workflow Review</a>
-                                <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
+                                <a class="button button-primary" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="cta" data-track-cta="workflow_review">Request Workflow Review</a>
+                                <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="cta" data-track-cta="guest_demo">Enter Guest Demo</a>
                             @endif
                         </div>
                         </div>
@@ -923,12 +923,13 @@
         <div class="shell footer-inner">
             <div>{{ $appName }}. Brand-ready return evidence and decision workflows.</div>
             <div class="footer-links">
-                <a href="{{ route('landing') }}">Home</a>
+                <a href="{{ route('landing') }}" data-track-page="compare" data-track-placement="footer" data-track-cta="back_to_site">Home</a>
                 <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
                 <a href="{{ route('terms-of-service') }}">Terms of Service</a>
-                <a href="{{ $demoLoginUrl }}">Live demo</a>
+                <a href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="footer" data-track-cta="guest_demo">Live demo</a>
             </div>
         </div>
     </footer>
+    @include('partials.marketing-click-tracking', ['pageKey' => 'compare'])
 </body>
 </html>

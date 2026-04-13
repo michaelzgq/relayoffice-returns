@@ -1,6 +1,6 @@
 # Dossentry vs Generic Inspection Apps
 
-最后更新时间：2026-04-11 America/Los_Angeles
+最后更新时间：2026-04-13 America/Los_Angeles
 
 ## Goal
 
@@ -9,6 +9,16 @@
 目标只有一个：
 
 **让多品牌 3PL / warehouse ops 在 60 秒内明白，为什么通用 inspection app 不足以处理 disputed returns。**
+
+## Current Status
+
+这份文案已经不只是提案。
+
+当前状态：
+
+- 已实现为 `/compare/generic-inspection-apps`
+- compare page 已经接上 first-party CTA click tracking
+- 目前只有本地 runtime 验证通过，不要在这份文档里假装已经有市场转化结论
 
 ## Recommended URL
 
@@ -31,6 +41,17 @@
 ### Secondary CTA
 
 `Enter Guest Demo`
+
+### Tertiary CTA
+
+`Request Workflow Review`
+
+### Fallback Rule
+
+如果当前环境没有 sample Brand Review Link：
+
+- Primary CTA 改为 `Request Workflow Review`
+- Secondary CTA 保留 `Enter Guest Demo`
 
 ## Core Comparison Table
 
@@ -143,4 +164,5 @@
 ### Buttons
 
 - `View Sample Brand Review Link`
+- `Enter Guest Demo`
 - `Request Workflow Review`

@@ -1,6 +1,6 @@
 # Dossentry Hero Copy v3
 
-最后更新时间：2026-04-11 America/Los_Angeles
+最后更新时间：2026-04-13 America/Los_Angeles
 
 ## What The Hero Must Do
 
@@ -16,6 +16,22 @@
 2. 它是给 disputed returns 用的
 3. 它不要求 station hardware / rebuild
 4. 它不是托管你数据的重型 SaaS
+
+## Current Status
+
+这份 hero recommendation 已经在当前首页实现，不再只是候选 copy。
+
+当前状态：
+
+- 当前首页 headline 已经使用这版主推荐
+- 当前 CTA 层级是：
+  - Primary: `View Sample Brand Review Link`
+  - Secondary: `Enter Guest Demo`
+  - Tertiary: `Request Workflow Review`
+- 如果当前环境没有 sample Brand Review Link，首页会降级成：
+  - Primary: `Request Workflow Review`
+  - Secondary: `Enter Guest Demo`
+- first-party CTA tracking 已经接到首页，但还没有真实流量样本来判断哪条 CTA 真赢
 
 ## Best Current Hero Recommendation
 
@@ -114,6 +130,8 @@
 - `phone-first`
 
 ## Recommended A/B Test Order
+
+下面这个顺序现在仍然只是 hypothesis order，不是数据结论。
 
 1. `Defensible return evidence, generated on the warehouse floor.`
 2. `When a brand questions a return, send one link instead of rebuilding the story.`

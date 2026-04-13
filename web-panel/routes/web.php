@@ -3,6 +3,7 @@
 use App\CPU\Helpers;
 use App\Models\ReturnCase;
 use App\Http\Controllers\Admin\EvidenceExportController;
+use App\Http\Controllers\MarketingClickEventController;
 use App\Http\Controllers\WorkflowReviewRequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -83,6 +84,10 @@ Route::get('compare/generic-inspection-apps', function (Request $request) use ($
 
 Route::post('workflow-review-request', [WorkflowReviewRequestController::class, 'store'])
     ->name('workflow-review-requests.store');
+
+Route::post('marketing/click-events', [MarketingClickEventController::class, 'store'])
+    ->middleware('throttle:120,1')
+    ->name('marketing.click-events.store');
 
 Route::view('privacy-policy', 'legal.privacy')->name('privacy-policy');
 Route::view('terms-of-service', 'legal.terms')->name('terms-of-service');

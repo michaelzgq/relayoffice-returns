@@ -22,14 +22,16 @@ class LandingPageRoutingTest extends TestCase
         $response = $this->get('http://dossentry.com/');
 
         $response->assertOk();
-        $response->assertSee('One defensible record for the returns that create arguments.');
+        $response->assertSee('Defensible return');
         $response->assertSee('Dossentry');
         $response->assertSee('Brand Review Link');
         $response->assertSee('View Sample Brand Review Link');
-        $response->assertSee('Shared guest workspace');
+        $response->assertSee('Shared guest demo');
         $response->assertSee('guest@dossentry.com');
         $response->assertSee(route('privacy-policy'));
         $response->assertSee(route('terms-of-service'));
+        $response->assertSee('data-track-cta="sample_review"', false);
+        $response->assertSee(json_encode(route('marketing.click-events.store')), false);
     }
 
     public function test_demo_domain_root_redirects_to_login(): void
@@ -38,5 +40,15 @@ class LandingPageRoutingTest extends TestCase
 
         $response->assertStatus(302);
         $this->assertStringContainsString('admin/auth/login', $response->headers->get('Location', ''));
+    }
+
+    public function test_compare_page_serves_public_comparison_with_tracking_hooks(): void
+    {
+        $response = $this->get('http://dossentry.com/compare/generic-inspection-apps');
+
+        $response->assertOk();
+        $response->assertSee('Generic inspection apps collect photos.');
+        $response->assertSee('data-track-cta="back_to_site"', false);
+        $response->assertSee(json_encode(route('marketing.click-events.store')), false);
     }
 }

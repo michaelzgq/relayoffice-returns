@@ -2947,3 +2947,142 @@
 - `/Users/mikezhang/Desktop/projects/6POS/output/chrome/mobile-home-500.png`
 - `/Users/mikezhang/Desktop/projects/6POS/output/chrome/mobile-compare-500.png`
 - `/Users/mikezhang/Desktop/projects/6POS/output/chrome/mobile-login-500.png`
+
+## 2026-04-13 - Add first-party measurement before sending traffic to new marketing pages
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: minimal CTA click tracking for the landing page, compare page, and admin lead inbox
+- Outcome: success with concerns
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- The lowest-risk measurement layer was a same-origin Laravel endpoint plus a tiny shared browser script, not a full third-party analytics install.
+- Reusing the existing `Workflow Review Requests` admin page created one operator surface for both hard conversions and pre-form CTA intent.
+- Keeping the scope to `sample review`, `guest demo`, `workflow review`, `compare`, and navigation return actions preserved speed and avoided building a generic analytics system.
+- Runtime verification succeeded once the self-hosted image was rebuilt from the current workspace, the new migration was applied, targeted PHPUnit files were executed in a bind-mounted PHP container, and a real browser click on the landing-page `Compare` CTA showed up in the admin UI summary.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I let messaging and page polish get ahead of measurement
+- What happened: the homepage and compare page were already live and positioned correctly, but there was still no first-party record of which CTA people clicked before submitting a form.
+- Root cause: I treated instrumentation as optional follow-up instead of part of launch readiness.
+- Earlier signal I missed: the next-step discussion had already shifted from copy and layout to "start traffic", which meant measurement should have been in place before that point.
+- Prevention rule: any public landing or compare page that is about to receive outreach or paid attention needs at least one minimal first-party event path before launch.
+- Next-time checklist item: before declaring a marketing page ready, confirm there is a way to count primary CTA clicks and relate them to later lead submissions.
+
+### Mistake: I allowed smoke tests to drift behind marketing copy
+- What happened: the existing landing page routing test was still asserting old hero language even though the live landing copy had already changed.
+- Root cause: copy-heavy marketing changes were treated as "just content" instead of code paths that still need test maintenance.
+- Earlier signal I missed: the old test strings no longer existed anywhere in the current Blade templates.
+- Prevention rule: when a public Blade page changes copy or CTA structure, update at least one smoke test in the same change set.
+- Next-time checklist item: grep the asserted strings in feature tests after every major landing page rewrite.
+
+### Mistake: I assumed the running self-hosted container already matched the workspace
+- What happened: after Docker came up, the first container check still showed no `MarketingClickEventController`, because this compose setup builds an image from `web-panel` and does not bind-mount source code.
+- Root cause: I carried forward the earlier local-assumption that the app container might reflect the current workspace without confirming the compose volume model.
+- Earlier signal I missed: `docker-compose.self-hosted.yml` mounts only `storage`, not the application code, so any PHP or Blade change requires a rebuild.
+- Prevention rule: before runtime QA, verify whether the environment is `bind-mounted` or `image-built`; if it is image-built, rebuild first and only then trust any browser or route result.
+- Next-time checklist item: inspect compose mounts before starting local verification and explicitly record whether a rebuild is mandatory.
+
+### Mistake: I assumed the old local port survived the rebuild
+- What happened: the rebuilt stack came back on `127.0.0.1:8080`, not the previously used `127.0.0.1:18081`, and the first browser open failed with `ERR_CONNECTION_REFUSED`.
+- Root cause: I reused an earlier remembered port instead of re-reading the active container port mapping after the stack restarted.
+- Earlier signal I missed: `docker ps` clearly showed `0.0.0.0:8080->10000/tcp` as soon as the rebuilt app started.
+- Prevention rule: after any compose rebuild or recreate, re-check the live port mapping before beginning browser QA.
+- Next-time checklist item: make `docker ps` or `curl -I` the first step after a local stack restart.
+
+### Mistake: I assumed the production-like image could run PHPUnit directly
+- What happened: the rebuilt app image had `--no-dev` Composer dependencies, so `phpunit` was absent inside the running container even though the tests existed in the workspace.
+- Root cause: I treated the production image as both runtime target and test runner target.
+- Earlier signal I missed: the Dockerfile path and build logs both showed a production install path, which should have implied missing dev tools.
+- Prevention rule: when the runtime image is intentionally lean, run PHPUnit in a separate PHP container with the workspace bind-mounted, or use a dedicated dev/test image.
+- Next-time checklist item: confirm whether dev dependencies exist in the container before choosing the test execution path.
+
+## Permanent Rules
+- Do not drive traffic to a new public page without at least minimal first-party CTA instrumentation.
+- Marketing copy changes are test changes if smoke tests assert rendered strings or CTA hooks.
+- Public measurement should start as narrow, first-party, and operator-readable before adding external analytics.
+- Verification claims must state whether they came from source review, automated tests, or live runtime execution.
+
+## Next-Project Checklist
+- [ ] Confirm the primary CTA list before launch and instrument each one explicitly
+- [ ] Add or refresh one routing/smoke test for every major public page rewrite
+- [ ] Verify PHP or Docker test execution availability before promising runtime proof
+- [ ] Surface click summaries somewhere operators already check instead of creating a second reporting page
+- [ ] Keep UTM capture first-touch and minimal unless a real sales workflow requires more
+
+## Open Risks Or Follow-Ups
+- Runtime verification now passed locally for one CTA path: landing `Compare` recorded into `marketing_click_events` with first-touch UTM values and rendered correctly in the admin `Review Requests` page.
+- The remaining unverified paths are the external-host CTAs such as `Enter Guest Demo` and `Log in`, which rely on `sendBeacon` or `fetch(... keepalive)` surviving navigation to another host.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/MarketingClickEventController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/Admin/WorkflowReviewRequestController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Models/MarketingClickEvent.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/migrations/2026_04_13_000001_create_marketing_click_events_table.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/partials/marketing-click-tracking.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/review-requests/index.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/LandingPageRoutingTest.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/MarketingClickTrackingTest.php`
+
+## 2026-04-13 - Strategy docs must be converted from proposal mode to shipped-status mode once pages exist
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: syncing the three positioning/copy markdown files to the actually shipped homepage, compare page, and CTA tracking state
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- The underlying positioning docs were still directionally correct, so the job was not a rewrite; it was a state-sync pass.
+- Updating docs right after runtime verification made it easy to separate `implemented`, `measured`, and `still hypothetical`.
+- Treating the compare and hero docs as shipped assets exposed one real mismatch quickly: the compare doc had already fallen behind the actual CTA stack.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I left strategy docs in “proposal mode” after the product pages were already built
+- What happened: the homepage hero and compare page already existed, but the markdown docs still read like those changes were only recommended next steps.
+- Root cause: once the implementation shipped, nobody explicitly converted the strategy docs from planning artifacts into source-of-truth status docs.
+- Earlier signal I missed: the docs still said things like `Immediate Next Moves` for work that was already in the codebase.
+- Prevention rule: once a strategy-driven page ships, update the source markdown in the same cycle so it says what is now live versus what still remains a hypothesis.
+- Next-time checklist item: after a marketing page lands, do one short doc-sync pass before moving on to the next experiment.
+
+### Mistake: I let the verbal framework get cleaner than the written framework
+- What happened: the competitive framing had already been verbally simplified to four layers, but the markdown still had a fifth tier for Claimlane.
+- Root cause: the conversation-level model evolved faster than the static doc.
+- Earlier signal I missed: the user was already consistently describing the framework as four layers, which directly conflicted with the written tier count.
+- Prevention rule: when a categorization framework changes, update the headings and tier count first, before polishing the individual entries.
+- Next-time checklist item: compare the spoken summary against the document outline and resolve tier-count drift immediately.
+
+### Mistake: I almost treated implementation notes as market proof
+- What happened: once CTA tracking existed, it was tempting to let the docs imply more certainty than the data justified.
+- Root cause: shipping instrumentation can feel like shipping evidence, but those are not the same thing.
+- Earlier signal I missed: the only validated data so far was local runtime click capture, not real traffic or conversion behavior.
+- Prevention rule: docs should clearly distinguish `implemented`, `runtime-verified`, and `market-validated`.
+- Next-time checklist item: never call a copy or CTA winner unless there is live traffic data behind it.
+
+## Permanent Rules
+- After shipping a strategy-led page, convert the associated markdown from recommendation mode to status mode.
+- Tier counts in competitive maps must stay consistent between spoken strategy and written docs.
+- Instrumentation does not equal market validation; label those states separately.
+
+## Next-Project Checklist
+- [ ] Mark which recommendations are already implemented in code
+- [ ] Remove or rewrite any `next move` that has already shipped
+- [ ] Check CTA stacks in docs against the actual rendered page
+- [ ] Separate `implemented`, `runtime-verified`, and `market-validated`
+- [ ] Keep one benchmark note separate if it does not belong in the main competitor tiers
+
+## Open Risks Or Follow-Ups
+- These docs are now aligned with the current codebase state, but still do not contain live traffic conclusions.
+- `returns-positioning-pricing-discovery-v2.md` remains intentionally outside this sync pass.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-competitive-map-v2.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-vs-generic-inspection-copy.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-hero-copy-v3.md`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`

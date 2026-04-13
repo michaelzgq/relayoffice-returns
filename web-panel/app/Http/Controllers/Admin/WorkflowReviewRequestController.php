@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
+use App\Models\MarketingClickEvent;
 use App\Models\WorkflowReviewRequest;
 use App\Services\WorkflowReviewNotificationService;
 use Brian2694\Toastr\Facades\Toastr;
@@ -40,12 +41,39 @@ class WorkflowReviewRequestController extends Controller
             ->paginate(\App\CPU\Helpers::pagination_limit())
             ->appends($request->query());
 
+        $clicksLast30Days = MarketingClickEvent::query()
+            ->where('created_at', '>=', now()->subDays(30));
+
         return view('admin-views.returns.review-requests.index', [
             'resources' => $resources,
             'statusCounts' => WorkflowReviewRequest::query()
                 ->selectRaw('status, count(*) as total')
                 ->groupBy('status')
                 ->pluck('total', 'status'),
+            'clickSummary' => [
+                'last7Days' => MarketingClickEvent::query()
+                    ->where('created_at', '>=', now()->subDays(7))
+                    ->count(),
+                'last30Days' => (clone $clicksLast30Days)->count(),
+                'uniqueClients30Days' => (clone $clicksLast30Days)
+                    ->whereNotNull('client_token')
+                    ->distinct()
+                    ->count('client_token'),
+                'ctaCounts30Days' => (clone $clicksLast30Days)
+                    ->selectRaw('cta_key, count(*) as total')
+                    ->groupBy('cta_key')
+                    ->pluck('total', 'cta_key'),
+                'topCtas30Days' => (clone $clicksLast30Days)
+                    ->selectRaw('page_key, placement, cta_key, count(*) as total')
+                    ->groupBy('page_key', 'placement', 'cta_key')
+                    ->orderByDesc('total')
+                    ->limit(8)
+                    ->get(),
+                'recentClicks' => MarketingClickEvent::query()
+                    ->latest()
+                    ->limit(20)
+                    ->get(),
+            ],
             'mailDiagnostics' => [
                 'notificationEmail' => trim((string) config('dossentry.workflow_review_notification_email')),
                 'mailFromAddress' => trim((string) config('mail.from.address')),

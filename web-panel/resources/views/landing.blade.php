@@ -1124,12 +1124,12 @@
                 <nav class="topnav">
                     <a href="#workflow">Products</a>
                     <a href="#deployment">Solutions</a>
-                    <a href="{{ route('compare.generic-inspection-apps') }}">Compare</a>
+                    <a href="{{ route('compare.generic-inspection-apps') }}" data-track-page="landing" data-track-placement="topnav" data-track-cta="compare">Compare</a>
                     <a href="#faq">FAQ</a>
                 </nav>
                 <div class="topbar-actions">
-                    <a class="login-link" href="{{ $demoLoginUrl }}">Log in</a>
-                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl ?: $demoLoginUrl }}">
+                    <a class="login-link" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="topbar" data-track-cta="login">Log in</a>
+                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl ?: $demoLoginUrl }}" data-track-page="landing" data-track-placement="topbar" data-track-cta="{{ $sampleBrandReviewUrl ? 'sample_review' : 'guest_demo' }}">
                         {{ $sampleBrandReviewUrl ? 'View Sample Review' : 'Enter Guest Demo' }}
                     </a>
                 </div>
@@ -1152,12 +1152,12 @@
                             </p>
                             <div class="hero-actions">
                                 @if($sampleBrandReviewUrl)
-                                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}">View Sample Brand Review Link</a>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
-                                    <a class="button button-tertiary" href="#review-request">Request Workflow Review</a>
+                                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}" data-track-page="landing" data-track-placement="hero" data-track-cta="sample_review">View Sample Brand Review Link</a>
+                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
+                                    <a class="button button-tertiary" href="#review-request" data-track-page="landing" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
                                 @else
-                                    <a class="button button-primary" href="#review-request">Request Workflow Review</a>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
+                                    <a class="button button-primary" href="#review-request" data-track-page="landing" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
+                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
                                 @endif
                             </div>
                             <div class="hero-proof">
@@ -1420,7 +1420,7 @@
                                 </div>
                                 <div class="hero-actions">
                                     <button class="button button-primary" type="submit">Request Workflow Review</button>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}">Enter Guest Demo</a>
+                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="review_form" data-track-cta="guest_demo">Enter Guest Demo</a>
                                 </div>
                                 <p class="form-note">Start with one real workflow. Formal production deployment can run in your own Docker environment.</p>
                             </form>
@@ -1432,7 +1432,7 @@
                                 <p>Open a sample Brand Review Link first. It is the fastest way to see the exact record your team could send when a brand challenges a return decision.</p>
                                 @if($sampleBrandReviewUrl)
                                     <div class="stack-actions">
-                                        <a class="button button-secondary" href="{{ $sampleBrandReviewUrl }}">View sample review record</a>
+                                        <a class="button button-secondary" href="{{ $sampleBrandReviewUrl }}" data-track-page="landing" data-track-placement="cta_meta" data-track-cta="sample_review">View sample review record</a>
                                     </div>
                                 @endif
                             </article>
@@ -1451,7 +1451,7 @@
                                     </div>
                                 </div>
                                 <div class="stack-actions">
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}">Open guest demo</a>
+                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="cta_meta" data-track-cta="guest_demo">Open guest demo</a>
                                 </div>
                             </article>
 
@@ -1470,12 +1470,13 @@
         <div class="shell footer-inner">
             <div>{{ $appName }}. Brand-ready return evidence and decision workflows.</div>
             <div class="footer-links">
-                <a href="{{ route('compare.generic-inspection-apps') }}">Compare</a>
+                <a href="{{ route('compare.generic-inspection-apps') }}" data-track-page="landing" data-track-placement="footer" data-track-cta="compare">Compare</a>
                 <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
                 <a href="{{ route('terms-of-service') }}">Terms of Service</a>
-                <a href="{{ $demoLoginUrl }}">Live demo</a>
+                <a href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="footer" data-track-cta="guest_demo">Live demo</a>
             </div>
         </div>
     </footer>
+    @include('partials.marketing-click-tracking', ['pageKey' => 'landing'])
 </body>
 </html>
