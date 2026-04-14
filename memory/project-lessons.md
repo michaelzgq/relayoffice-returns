@@ -3398,3 +3398,120 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Services/WorkflowReviewNotificationService.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Mail/WorkflowReviewRequestSubmitted.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/migrations/2026_04_10_000001_create_workflow_review_requests_table.php`
+
+## 2026-04-13 - Customer-facing product overview PDF must be grounded in live product state
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: creating a customer-safe PDF that explains the current Dossentry product, workflow, value, and fit based on the latest shipped state
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Using both live product files and status docs produced a cleaner result than relying on either source alone.
+- Writing the PDF from a markdown source plus a generator script made the output reusable instead of turning it into a one-off export.
+- Rendering preview images after generation caught layout issues early enough to fix them before handing the file to the user.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Customer-facing collateral could have drifted into strategy language instead of shipped product language
+- What happened: the source material included strategy docs, positioning drafts, and status reports, which are useful context but not safe to present to a customer as direct product truth.
+- Root cause: internal strategy documents age differently than routes, views, and tested flows, so they can preserve claims that are directionally right but no longer phrased like the live product.
+- Earlier signal I missed: earlier positioning docs already contained "next move" items that had since shipped, which is a direct sign that doc recency alone cannot be trusted.
+- Prevention rule: any customer-facing collateral must be anchored to live routes, views, and currently available workflow steps first, with strategy docs used only as secondary framing.
+- Next-time checklist item: before drafting external-facing product material, verify each core claim against current code or live product entry points rather than only against markdown docs.
+
+### Mistake: The deliverable would have been fragile if the PDF existed without its editable source
+- What happened: the user asked for a shareable PDF, but without also keeping the source markdown and generator script, the next revision would have required manual PDF surgery or a full rewrite.
+- Root cause: it is easy to treat collateral as a final binary instead of as versioned product documentation that will change with the product.
+- Earlier signal I missed: the request explicitly asked for something both the team and customers could reuse, which implies repeat updates rather than a one-time export.
+- Prevention rule: every reusable external document should ship as a three-part asset: editable source, reproducible generator, and exported file.
+- Next-time checklist item: when creating any PDF deliverable, save the source text and build script in-repo before considering the task complete.
+
+### Mistake: The first PDF script revision assumed ReportLab style names were empty
+- What happened: the initial generation path collided with an existing stylesheet entry named `Bullet`, which blocked export until the custom style was renamed.
+- Root cause: the script assumed custom style names could reuse generic labels from example code.
+- Earlier signal I missed: ReportLab's sample stylesheet is opinionated and already seeds common names like `Bullet`, `Title`, and `BodyText`.
+- Prevention rule: custom PDF style names should always be namespaced to the document or project instead of using generic style labels.
+- Next-time checklist item: prefix custom ReportLab styles before first run to avoid silent collisions with the default stylesheet.
+
+## Permanent Rules
+- Customer-facing product documents must describe the shipped workflow, not the planned roadmap.
+- Reusable PDF collateral must be reproducible from source inside the repo.
+- PDF generation scripts should namespace custom styles and preview-render at least one page before handoff.
+
+## Next-Project Checklist
+- [ ] Confirm which claims are live product facts versus positioning language before drafting external collateral.
+- [ ] Verify the core workflow against current routes, views, and live entry points.
+- [ ] Save markdown source, build script, and exported PDF together.
+- [ ] Render at least one preview image and inspect layout before handing off the PDF.
+- [ ] Include a clear "best fit" and "not replacing" section so buyers classify the product correctly.
+
+## Open Risks Or Follow-Ups
+- The current PDF is an English customer-facing overview; if the primary outreach channel shifts to Chinese-language operators, a Chinese variant should be generated from the same source structure rather than translated ad hoc.
+- As the product changes, the overview will need periodic refreshes or it will start drifting again.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-current-product-overview-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/scripts/generate_dossentry_product_overview_pdf.py`
+- `/Users/mikezhang/Desktop/projects/6POS/output/pdf/dossentry-current-product-overview-2026-04.pdf`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/web.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/admin.php`
+- `/Users/mikezhang/Desktop/projects/6POS/CURRENT_APP_FEATURES_MANUAL.md`
+- `/Users/mikezhang/Desktop/projects/6POS/v0-status-and-cloud-readiness-report.md`
+
+## 2026-04-13 - Bilingual sales collateral should be generated from one branded pipeline
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: upgrading the customer-facing Dossentry PDF into a branded sales collateral version, adding a Chinese customer edition, and packaging the sources for reuse
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Reusing one generator for both English and Chinese kept structure, branding, and page flow aligned.
+- Rendering preview images before handoff caught localization issues that plain text extraction would not have caught.
+- Keeping the output customer-safe and boundary-aware avoided accidentally turning the document into a fake full-suite claim.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I initially validated the generated files in parallel with the generation step
+- What happened: the first existence check reported the Chinese PDF missing and showed the old English timestamp, even though the generator completed successfully a moment later.
+- Root cause: the validation command raced the file-writing command because both were run in parallel.
+- Earlier signal I missed: binary artifact generation is not a safe candidate for same-batch existence checks when the follow-up command depends on write completion.
+- Prevention rule: never verify generated artifact timestamps or file presence in parallel with the command that is still writing them.
+- Next-time checklist item: run generation first, then do file existence and metadata checks as a second step.
+
+### Mistake: The first Chinese collateral pass still left English UI chrome in places where buyers expect full localization
+- What happened: the initial Chinese PDF still showed English table headers and English page labels even though the body copy was translated.
+- Root cause: the content translation was localized, but shared presentation labels in the generator were still hard-coded in English.
+- Earlier signal I missed: any reusable bilingual template has two translation layers, content strings and layout chrome, and both need review.
+- Prevention rule: for bilingual collateral, localize table headers, footer labels, and small UI text, not just section bodies.
+- Next-time checklist item: inspect one cover page and one interior table page in every target language before considering the export finished.
+
+## Permanent Rules
+- Bilingual collateral should come from one shared generator, not two manually diverging export files.
+- Generated binary artifacts should be verified only after the write step completes.
+- Localization QA must include layout chrome, not just narrative content.
+
+## Next-Project Checklist
+- [ ] Run PDF generation before any file existence or timestamp checks.
+- [ ] Render at least one cover page and one dense table page for each language.
+- [ ] Localize table headers, page labels, and callout chrome in every translated edition.
+- [ ] Keep product nouns intentional; translate surrounding explanation even if some product labels remain in English.
+- [ ] Stage only the relevant collateral assets and avoid mixing unrelated working-tree changes into the docs commit.
+
+## Open Risks Or Follow-Ups
+- The Chinese version intentionally keeps some product nouns in English, such as `Brand Review Link` and `Decision Queue`; if the target buyer expects fully localized product naming, a second pass may be needed.
+- As the live product and positioning evolve, both editions will need refreshes together or they will drift.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-current-product-overview-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-current-product-overview-zh-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/scripts/generate_dossentry_product_overview_pdf.py`
+- `/Users/mikezhang/Desktop/projects/6POS/output/pdf/dossentry-current-product-overview-2026-04.pdf`
+- `/Users/mikezhang/Desktop/projects/6POS/output/pdf/dossentry-current-product-overview-zh-2026-04.pdf`
+- `/Users/mikezhang/Desktop/projects/6POS/tmp/pdfs/dossentry-sales-overview-en-page-1.png`
+- `/Users/mikezhang/Desktop/projects/6POS/tmp/pdfs/dossentry-sales-overview-zh-final-page-3.png`
