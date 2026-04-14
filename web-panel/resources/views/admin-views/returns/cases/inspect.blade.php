@@ -165,10 +165,35 @@
             min-height: 360px;
             overflow: hidden;
         }
+        .scan-reader {
+            width: 100%;
+            min-height: 360px;
+        }
+        .scan-reader,
+        .scan-reader > div {
+            height: 100%;
+        }
         .scan-viewport video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        .scan-reader video,
+        .scan-reader canvas {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
+            border-radius: 18px;
+        }
+        .scan-reader__empty {
+            min-height: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 14px;
+            text-align: center;
+            padding: 24px;
         }
         .scan-viewport::after {
             content: '';
@@ -467,18 +492,29 @@
                 </div>
                 <div class="scan-sheet__body">
                     <div class="scan-viewport" id="scan-viewport">
-                        <video id="scan-video" playsinline muted></video>
+                        <div class="scan-reader d-none" id="scan-reader">
+                            <div class="scan-reader__empty">Opening camera…</div>
+                        </div>
+                        <video class="d-none" id="scan-video" playsinline muted></video>
                     </div>
-                    <div class="scan-manual-help" id="scan-manual-help">Tip: if the browser does not support camera scanning, focus the field and use a USB or Bluetooth scanner instead.</div>
+                    <div class="scan-manual-help" id="scan-manual-help">Tip: if live camera scan is unavailable on this browser, use a label photo or a USB / Bluetooth scanner instead.</div>
                 </div>
-                <div class="scan-sheet__footer d-flex justify-content-between align-items-center">
+                <input class="d-none" id="scan-file-input" type="file" accept="image/*" capture="environment">
+                <div class="scan-sheet__footer d-flex justify-content-between align-items-center gap-2 flex-wrap">
                     <div class="small text-muted">Target <span class="scan-target-pill" id="scan-target-pill">Return label</span></div>
-                    <button class="btn btn-light" type="button" data-scan-close>Close</button>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-outline-primary" id="scan-file-button" type="button">Use camera photo</button>
+                        <button class="btn btn-light" type="button" data-scan-close>Close</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+@push('script')
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+@endpush
 
 @push('script_2')
     <script>
@@ -527,11 +563,14 @@
             const dispositionInputs = Array.from(form.querySelectorAll('.disposition-input'));
             const scanStatusBanner = document.getElementById('scan-status-banner');
             const scanSheet = document.getElementById('scan-sheet');
+            const scanReader = document.getElementById('scan-reader');
             const scanVideo = document.getElementById('scan-video');
             const scanTitle = document.getElementById('scan-sheet-title');
             const scanSubtitle = document.getElementById('scan-sheet-subtitle');
             const scanTargetPill = document.getElementById('scan-target-pill');
             const scanManualHelp = document.getElementById('scan-manual-help');
+            const scanFileButton = document.getElementById('scan-file-button');
+            const scanFileInput = document.getElementById('scan-file-input');
             const scanButtons = Array.from(document.querySelectorAll('[data-scan-mode]'));
             const scanClosers = Array.from(document.querySelectorAll('[data-scan-close]'));
 
@@ -548,7 +587,27 @@
                 detector: null,
                 rafId: null,
                 lastRawValue: null,
+                engine: null,
+                html5Qrcode: null,
             };
+
+            const supportedHtml5Formats = (() => {
+                if (!window.Html5QrcodeSupportedFormats) {
+                    return [];
+                }
+
+                return [
+                    window.Html5QrcodeSupportedFormats.QR_CODE,
+                    window.Html5QrcodeSupportedFormats.CODE_128,
+                    window.Html5QrcodeSupportedFormats.CODE_39,
+                    window.Html5QrcodeSupportedFormats.EAN_13,
+                    window.Html5QrcodeSupportedFormats.EAN_8,
+                    window.Html5QrcodeSupportedFormats.UPC_A,
+                    window.Html5QrcodeSupportedFormats.UPC_E,
+                    window.Html5QrcodeSupportedFormats.ITF,
+                    window.Html5QrcodeSupportedFormats.CODABAR,
+                ].filter(Boolean);
+            })();
 
             const setRequiredState = (input, indicator, required) => {
                 if (!input || !indicator) {
@@ -566,6 +625,39 @@
 
                 scanStatusBanner.textContent = message;
                 scanStatusBanner.className = `scan-status scan-status--${tone} is-visible`;
+            };
+
+            const openScanSheet = (mode, target) => {
+                scanTitle.textContent = mode === 'label' ? 'Scan return label' : 'Scan field value';
+                scanSubtitle.textContent = mode === 'label'
+                    ? 'Point the camera at the return label. Structured QR codes will auto-fill multiple fields.'
+                    : 'Point the camera at the barcode or QR code for this field.';
+                scanTargetPill.textContent = mode === 'label' ? 'Return label' : humanize(target);
+                scanManualHelp.textContent = mode === 'label'
+                    ? 'If live camera scan does not start on this phone, tap "Use camera photo" and capture the label instead.'
+                    : 'If live camera scan does not start on this phone, tap "Use camera photo" and capture the barcode or QR code instead.';
+                scanSheet.classList.remove('d-none');
+                scanSheet.classList.add('is-open');
+                scanSheet.setAttribute('aria-hidden', 'false');
+            };
+
+            const hideScanSheet = () => {
+                scanSheet.classList.add('d-none');
+                scanSheet.classList.remove('is-open');
+                scanSheet.setAttribute('aria-hidden', 'true');
+            };
+
+            const resetScanViewport = () => {
+                if (scanReader) {
+                    scanReader.classList.add('d-none');
+                    scanReader.innerHTML = '<div class="scan-reader__empty">Opening camera…</div>';
+                }
+
+                if (scanVideo) {
+                    scanVideo.classList.add('d-none');
+                    scanVideo.pause();
+                    scanVideo.srcObject = null;
+                }
             };
 
             const syncOptionGroup = (selector, allowedValues) => {
@@ -850,32 +942,62 @@
                 return true;
             };
 
-            const closeScanner = () => {
-                scanState.active = false;
+            const stopNativeScanner = () => {
                 if (scanState.rafId) {
                     cancelAnimationFrame(scanState.rafId);
                     scanState.rafId = null;
                 }
+
                 if (scanState.stream) {
                     scanState.stream.getTracks().forEach((track) => track.stop());
                     scanState.stream = null;
                 }
-                if (scanVideo) {
-                    scanVideo.pause();
-                    scanVideo.srcObject = null;
-                }
-                scanSheet.classList.add('d-none');
-                scanSheet.classList.remove('is-open');
-                scanSheet.setAttribute('aria-hidden', 'true');
+
+                scanState.detector = null;
             };
 
-            const handleDetectedCode = (rawValue) => {
+            const stopHtml5Scanner = async () => {
+                const html5Qrcode = scanState.html5Qrcode;
+                scanState.html5Qrcode = null;
+
+                if (!html5Qrcode) {
+                    return;
+                }
+
+                try {
+                    await html5Qrcode.stop();
+                } catch (error) {
+                    // Ignore stop failures when the scanner never reached an active state.
+                }
+
+                try {
+                    await html5Qrcode.clear();
+                } catch (error) {
+                    // Ignore clear failures from partially initialized scanners.
+                }
+            };
+
+            const stopScannerSession = async () => {
+                scanState.active = false;
+                scanState.engine = null;
+
+                stopNativeScanner();
+                await stopHtml5Scanner();
+                resetScanViewport();
+            };
+
+            const closeScanner = async () => {
+                await stopScannerSession();
+                hideScanSheet();
+            };
+
+            const handleDetectedCode = async (rawValue) => {
                 if (!rawValue || rawValue === scanState.lastRawValue) {
                     return;
                 }
 
                 scanState.lastRawValue = rawValue;
-                closeScanner();
+                await closeScanner();
 
                 if (scanState.mode === 'label') {
                     if (applyParsedPayload(rawValue)) {
@@ -902,13 +1024,13 @@
                     if (barcodes.length > 0) {
                         const rawValue = barcodes.find((item) => item.rawValue)?.rawValue;
                         if (rawValue) {
-                            handleDetectedCode(rawValue);
+                            void handleDetectedCode(rawValue);
                             return;
                         }
                     }
                 } catch (error) {
-                    setScanStatus('Camera scanning failed on this browser. Use Chrome or Edge on mobile, or use a hardware scanner in the active field.', 'warning');
-                    closeScanner();
+                    setScanStatus('Live camera scanning failed on this browser. Use "Use camera photo" or scan into the active field with a hardware scanner.', 'warning');
+                    void closeScanner();
                     return;
                 }
 
@@ -929,55 +1051,144 @@
                 }
             };
 
+            const startNativeScanner = async () => {
+                if (!window.BarcodeDetector || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('native-barcode-detector-unavailable');
+                }
+
+                const formats = await getSupportedFormats();
+                scanState.detector = new window.BarcodeDetector({ formats: formats.length ? formats : undefined });
+                scanState.stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: 'environment' },
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                    },
+                    audio: false,
+                });
+
+                scanState.engine = 'native';
+                scanVideo.classList.remove('d-none');
+                if (scanReader) {
+                    scanReader.classList.add('d-none');
+                }
+                scanVideo.srcObject = scanState.stream;
+                await scanVideo.play();
+                scanState.active = true;
+                scanLoop();
+            };
+
+            const getPreferredHtml5CameraCandidate = async () => {
+                if (!window.Html5Qrcode || typeof window.Html5Qrcode.getCameras !== 'function') {
+                    return { facingMode: 'environment' };
+                }
+
+                try {
+                    const cameras = await window.Html5Qrcode.getCameras();
+                    const preferredCamera = cameras.find((camera) => /back|rear|environment/i.test(String(camera.label || '')))
+                        || cameras[cameras.length - 1];
+
+                    if (preferredCamera?.id) {
+                        return { deviceId: { exact: preferredCamera.id } };
+                    }
+                } catch (error) {
+                    // Fall back to facing mode constraints below.
+                }
+
+                return { facingMode: 'environment' };
+            };
+
+            const startHtml5Scanner = async () => {
+                if (!window.Html5Qrcode || !scanReader) {
+                    throw new Error('html5-qrcode-unavailable');
+                }
+
+                scanReader.classList.remove('d-none');
+                scanReader.innerHTML = '<div class="scan-reader__empty">Opening camera…</div>';
+                scanVideo.classList.add('d-none');
+
+                const html5Qrcode = new window.Html5Qrcode('scan-reader', false);
+                scanState.html5Qrcode = html5Qrcode;
+
+                const config = {
+                    fps: 10,
+                    rememberLastUsedCamera: true,
+                    formatsToSupport: supportedHtml5Formats.length ? supportedHtml5Formats : undefined,
+                    experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true,
+                    },
+                };
+
+                const preferredCamera = await getPreferredHtml5CameraCandidate();
+                await html5Qrcode.start(
+                    preferredCamera,
+                    config,
+                    (decodedText) => {
+                        void handleDetectedCode(decodedText);
+                    },
+                    () => {
+                        // Ignore frame-level decode misses and keep scanning.
+                    }
+                );
+
+                scanState.engine = 'html5';
+                scanState.active = true;
+            };
+
+            const scanFromImageFile = async (file) => {
+                if (!file) {
+                    return;
+                }
+
+                if (!window.Html5Qrcode || !scanReader) {
+                    setScanStatus('Photo-based scan is unavailable because the scanner library did not load. Type the value or use a hardware scanner instead.', 'warning');
+                    focusField(scanState.target);
+                    return;
+                }
+
+                openScanSheet(scanState.mode, scanState.target);
+                await stopScannerSession();
+
+                scanReader.classList.remove('d-none');
+                scanReader.innerHTML = '<div class="scan-reader__empty">Reading the captured label…</div>';
+
+                const html5Qrcode = new window.Html5Qrcode('scan-reader', false);
+                scanState.html5Qrcode = html5Qrcode;
+                scanState.engine = 'file';
+
+                try {
+                    const decodedText = await html5Qrcode.scanFile(file, true);
+                    await handleDetectedCode(decodedText);
+                } catch (error) {
+                    setScanStatus('Could not read a barcode or QR code from that photo. Try a tighter close-up, better light, or type it manually.', 'warning');
+                }
+            };
+
             const openScanner = async (mode, target = 'return_id') => {
-                if (scanState.active) {
-                    closeScanner();
+                if (scanState.active || scanState.engine) {
+                    await closeScanner();
                 }
 
                 scanState.mode = mode;
                 scanState.target = target;
                 scanState.lastRawValue = null;
 
-                if (!window.BarcodeDetector || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    focusField(target);
-                    setScanStatus('Camera scan is not available in this browser. Focus the field and use a USB/Bluetooth scanner, or open Dossentry in Chrome on mobile.', 'warning');
+                openScanSheet(mode, target);
+                resetScanViewport();
+
+                try {
+                    await startHtml5Scanner();
                     return;
+                } catch (html5Error) {
+                    await stopHtml5Scanner();
                 }
 
                 try {
-                    const formats = await getSupportedFormats();
-                    scanState.detector = new window.BarcodeDetector({ formats: formats.length ? formats : undefined });
-                    scanState.stream = await navigator.mediaDevices.getUserMedia({
-                        video: {
-                            facingMode: { ideal: 'environment' },
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 },
-                        },
-                        audio: false,
-                    });
-                } catch (error) {
-                    focusField(target);
-                    setScanStatus('Camera access was blocked. Allow camera access and try again, or use a USB/Bluetooth scanner in the active field.', 'warning');
+                    await startNativeScanner();
                     return;
+                } catch (nativeError) {
+                    setScanStatus('Live camera scan is unavailable on this phone right now. Allow camera access, or tap "Use camera photo" to capture the label instead.', 'warning');
                 }
-
-                scanSheet.classList.remove('d-none');
-                scanSheet.classList.add('is-open');
-                scanSheet.setAttribute('aria-hidden', 'false');
-
-                scanTitle.textContent = mode === 'label' ? 'Scan return label' : 'Scan field value';
-                scanSubtitle.textContent = mode === 'label'
-                    ? 'Point the camera at the return label. Structured QR codes will auto-fill multiple fields.'
-                    : 'Point the camera at the barcode or QR code for this field.';
-                scanTargetPill.textContent = mode === 'label' ? 'Return label' : humanize(target);
-                scanManualHelp.textContent = mode === 'label'
-                    ? 'Best result: QR code or barcode that includes return ID, SKU/barcode, or serial. If your browser does not support camera scan, use a Bluetooth scanner while the cursor is in Return ID.'
-                    : 'If camera scan is unavailable, close this sheet and use a USB/Bluetooth scanner while the cursor is in the target field.';
-
-                scanVideo.srcObject = scanState.stream;
-                await scanVideo.play();
-                scanState.active = true;
-                scanLoop();
             };
 
             if (refundSelect) {
@@ -1000,21 +1211,37 @@
 
             scanButtons.forEach((button) => {
                 button.addEventListener('click', function () {
-                    openScanner(button.dataset.scanMode, button.dataset.scanTarget || 'return_id');
+                    void openScanner(button.dataset.scanMode, button.dataset.scanTarget || 'return_id');
                 });
             });
 
             scanClosers.forEach((button) => {
-                button.addEventListener('click', closeScanner);
+                button.addEventListener('click', function () {
+                    void closeScanner();
+                });
             });
 
             document.addEventListener('keydown', function (event) {
-                if (event.key === 'Escape' && scanState.active) {
-                    closeScanner();
+                if (event.key === 'Escape' && !scanSheet.classList.contains('d-none')) {
+                    void closeScanner();
                 }
             });
 
-            window.addEventListener('beforeunload', closeScanner);
+            if (scanFileButton && scanFileInput) {
+                scanFileButton.addEventListener('click', function () {
+                    scanFileInput.click();
+                });
+
+                scanFileInput.addEventListener('change', function (event) {
+                    const file = event.target.files?.[0];
+                    event.target.value = '';
+                    void scanFromImageFile(file);
+                });
+            }
+
+            window.addEventListener('beforeunload', function () {
+                void closeScanner();
+            });
 
             brandSelect.addEventListener('change', syncRuleProfile);
             syncRuleProfile();

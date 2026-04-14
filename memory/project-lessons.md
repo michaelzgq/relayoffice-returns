@@ -3185,3 +3185,216 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
 - Production sample Brand Review page on `dossentry.com`
+
+## 2026-04-13 - Outreach assets must follow the live funnel, not an old pitch deck
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: updating the outbound execution pack after landing, compare, sample review, and first-party CTA tracking were already live
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Re-reading the shipped hero, compare, and competitive-map documents before touching the outreach pack prevented the outbound copy from drifting back to the older `refund decision support` framing.
+- Turning the outreach plan into one execution pack kept channel list, UTM rules, copy, and weekly thresholds in the same place instead of scattering them across chats and stale docs.
+- Anchoring the plan to the actual live funnel made the pack more operational: compare first, sample review second, guest demo third.
+
+## Mistakes To Stop Repeating
+
+### Mistake: It was easy for outreach language to lag behind the shipped product narrative
+- What happened: the older outreach pack still centered on `Returns Decision Support Review`, refund holds, and older wedge language even though the live site now leads with `Brand Review Link`, compare page, and warehouse-side dispute evidence.
+- Root cause: sales materials had been created before the final positioning and product entry flow stabilized.
+- Earlier signal I missed: the site had already changed CTA order and proof asset hierarchy, but the execution pack had not been refreshed to match.
+- Prevention rule: after any meaningful landing-page repositioning, outbound scripts must be synced before starting promotion.
+- Next-time checklist item: compare the hero headline, primary CTA, and first outbound sentence in one pass before sending any campaign.
+
+### Mistake: A technically invalid measurement path was hiding inside the outreach idea
+- What happened: the most tempting outbound asset to send directly was the signed sample Brand Review Link, but adding UTM parameters there would create signing risk and pollute the measurement path.
+- Root cause: business-side experimentation was briefly being designed without fully respecting the signed-route constraint in the product.
+- Earlier signal I missed: the sample review link is not a normal marketing URL; it is a signed proof artifact.
+- Prevention rule: first-touch measurement links must point to stable landing or compare pages, not directly to signed proof assets.
+- Next-time checklist item: for every outbound CTA, classify the destination as `stable public URL`, `signed URL`, or `authenticated app URL` before defining UTM rules.
+
+## Permanent Rules
+- Outbound copy must follow the live product funnel, not legacy proposal language.
+- Signed proof links are second-step sales assets, not first-touch tracking destinations.
+- The first outbound link should usually be the compare or landing page if you need clean attribution.
+
+## Next-Project Checklist
+- [ ] Re-read live hero and compare copy before updating outbound scripts
+- [ ] Confirm which outbound links can safely carry UTM parameters
+- [ ] Keep channel plan, copy, and validation thresholds in one execution doc
+- [ ] Do not start promotion until the outbound pack matches the live CTA hierarchy
+
+## Open Risks Or Follow-Ups
+- The new outreach pack still needs real market data; current thresholds are execution targets, not proof that the market will respond.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/returns-outreach-execution-pack.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-hero-copy-v3.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-vs-generic-inspection-copy.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-competitive-map-v2.md`
+
+## 2026-04-13 - Mobile barcode scanning cannot depend on BarcodeDetector alone
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: fixing the mobile inspect-page bug where warehouse staff could open scan on the phone but could not actually use camera scanning reliably
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- The bug was narrowed quickly by reading the inspect page instead of guessing from symptoms. The code already made the root cause visible: camera scan only worked when `window.BarcodeDetector` existed.
+- Validation stayed grounded in executable evidence: the inspection role page test was updated and rerun inside the production PHP image against the local worktree, resulting in `6 tests, 42 assertions, OK`.
+- The fix did not just swap one camera call for another. It added two layers of resilience: an HTML5 scanner fallback and a photo-based scan fallback for browsers where live camera startup is flaky.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I treated a browser-native experimental API like a dependable warehouse feature
+- What happened: the inspect page only offered live scanning through `BarcodeDetector + getUserMedia`, so phones on unsupported or inconsistent mobile browsers effectively had no usable scan path.
+- Root cause: implementation was optimized for the cleanest desktop-capable API instead of the broadest real mobile compatibility.
+- Earlier signal I missed: the code already contained a warning branch for missing `BarcodeDetector`, which was a sign the main path was not universally available.
+- Prevention rule: any warehouse-critical mobile workflow must have a cross-browser fallback before it is considered shipped.
+- Next-time checklist item: if a feature depends on `window.*Detector` or another limited browser API, verify the fallback path before calling the mobile workflow complete.
+
+### Mistake: The original fallback assumed a hardware scanner, which is weak on phones
+- What happened: when camera scan was unavailable, the UI told users to use a USB/Bluetooth scanner or manual entry. That is not an adequate fallback on many mobile inspect sessions.
+- Root cause: the fallback was designed from a desktop or dock-station mindset rather than a shared warehouse-phone mindset.
+- Earlier signal I missed: the product positioning already says `phone-first inspection flow`, so a fallback that only really works with external hardware contradicted the actual operating model.
+- Prevention rule: mobile-first workflows need a mobile-native fallback, not just a desktop-compatible fallback.
+- Next-time checklist item: for every mobile scan flow, include at least one non-live-camera path such as image capture or photo upload.
+
+### Mistake: Acceptance coverage only proved the page rendered, not that the scan strategy matched the real device surface
+- What happened: the existing role test confirmed the inspect page showed scan controls, but it did not prove the page carried a reliable mobile scan engine or fallback path.
+- Root cause: the test boundary was too shallow for a feature whose main risk was browser capability mismatch.
+- Earlier signal I missed: the page test asserted copy like `Works with camera scan` but did not assert anything about the underlying scan implementation or alternate path.
+- Prevention rule: when a UI promise depends on a browser capability, feature coverage should assert the presence of the compatibility path too.
+- Next-time checklist item: add at least one assertion for the fallback engine or fallback CTA when a browser capability is part of the product promise.
+
+## Permanent Rules
+- Do not ship mobile scanning features with `BarcodeDetector` as the only camera path.
+- Mobile inspection flows need a camera-photo fallback when live scanning is unavailable.
+- UI tests for browser-sensitive features should assert the compatibility path, not just the happy-path button labels.
+
+## Next-Project Checklist
+- [ ] Check whether the primary browser API is baseline across target mobile browsers
+- [ ] Add a non-live-camera fallback before calling a mobile scan workflow complete
+- [ ] Assert the fallback engine or fallback CTA in feature coverage
+- [ ] Validate the fix in the same runtime family used by production builds
+
+## Open Risks Or Follow-Ups
+- This fix was validated by feature tests and code inspection, but not yet by a real iPhone or Android manual scan session. The next highest-value QA is one physical-device pass on the inspect page.
+
+## Source Artifacts
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/admin-views/returns/cases/inspect.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/Returns/ReturnsWorkspaceRoleTest.php`
+- `docker run --rm -v /Users/mikezhang/Desktop/projects/6POS/web-panel:/app -w /app dossentry-selfhosted-app php vendor/bin/phpunit tests/Feature/Returns/ReturnsWorkspaceRoleTest.php`
+
+## 2026-04-13 - PDF banner title sizing must lock the comparison rule before editing
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: one-off print asset edit for the `Warrior To Warriors` banner PDF title sizing
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Measured the title block and subtitle block before editing, which exposed that the user request could not be interpreted safely from the screenshots alone.
+- Rebuilt only the title region at the PDF page level instead of flattening the whole banner to one raster image, so the rest of the proof stayed intact.
+
+## Mistakes To Stop Repeating
+
+### Mistake: The acceptance rule was not locked before the first implementation step
+- What happened: the request said the first title should be only slightly larger than the second reference line, but the screenshots showed a current title that was already many times larger. That made `slightly larger` ambiguous enough to change the final layout materially.
+- Root cause: the edit target was described in mixed visual language (`稍微大`) and size language (`2号`) without first choosing whether the comparison should be visual or literal.
+- Earlier signal I missed: the measured ink height difference between the two references was already extreme, which meant a literal interpretation would produce a major shrink, not a micro-adjustment.
+- Prevention rule: before touching any print or design asset, lock whether size instructions are based on visual proportion, literal pt change, or a specific reference object.
+- Next-time checklist item: when a user gives screenshot-based sizing feedback, restate the exact comparison rule and wait for confirmation before exporting.
+
+### Mistake: The first clip region was too loose for a proof PDF
+- What happened: the first page-level reconstruction pass accidentally carried side proof guides into the new title block because the clip rectangle was based on a broad region, not the actual title ink bounds.
+- Root cause: I optimized for speed on the first pass and treated the title area like a simple white canvas, even though proof PDFs can include guide marks near the crop region.
+- Earlier signal I missed: the original proof already had light blue guide lines near the page sides, so any wide horizontal clip risked bringing them into the replayed area.
+- Prevention rule: when reusing a clipped region from a proof PDF, derive the clip from the actual object bounds, not from a loose visual zone.
+- Next-time checklist item: after any clip-and-replay PDF edit, render one preview and check for accidental guides, trim marks, or border artifacts.
+
+## Permanent Rules
+- Screenshot-driven design edits need an explicit comparison rule before implementation.
+- In print/PDF work, preserve vector content outside the changed region whenever possible.
+- Proof PDFs should be clipped from tight object bounds, then preview-rendered once for guide-line artifacts.
+
+## Next-Project Checklist
+- [ ] Measure the source and reference text blocks before deciding how to edit.
+- [ ] Confirm whether the requested size delta is visual, literal pt, or tied to one named reference object.
+- [ ] Avoid whole-page rasterization unless the user explicitly accepts that tradeoff.
+- [ ] Render a preview after any PDF clip/replay edit and inspect for proof-guide contamination.
+
+## Open Risks Or Follow-Ups
+- This edit preserves the original title artwork by scaling the existing vector region; if the user later wants true font-level re-typesetting, the source design file rather than the exported PDF will be the correct editing target.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/2329-2_gabriel_banner4x6_final.pdf`
+- `/Users/mikezhang/Desktop/2329-2_gabriel_banner4x6_final_title_adjusted.pdf`
+- `/Users/mikezhang/Desktop/projects/6POS/tmp/pdfs/banner_page.png`
+- `/Users/mikezhang/Desktop/projects/6POS/tmp/pdfs/banner_page_adjusted_v2.png`
+
+## 2026-04-13 - Public workflow review notifications can be mistaken for self-sent email
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: debugging why a `New workflow review request` email arrived even though the owner did not send anything manually
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Tracing the exact route, controller, notification service, and mailable made it clear this was an inbound form-notification path, not an outbound campaign path.
+- Comparing the email body against the landing-page form copy quickly showed the submission was almost certainly spam or unsolicited SEO outreach rather than a real warehouse workflow request.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Public lead form submissions were trusted enough to trigger owner email immediately
+- What happened: a spammer or outreach bot submitted the public workflow review form, and the app immediately generated an owner notification email that looked like a legitimate inbound lead.
+- Root cause: the form is public and only guarded by a hidden honeypot field, with no route throttling, CAPTCHA, or spam scoring before notification.
+- Earlier signal I missed: the click-event endpoint already had explicit throttling while the lead-intake endpoint did not, even though the lead form is the higher-value spam target.
+- Prevention rule: never let a public lead form notify the owner directly unless it has at least rate limiting plus one real spam gate.
+- Next-time checklist item: before launching any public intake form, verify throttle, CAPTCHA or Turnstile, and a clear spam-handling path before email notifications go live.
+
+### Mistake: The stored “Submitted from” fields were named like attribution data but only captured our own endpoint
+- What happened: the notification email showed `Submitted from dossentry.com` and the form POST URL, which looks useful but does not identify the real submitter.
+- Root cause: the code stores `$request->getHost()` and `$request->fullUrl()`, which are just the destination host and endpoint, not the submitter IP, referer, or user agent.
+- Earlier signal I missed: the schema for `workflow_review_requests` never included source IP, referer, or user-agent fields, so there was no way the email could later explain who actually sent it.
+- Prevention rule: for public lead intake, record forensic fields that help distinguish real prospects from spam: IP, user agent, referer, and spam verdict.
+- Next-time checklist item: when adding any public request table, check whether the stored metadata would be enough to investigate one suspicious submission later.
+
+### Mistake: Mail presentation was allowed to create sender confusion
+- What happened: the owner saw a notification email and reasonably questioned whether it had been self-sent or originated from the spammer directly.
+- Root cause: the app sends the notification to the configured owner inbox, but sets `reply-to` to the submitted email, and Gmail self-send behavior can further blur the thread when sender and recipient overlap.
+- Earlier signal I missed: the admin review-request diagnostics already contained a Gmail self-send warning, which means this confusion mode was known by the product.
+- Prevention rule: owner notifications should make the transport path obvious in both subject and body: “site form notification” first, submitter details second.
+- Next-time checklist item: review one real notification email in Gmail or the production mailbox UI before considering the lead-notification flow done.
+
+## Permanent Rules
+- Public lead forms need real anti-spam controls before owner notifications are enabled.
+- Attribution fields must capture the submitter, not just the app endpoint.
+- Notification emails should be written to minimize sender confusion in the mailbox UI.
+
+## Next-Project Checklist
+- [ ] Add route throttling to every public intake endpoint, not just analytics endpoints.
+- [ ] Add Turnstile, reCAPTCHA, or equivalent before sending owner notifications from public forms.
+- [ ] Store IP, user agent, referer, and spam-review status for public submissions.
+- [ ] Review the notification email in the real mailbox UI for self-send and reply-to confusion.
+- [ ] Separate probable spam from qualified leads before notifying the owner.
+
+## Open Risks Or Follow-Ups
+- As currently implemented, you still cannot reliably identify the true origin of a suspicious workflow review submission from app data alone.
+- Until anti-spam controls are added, similar SEO outreach or bot submissions will keep reaching the owner inbox.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/routes/web.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Http/Controllers/WorkflowReviewRequestController.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Services/WorkflowReviewNotificationService.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Mail/WorkflowReviewRequestSubmitted.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/database/migrations/2026_04_10_000001_create_workflow_review_requests_table.php`

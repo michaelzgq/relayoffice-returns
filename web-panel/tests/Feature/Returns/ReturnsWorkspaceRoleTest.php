@@ -56,6 +56,8 @@ class ReturnsWorkspaceRoleTest extends TestCase
         $response->assertOk();
         $response->assertSee('Scan return label');
         $response->assertSee('Works with camera scan, USB/Bluetooth barcode scanners, or manual typing.');
+        $response->assertSee('Use camera photo');
+        $response->assertSee('html5-qrcode@2.3.8/html5-qrcode.min.js');
         $response->assertSee('Decision state will be set automatically');
         $response->assertDontSee('name="refund_status"', false);
         $response->assertDontSee('name="received_at"', false);
