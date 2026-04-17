@@ -24,6 +24,8 @@
 - 环境模板: [.env.self-hosted.example](/Users/mikezhang/Desktop/projects/6POS/.env.self-hosted.example)
 - 初始化脚本: [init.sh](/Users/mikezhang/Desktop/projects/6POS/web-panel/scripts/self-hosted/init.sh)
 - 生产镜像: [Dockerfile.render](/Users/mikezhang/Desktop/projects/6POS/web-panel/Dockerfile.render)
+- 客户 IT checklist: [dossentry-docker-install-handoff-checklist.md](/Users/mikezhang/Desktop/projects/6POS/dossentry-docker-install-handoff-checklist.md)
+- 内部 guided install SOP: [dossentry-guided-self-hosted-install-sop.md](/Users/mikezhang/Desktop/projects/6POS/dossentry-guided-self-hosted-install-sop.md)
 
 ## Why This Is Better Than A Desktop Rewrite Right Now
 
