@@ -23,3 +23,8 @@ web-panel/storage/app/public/*
 # Dependency/build output
 web-panel/vendor/
 web-panel/node_modules/
+
+# Local temporary artifacts
+tmp/
+scripts/__pycache__/
+*.pyc

@@ -32,6 +32,11 @@ class LandingPageRoutingTest extends TestCase
         $response->assertSee(route('terms-of-service'));
         $response->assertSee('data-track-cta="sample_review"', false);
         $response->assertSee(json_encode(route('marketing.click-events.store')), false);
+        $response->assertSee('property="og:title"', false);
+        $response->assertSee('property="og:description"', false);
+        $response->assertSee('property="og:image"', false);
+        $response->assertSee('assets/dossentry/og-home.png', false);
+        $response->assertSee('name="twitter:card"', false);
     }
 
     public function test_demo_domain_root_redirects_to_login(): void
@@ -50,5 +55,10 @@ class LandingPageRoutingTest extends TestCase
         $response->assertSee('Generic inspection apps collect photos.');
         $response->assertSee('data-track-cta="back_to_site"', false);
         $response->assertSee(json_encode(route('marketing.click-events.store')), false);
+        $response->assertSee('property="og:title"', false);
+        $response->assertSee('property="og:description"', false);
+        $response->assertSee('property="og:image"', false);
+        $response->assertSee('assets/dossentry/og-compare.png', false);
+        $response->assertSee('name="twitter:card"', false);
     }
 }

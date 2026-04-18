@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $appName }} | Compare Dossentry vs Generic Inspection Apps</title>
-    <meta name="description" content="See why generic inspection apps stop at checklists while Dossentry creates a brand-ready return record for disputed warehouse-side returns.">
+    @include('partials.marketing-meta', [
+        'metaTitle' => $appName . ' | Compare Dossentry vs Generic Inspection Apps',
+        'metaDescription' => 'See why generic inspection apps stop at checklists while Dossentry creates a brand-ready return record for disputed warehouse-side returns.',
+        'metaImage' => asset('assets/dossentry/og-compare.png'),
+        'metaImageAlt' => 'Dossentry compared with generic inspection apps for warehouse-side returns.',
+    ])
     <link rel="icon" type="image/svg+xml" href="{{ asset('assets/dossentry/favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

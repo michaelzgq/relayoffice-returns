@@ -3515,3 +3515,584 @@
 - `/Users/mikezhang/Desktop/projects/6POS/output/pdf/dossentry-current-product-overview-zh-2026-04.pdf`
 - `/Users/mikezhang/Desktop/projects/6POS/tmp/pdfs/dossentry-sales-overview-en-page-1.png`
 - `/Users/mikezhang/Desktop/projects/6POS/tmp/pdfs/dossentry-sales-overview-zh-final-page-3.png`
+
+## 2026-04-13 - Customer PDF should support outreach, not replace message validation
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: packaging the new customer PDFs into usable cold email, LinkedIn, and follow-up scripts
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Keeping the PDF as a second-step asset produced cleaner outreach than leading with a heavy attachment.
+- Splitting the follow-up playbook into a separate file avoided mixing it into an already-dirty outreach execution draft.
+
+## Mistakes To Stop Repeating
+
+### Mistake: It is easy to confuse "good collateral" with "good first-touch outreach"
+- What happened: once the branded PDFs existed, the next instinct could have been to use them as the first outbound asset.
+- Root cause: polished collateral feels more persuasive than a short problem-first message, even when it adds friction.
+- Earlier signal I missed: the compare page and landing page are already designed to validate message with lower friction than a file attachment.
+- Prevention rule: first-touch outreach should validate interest with a low-friction link; collateral comes after curiosity, not before it.
+- Next-time checklist item: before using a new asset in sales, decide whether it belongs in first touch, follow-up, or post-call reinforcement.
+
+## Permanent Rules
+- Cold outreach should lead with a narrow problem and a low-friction page, not with an attachment.
+- New collateral should get its own operator playbook instead of being buried in a broader strategy file.
+
+## Next-Project Checklist
+- [ ] Decide where each new sales asset fits in the outreach sequence before writing copy.
+- [ ] Keep first-touch CTAs lighter than follow-up assets.
+- [ ] Separate channel scripts from master strategy docs when the working tree is already dirty.
+
+## Open Risks Or Follow-Ups
+- The follow-up scripts still need real reply data before they can be called proven.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-pdf-outreach-followups-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/output/pdf/dossentry-current-product-overview-2026-04.pdf`
+- `/Users/mikezhang/Desktop/projects/6POS/output/pdf/dossentry-current-product-overview-zh-2026-04.pdf`
+
+## 2026-04-13 - First outbound list should be segment-first, not contact-first
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: turning the first outbound plan into a concrete target-account filter and UTM template pack
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Converting ICP talk into `10` concrete account archetypes made outreach more actionable immediately.
+- Tying `utm_term` to segment or account slug makes later click review usable instead of generic.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Early outreach planning can stay too abstract if it stops at messaging
+- What happened: the copy and PDF were ready, but without a concrete target-account filter it would still be easy to send messages to weak-fit accounts.
+- Root cause: message strategy feels like progress, but account selection is what determines whether the message is tested against the right buyer.
+- Earlier signal I missed: the user already asked for “下一步”, which meant the bottleneck had moved from assets to execution targeting.
+- Prevention rule: after writing first-touch copy, the next artifact should be a concrete account filter and link template pack, not more messaging theory.
+- Next-time checklist item: before starting outbound, define the first 10 account archetypes, role priorities, and UTM structure.
+
+## Permanent Rules
+- In early outbound, account selection quality matters as much as message quality.
+- UTM terms should encode segment or account identity, not vague campaign noise.
+
+## Next-Project Checklist
+- [ ] Define role priority before building the first target list.
+- [ ] Define 10 concrete account archetypes before sending outbound.
+- [ ] Pair each archetype with a default landing asset and `utm_term`.
+
+## Open Risks Or Follow-Ups
+- The target-account pack is still a hypothesis until the first real replies come back.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-target-accounts-and-utm-templates-2026-04.md`
+
+## 2026-04-13 - Batch-one outbound list should be built from public fit signals, not generic logos
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: building the first real Dossentry target-account batch from public company evidence
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Using official returns or reverse-logistics pages kept the first batch anchored to real operational pain rather than vague brand-fit guesses.
+- Separating a ranked list from a reserve list made the batch immediately usable instead of becoming a giant research backlog.
+
+## Mistakes To Stop Repeating
+
+### Mistake: It is tempting to optimize for recognizable logos instead of reachable, well-matched accounts
+- What happened: early target selection could easily have drifted toward larger, more famous fulfillment or returns companies.
+- Root cause: logo quality is visually persuasive, but first-customer outreach is constrained more by fit and speed than by prestige.
+- Earlier signal I missed: the product is still in message-validation mode, which means learning speed matters more than enterprise brand signaling.
+- Prevention rule: batch-one outbound should prioritize publicly verifiable pain and reachable operators over company fame.
+- Next-time checklist item: before adding an account to the first batch, verify a public returns, reverse logistics, or inspection signal from the company itself.
+
+## Permanent Rules
+- First outbound lists should come from public fit signals, not generic market reputation.
+- Keep a reserve list so weak-fit or unreachable accounts can be swapped quickly without restarting research.
+
+## Next-Project Checklist
+- [ ] Verify at least one public fit signal from each target account before outreach.
+- [ ] Bias batch one toward reachable mid-market operators rather than enterprise logos.
+- [ ] Prepare a reserve list before sending the first messages.
+
+## Open Risks Or Follow-Ups
+- Public fit signals do not guarantee internal urgency; reply behavior still decides whether each company belongs in the live pipeline.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-real-target-accounts-batch-1-2026-04.md`
+
+## 2026-04-13 - LinkedIn profile setup should prioritize proof assets, and external links need OG metadata first
+
+## Snapshot
+- Date: 2026-04-13
+- Scope: turning the founder LinkedIn profile into a usable outbound profile for Dossentry
+- Outcome: partial success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Replacing the student headline with a concrete Dossentry positioning line immediately made the profile legible to operators.
+- Adding the `About` section and current `Founder` role shifted the profile from resume-like to product-facing.
+- Featuring the English product overview PDF provided a reliable sales asset even when external-link previews failed.
+- Swapping the default gray background for a non-default cover image improved first impression even without a custom branded banner.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I tried to force a LinkedIn featured link before checking social-preview readiness
+- What happened: adding the Dossentry compare page as a LinkedIn `Featured` link failed repeatedly.
+- Root cause: `dossentry.com` and the compare page do not currently expose `og:title`, `og:description`, or `og:image`, so LinkedIn has weak or missing preview data.
+- Earlier signal I missed: the site had been optimized for landing-page conversion, not yet for social embedding, and no OG audit had been done before profile setup.
+- Prevention rule: before adding any site page to LinkedIn `Featured`, verify Open Graph metadata on the exact URL first.
+- Next-time checklist item: run a quick OG metadata check on homepage, compare page, and any sample-proof asset before touching LinkedIn links.
+
+### Mistake: I spent too long trying to make a custom cover-image upload work inside LinkedIn's multi-step modal
+- What happened: the custom Dossentry banner was generated successfully, but LinkedIn's background-image flow did not persist it cleanly in this automation session.
+- Root cause: the flow requires multiple real UI events and a second confirmation step; it is much less reliable than normal profile text editing.
+- Earlier signal I missed: the first upload attempt fell back to the wrong file and the cover-image modal still required an extra save.
+- Prevention rule: treat LinkedIn media upload as a separate workflow from text edits, and prefer a fallback cover image if the custom upload path gets brittle.
+- Next-time checklist item: if custom cover upload is not confirmed within one pass, switch to a stable fallback and move on.
+
+## Permanent Rules
+- LinkedIn text fields are easy wins; do those before fighting media workflows.
+- Do not rely on LinkedIn `Featured` external links until the target URL has working OG metadata.
+- When social-link previews are not ready, use a PDF or image asset as the featured proof item instead.
+
+## Next-Project Checklist
+- [ ] Verify `og:title`, `og:description`, and `og:image` on every outbound-facing URL.
+- [ ] Keep one PDF-based proof asset ready as a fallback for LinkedIn and email follow-up.
+- [ ] Confirm profile search bar and other incidental UI fields are clean after browser automation.
+- [ ] Prefer a real headshot next; it will improve trust more than another round of profile copy edits.
+
+## Open Risks Or Follow-Ups
+- The profile still lacks a real photo, which is now the biggest trust gap.
+- The site still needs Open Graph metadata before LinkedIn link features will be reliable.
+- The custom branded banner image exists locally but was not cleanly persisted through LinkedIn's upload flow in this session.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/tmp/linkedin-dossentry-banner-1584x396-v2.png`
+- `/Users/mikezhang/Desktop/projects/6POS/output/pdf/dossentry-current-product-overview-2026-04.pdf`
+
+## 2026-04-14 - Outbound-facing pages need Open Graph metadata before LinkedIn activation
+
+## Snapshot
+- Date: 2026-04-14
+- Scope: adding Open Graph and Twitter card metadata to Dossentry marketing pages after LinkedIn featured-link failures
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Using one shared metadata partial kept landing and compare pages aligned instead of duplicating fragile head tags.
+- Generating dedicated `1200x630` social images produced assets that match social-preview expectations better than reusing a generic background image.
+- Verifying both with PHPUnit and a temporary mounted-code PHP server caught the real rendered output, not just source edits.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Social preview requirements were treated as a later polish step
+- What happened: landing and compare pages shipped without `og:title`, `og:description`, `og:image`, or Twitter card metadata.
+- Root cause: the pages were optimized for on-site conversion and copy iteration first, while external distribution requirements were left implicit.
+- Earlier signal I missed: LinkedIn featured-link creation failed before any code-level OG audit had been done.
+- Prevention rule: every outbound-facing marketing page must ship with complete social metadata on day one.
+- Next-time checklist item: before calling a marketing page “ready,” inspect the rendered head for canonical URL, Open Graph tags, and a large-image Twitter card.
+
+### Mistake: I initially verified against the running production-style container instead of the changed local code
+- What happened: checking `localhost:8080` showed old HTML because the running container had not been rebuilt with the latest files.
+- Root cause: I reused an existing runtime assumption instead of checking whether the container was serving mounted local code or an older image.
+- Earlier signal I missed: new public assets were missing inside the running app container.
+- Prevention rule: when verifying local changes in Docker, confirm whether the runtime is image-based or bind-mounted before trusting curl results.
+- Next-time checklist item: inspect container file presence first, then choose between mounted-code test runtime and deployed runtime.
+
+## Permanent Rules
+- Marketing pages are not done until their social-preview metadata is present in rendered HTML.
+- Keep a dedicated social-share image per key outbound page when the positioning differs materially.
+- Runtime verification must target the code under test, not a stale image.
+
+## Next-Project Checklist
+- [ ] Add canonical, Open Graph, and Twitter card metadata to every new public marketing page.
+- [ ] Generate or assign a `1200x630` social image before distribution begins.
+- [ ] Verify rendered metadata with both automated tests and one real HTML fetch.
+- [ ] Check that external-link assets exist inside the runtime being tested.
+
+## Open Risks Or Follow-Ups
+- These changes still need to be deployed before LinkedIn can successfully preview the public URLs.
+- Brand-review pages may benefit from their own share metadata later if they are used as external proof assets.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/partials/marketing-meta.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/public/assets/dossentry/og-home.png`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/public/assets/dossentry/og-compare.png`
+
+## 2026-04-16 - Fresh self-hosted install must prove real login, not just successful bootstrap
+
+## Snapshot
+- Date: 2026-04-16
+- Scope: validating whether the Docker self-hosted package is actually customer-ready for a blank workspace install
+- Outcome: success after fix
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Running a brand-new isolated compose stack exposed the real customer path instead of reusing an already-warm local container.
+- Narrowing the login hang by layer saved time: Blade rendering was fast, which pushed the investigation back into provider and middleware startup code.
+- Converting the discovered blocker into a feature test means future self-hosted regressions will be caught before another fresh-install audit.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I previously treated “migrations + seed completed” as evidence that self-hosted delivery was ready
+- What happened: the blank self-hosted bootstrap finished successfully, but `/admin/auth/login` still hung on a brand-new install.
+- Root cause: bootstrap success was mistaken for end-to-end usability, and the post-install login path was not treated as a release gate.
+- Earlier signal I missed: prior audits confirmed database setup and seeded accounts, but did not prove that a real unauthenticated browser request could reach the login form quickly.
+- Prevention rule: no self-hosted install can be called customer-ready until a fresh stack reaches login and completes one real staff sign-in.
+- Next-time checklist item: after every self-hosted bootstrap, verify `/`, `/compare/...`, `/admin/auth/login`, and one actual admin login on the new stack.
+
+### Mistake: A silent outbound license/log-keeper call was allowed to run on the login route
+- What happened: `AppServiceProvider` made a synchronous cURL request on `admin/auth/login` and `admin/business-settings*`, with no timeout and no self-hosted guard.
+- Root cause: inherited vendor-license tracking logic was left on a hot path that self-hosted customers must use, even though the self-hosted package does not require license activation.
+- Earlier signal I missed: `.env.self-hosted.example` never asked for `BUYER_USERNAME`, `PURCHASE_CODE`, or `SOFTWARE_ID`, which meant the login path and the delivery pack were already semantically out of sync.
+- Prevention rule: self-hosted customer login and setup paths must not depend on vendor-controlled external services.
+- Next-time checklist item: grep fresh-install routes for outbound HTTP/cURL calls and either remove them from critical paths or make them best-effort with short timeouts.
+
+### Mistake: I introduced a fake 500 during validation by writing an invalid `APP_KEY_BASE64`
+- What happened: one audit stack returned `500` immediately because the temporary env file contained a literal command string instead of a generated key.
+- Root cause: I created a temporary env file with a quoted heredoc that prevented shell expansion, then briefly treated the resulting 500 as if it might be an application issue.
+- Earlier signal I missed: the error was an encryption key length exception, which pointed at env generation rather than the product code.
+- Prevention rule: when validating install docs, treat the env file itself as part of the test surface and inspect key material first if Laravel fails at the encryption layer.
+- Next-time checklist item: generate and print the effective `APP_KEY_BASE64` before starting a new audit stack.
+
+## Permanent Rules
+- Fresh-install readiness requires a real post-bootstrap login, not just successful migrations and seeding.
+- Self-hosted critical paths must not block on outbound vendor callbacks.
+- Any remaining outbound telemetry on customer flows must be optional, time-bounded, and skipped when required credentials are absent.
+
+## Next-Project Checklist
+- [ ] Start every self-hosted audit from a brand-new compose project and empty volumes.
+- [ ] Verify homepage, compare page, login page, and one real admin login after bootstrap.
+- [ ] Search critical routes and service providers for outbound network calls before declaring customer readiness.
+- [ ] Confirm the install env contains a valid `APP_KEY_BASE64` before diagnosing application-layer 500s.
+
+## Open Risks Or Follow-Ups
+- The delivery pack is now technically usable for guided IT installs, but it still does not provide a self-service installer, automated upgrades, or license entitlement flow.
+- The compose file still assumes the customer env file is named `.env.self-hosted`, which is fine for the documented flow but less flexible for alternate packaging or automated CI validation.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/app/Providers/AppServiceProvider.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/tests/Feature/SelfHostedBootstrapTest.php`
+- `/tmp/dossentry-selfhosted-audit4.env`
+
+## 2026-04-17 - Self-hosted delivery needs operator docs, not just a technical pack
+
+## Snapshot
+- Date: 2026-04-17
+- Scope: turning the now-validated Docker self-hosted path into customer-facing and operator-facing install docs
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Splitting the documentation by audience made the package clearer immediately: one checklist for customer IT, one SOP for internal guided installs.
+- Reusing the already-validated fresh-install path kept the docs grounded in what actually works today instead of drifting into aspirational setup steps.
+- Linking the new docs back into the main delivery pack made the entry point stronger without rewriting the full pack.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I previously treated the self-hosted delivery pack as sufficient for customer handoff
+- What happened: the project had a solid delivery-pack overview, but it still lacked a customer-ready install checklist and an internal guided-install runbook.
+- Root cause: technical completeness was mistaken for operational completeness.
+- Earlier signal I missed: the user kept asking practical questions like “客户现在能不能装” and “多久能完成,” which meant the missing gap was execution packaging, not architecture.
+- Prevention rule: once a deployment path is validated, the next artifact must be an audience-specific handoff doc, not another general overview.
+- Next-time checklist item: for any sellable deployment path, create one customer checklist and one internal operator SOP before calling it market-ready.
+
+### Mistake: Delivery docs can stay too generic if they are not tied to a release gate
+- What happened: the original pack described installation, but it did not elevate the real acceptance gate strongly enough: fresh blank install plus real owner login.
+- Root cause: documentation drifted toward “how it works” instead of “what must pass before handoff.”
+- Earlier signal I missed: the fresh-install login bug proved that successful bootstrap alone is not enough.
+- Prevention rule: customer installation docs must include explicit acceptance criteria, not just steps.
+- Next-time checklist item: add a final handoff section with smoke tests and sign-off criteria to every deployment guide.
+
+## Permanent Rules
+- Technical delivery packs are not enough; customer-facing and operator-facing docs are separate artifacts.
+- Every install guide must include explicit acceptance criteria before handoff.
+- Deployment documentation should follow the validated path exactly, not a broader theoretical setup story.
+
+## Next-Project Checklist
+- [ ] Create a customer IT checklist for every non-trivial deployment path.
+- [ ] Create an internal guided-install SOP for the same path.
+- [ ] Include acceptance criteria and failure triage in both docs.
+- [ ] Link the audience-specific docs from the main overview document.
+
+## Open Risks Or Follow-Ups
+- These new docs still need to be committed if you want them preserved in the repository history.
+- A later phase may still need a shorter one-page commercial install summary for proposals or SOWs.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-docker-install-handoff-checklist.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-guided-self-hosted-install-sop.md`
+
+## 2026-04-17 - Once delivery is validated, the next bottleneck is paper, not code
+
+## Snapshot
+- Date: 2026-04-17
+- Scope: turning the validated self-hosted delivery path into customer-facing proposal, SOW, and quote templates
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Reusing the already-validated scope boundaries kept the commercial templates honest instead of turning them into vague “full platform” promises.
+- Splitting the sales pack into proposal, SOW, and quote/order form matched the real progression of a first paid deal.
+- Using a default commercial structure of guided setup plus a bounded support term kept the offer aligned with the current product maturity.
+
+## Mistakes To Stop Repeating
+
+### Mistake: It is easy to keep polishing delivery docs and forget that first paid deals need paper
+- What happened: after the self-hosted package became technically ready, the next real blocker was no longer installation but the lack of customer-ready commercial documents.
+- Root cause: engineering readiness can feel like the finish line, even though buyers still need a scoped commercial path to say yes.
+- Earlier signal I missed: the legal checklist already said the first paid customer required an MSA and order form, which meant the paper gap had been visible before this step.
+- Prevention rule: after a deployment path is validated, the next deliverable should be the commercial package needed to close a deal.
+- Next-time checklist item: once delivery is proven, create proposal, SOW, and quote templates before returning to more product work.
+
+### Mistake: Commercial templates can accidentally overpromise if they are not forced through current scope boundaries
+- What happened: these documents could easily have slipped into promising WMS replacement, ongoing infrastructure management, or enterprise rollout capability.
+- Root cause: proposal language naturally drifts wider than the current real service unless it is anchored to validated scope.
+- Earlier signal I missed: both the positioning doc and the self-hosted pack already warned that the product is not a full returns suite or self-serve installer.
+- Prevention rule: every commercial template must state out-of-scope items and responsibility split explicitly.
+- Next-time checklist item: before finalizing a quote template, check it against product positioning, self-hosted scope boundaries, and website legal language.
+
+## Permanent Rules
+- Technical readiness does not close deals; commercial paperwork closes deals.
+- Proposal, SOW, and quote should be separate documents with separate jobs.
+- Commercial docs must repeat out-of-scope items and responsibility split explicitly.
+
+## Next-Project Checklist
+- [ ] Create proposal, SOW, and quote templates as soon as a delivery path is technically validated.
+- [ ] Make sure the quote structure matches current service maturity, not future SaaS aspirations.
+- [ ] Repeat “not a WMS replacement” and “customer-controlled deployment” in commercial materials.
+- [ ] Cross-check commercial wording against legal pages and scope docs before sending.
+
+## Open Risks Or Follow-Ups
+- These templates still need your real legal entity name, mailing address, and final pricing numbers filled in before they are sent.
+- A future phase may still need a short MSA template or simple services agreement to complete the first paid-customer paper stack.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-self-hosted-setup-proposal-template.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-self-hosted-sow-template.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-self-hosted-quote-template.md`
+
+## 2026-04-18 - First outbound messages should be shipped as an operator pack, not left scattered across strategy docs
+
+## Snapshot
+- Date: 2026-04-18
+- Scope: converting the first-customer plan into the exact top-5 LinkedIn messages to send today
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Using the already-ranked target list kept the writing focused on execution instead of re-opening ICP theory.
+- Writing one message per account produced sharper outreach than trying to reuse one generic template.
+- Keeping the first-touch CTA fixed on the compare page preserved the tracking and message-validation setup.
+
+## Mistakes To Stop Repeating
+
+### Mistake: It is easy to leave outreach buried across multiple planning files
+- What happened: the repo already had target-account research, UTM conventions, and follow-up copy, but not one exact send-ready pack for the first five LinkedIn messages.
+- Root cause: strategy docs accumulate faster than operator packs.
+- Earlier signal I missed: “今天就能发” requires one file with no synthesis work left for the operator.
+- Prevention rule: once the first batch is chosen, collapse everything needed to send into one operator file.
+- Next-time checklist item: for every outbound batch, create one send-ready file with targets, links, message copy, and follow-up timing.
+
+### Mistake: First-touch messages can easily drift too broad if they are not anchored to one wedge per account
+- What happened: without account-specific hooks, the outreach would slide back into generic returns-software language.
+- Root cause: generic B2B copy feels reusable, but it hides the actual reason a specific operator should care.
+- Earlier signal I missed: the top-5 targets each had a distinct public signal that should shape the opening line.
+- Prevention rule: each first-touch message must anchor to one public-fit signal and one narrow problem.
+- Next-time checklist item: write down the specific public reason the account fits before drafting the DM.
+
+## Permanent Rules
+- First outbound messages belong in a send-ready operator pack, not scattered across multiple docs.
+- The first CTA should stay low-friction and consistent across the batch.
+- Personalization should come from one public-fit signal, not fake familiarity.
+
+## Next-Project Checklist
+- [ ] Pick the top 5 accounts before writing first-touch copy.
+- [ ] Create one send-ready file with links, roles, messages, and follow-up timing.
+- [ ] Anchor each DM to one verified public-fit signal.
+- [ ] Keep PDF and pricing out of the first message.
+
+## Open Risks Or Follow-Ups
+- These messages still need real response data before any wording can be treated as proven.
+- The next useful artifact will be the matching 5 follow-up emails after the first LinkedIn sends go out.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-linkedin-dm-batch-1-top-5-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/self-hosted-web-delivery-pack.md`
+
+## 2026-04-17 - Customer-style dry run should use a copied handoff folder and prove post-login admin handoff
+
+## Snapshot
+- Date: 2026-04-17
+- Scope: simulating a real customer Docker install from a temporary handoff directory using the new checklist and SOP
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Running the install from a temporary handoff directory with the official filenames `.env.self-hosted` and `docker-compose.self-hosted.yml` validated the docs in a customer-like way.
+- The copied-package dry run proved the full acceptance path, not just bootstrap: homepage, login page, real owner login, and `Workspace Access`.
+- The documented `blank` flow correctly created customer-owned accounts only: owner, ops, and inspector.
+
+## Mistakes To Stop Repeating
+
+### Mistake: I initially used a symlinked handoff directory for the customer dry run
+- What happened: the first dry-run attempt used a temporary directory with a symlink to `web-panel`, and Docker Desktop behaved inconsistently during build.
+- Root cause: a symlinked build context is convenient for local testing, but it does not match how a customer would receive a real copied package.
+- Earlier signal I missed: the build stalled at metadata/context stages without creating the expected containers, which pointed to local packaging mechanics rather than product logic.
+- Prevention rule: customer dry runs should use a copied handoff directory, not a symlinked one.
+- Next-time checklist item: for deployment dry runs, copy the package into a temporary folder and run the documented commands from there.
+
+### Mistake: It would have been easy to stop at service start + bootstrap success again
+- What happened: the compose stack built and bootstrapped successfully, but the real value of this dry run only showed up after proving owner login and `Workspace Access`.
+- Root cause: technical milestones are easier to verify than the first real admin handoff path.
+- Earlier signal I missed: the whole purpose of the guided-install docs is not “services came up,” it is “the customer can now use the workspace.”
+- Prevention rule: every delivery dry run must prove at least one post-login admin screen that matters to handoff.
+- Next-time checklist item: after first login, always open the account-management screen that the customer will use immediately.
+
+## Permanent Rules
+- Customer dry runs must use a copied package directory, not a symlinked build context.
+- Self-hosted acceptance is not complete until one real admin login and one post-login handoff page are verified.
+- Docker build slowness on cold metadata resolution is an environment factor, not automatically a product blocker.
+
+## Next-Project Checklist
+- [ ] Create a temporary copied handoff directory before running a customer-style deployment test.
+- [ ] Run the documented compose commands from that copied directory.
+- [ ] Verify homepage, login page, owner login, and `Workspace Access`.
+- [ ] Clean up temporary containers, volumes, and temp directories after the dry run.
+
+## Open Risks Or Follow-Ups
+- The package is now validated for guided delivery, but still not positioned as a zero-support self-service installer.
+- A future sales asset may still be useful: one short “what customer IT should expect in the first 60 minutes” summary for proposals.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-docker-install-handoff-checklist.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-guided-self-hosted-install-sop.md`
+
+## 2026-04-18 - Narrow ICP re-ranking should optimize for wedge fit, not just generic returns relevance
+
+## Snapshot
+- Date: 2026-04-18
+- Scope: narrowing the first-customer profile and re-ranking the existing target-account batch
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Reframing the first-customer question from “who does returns?” to “who has client-facing warehouse exception pressure?” made the list much sharper.
+- Keeping the original verified account pool and adding a separate `A / B / C` execution filter preserved prior research without forcing a rewrite.
+- The wedge stayed consistent with current positioning: evidence capture, exception control, and brand/client explanation.
+
+## Mistakes To Stop Repeating
+
+### Mistake: It is easy to confuse returns capability with early-customer fit
+- What happened: the original batch contained real returns-capable accounts, but several of them were better broad-market references than ideal first customers.
+- Root cause: “has returns” is an easy screening heuristic, but it is too weak for first-customer selection.
+- Earlier signal I missed: some accounts had public language about integration, scale, or generic fulfillment support, but less evidence of the exact client-facing exception workflow Dossentry fits best.
+- Prevention rule: first-customer lists must rank accounts by wedge fit, not just category fit.
+- Next-time checklist item: for each account, score `warehouse exception pressure`, `client-facing explanation need`, and `buyer accessibility` before ranking it.
+
+### Mistake: Larger logos can look attractive even when they slow learning
+- What happened: broader or likely-larger operators stayed high in the original batch because they looked credible.
+- Root cause: logo quality is psychologically easier to trust than speed-of-learning or accessibility.
+- Earlier signal I missed: the narrow ICP already favored mid-market, multi-brand operators without heavyweight reverse-logistics complexity.
+- Prevention rule: early outreach ranking should prefer accessible operators over impressive logos.
+- Next-time checklist item: explicitly downgrade accounts that are likely to have enterprise procurement drag unless there is overwhelming wedge fit.
+
+## Permanent Rules
+- First-customer prioritization must optimize for wedge fit, client-facing pain, and buyer accessibility.
+- “Has returns management” is necessary but not sufficient for top-tier outreach priority.
+- Keep the broad research pool and the narrow execution queue as separate artifacts.
+
+## Next-Project Checklist
+- [ ] Score each target account on wedge fit before writing outreach.
+- [ ] Separate `research pool` from `contact now` queue.
+- [ ] Downgrade accounts with likely enterprise drag unless the fit is exceptional.
+- [ ] Keep the first five accounts tightly aligned to the narrowest current ICP.
+
+## Open Risks Or Follow-Ups
+- The new priority order is still hypothesis-driven until the first outreach wave produces clicks, replies, or calls.
+- A future refinement may split the `A` tier into `client-services-heavy` and `inspection-heavy` subgroups if response patterns diverge.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-real-target-accounts-batch-1-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/returns-positioning-pricing-discovery-v2.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-narrow-icp-reprioritization-2026-04.md`
+
+## 2026-04-18 - Release cleanup must separate durable go-to-market assets from throwaway build artifacts
+
+## Snapshot
+- Date: 2026-04-18
+- Scope: promotion-ready release cleanup across marketing pages, outreach assets, and repository hygiene
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Reviewing the dirty worktree by file class instead of by timestamp made it easy to separate real assets from junk.
+- The new OG images, meta partial, compare-page metadata, outreach pack, and commercial templates all clearly belonged to the shipped go-to-market surface.
+- Treating cleanup as a release step, not an afterthought, exposed one real repository issue early: temporary image exports and Python cache files were still sitting beside formal assets.
+
+## Mistakes To Stop Repeating
+
+### Mistake: Generated artifacts were left in the repo root long enough to be mistaken for shippable assets
+- What happened: `tmp/` and `scripts/__pycache__/` accumulated generated PNGs and Python bytecode while real marketing assets were being added in the same time window.
+- Root cause: build/test output was created during content work, but no cleanup rule ran before the next release-ready review.
+- Earlier signal I missed: the repository already contained a mix of public assets (`og-home.png`, `og-compare.png`) and obviously transient exports in `tmp/pdfs/`, which should never share the same decision cycle.
+- Prevention rule: every release cleanup must explicitly classify files into `ship`, `archive`, or `delete`.
+- Next-time checklist item: before calling a version promotion-ready, run `git status --short` and remove or ignore temporary directories before reviewing copy or design changes.
+
+### Mistake: Important outbound and pricing documents remained untracked even after they became part of the operating playbook
+- What happened: multiple Dossentry sales, ICP, and self-hosted proposal documents were present but untracked, which meant the repository did not reflect the real current operating system.
+- Root cause: documents were created quickly during iteration, but there was no explicit “promote from scratchpad to official asset” step.
+- Earlier signal I missed: the filenames were already date-stamped, product-branded, and customer-facing, which is a strong sign they should be versioned.
+- Prevention rule: once a document becomes part of outreach, pricing, proposal, or onboarding execution, it must be committed in the same cycle as the related product or GTM change.
+- Next-time checklist item: when adding new GTM docs, decide immediately whether each file is `scratch` or `official` and place it accordingly.
+
+## Permanent Rules
+- Release cleanup is a required step before any promotion push.
+- Temporary image exports, caches, and generated previews must be ignored or deleted immediately after use.
+- Official GTM docs, proposal templates, and outreach packs must be committed once they are used operationally.
+- A dirty worktree is a release risk, not just a cosmetic issue.
+
+## Next-Project Checklist
+- [ ] Run `git status --short` before declaring the build promotion-ready.
+- [ ] Classify each untracked file as `ship`, `archive`, or `delete`.
+- [ ] Delete or ignore temp directories such as `tmp/` and `__pycache__/`.
+- [ ] Commit official outbound, pricing, and proposal assets in the same cycle they start being used.
+- [ ] Check for configuration leftovers that still reference retired branding or infrastructure.
+
+## Open Risks Or Follow-Ups
+- `internal_admin_login_url` still defaults to the old Render subdomain and should be intentionally resolved in a later infrastructure pass instead of being silently changed.
+- The marketing/test changes should still get a promotion-focused QA pass after cleanup because local PHP and Docker are unavailable on this machine.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/.gitignore`
+- `/Users/mikezhang/Desktop/projects/6POS/returns-outreach-execution-pack.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-linkedin-dm-batch-1-top-5-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-narrow-icp-reprioritization-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-pdf-outreach-followups-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-real-target-accounts-batch-1-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-self-hosted-quote-template.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-self-hosted-setup-proposal-template.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-self-hosted-sow-template.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-target-accounts-and-utm-templates-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/returns-positioning-pricing-discovery-v2.md`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
+- `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/partials/marketing-meta.blade.php`

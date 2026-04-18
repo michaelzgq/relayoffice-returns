@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $appName }} | Brand-Ready Return Evidence</title>
-    <meta name="description" content="Dossentry helps multi-brand 3PLs and operators turn disputed return cases into brand-ready evidence, review links, and decision-ready case records.">
+    @include('partials.marketing-meta', [
+        'metaTitle' => $appName . ' | Brand-Ready Return Evidence',
+        'metaDescription' => 'Dossentry helps multi-brand 3PLs and operators turn disputed return cases into brand-ready evidence, review links, and decision-ready case records.',
+        'metaImage' => asset('assets/dossentry/og-home.png'),
+        'metaImageAlt' => 'Dossentry overview for warehouse-side return evidence and Brand Review Links.',
+    ])
     <link rel="icon" type="image/svg+xml" href="{{ asset('assets/dossentry/favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

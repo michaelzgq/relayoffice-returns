@@ -1,320 +1,570 @@
 # Returns Outreach Execution Pack
 
-最后更新时间：2026-04-06 America/Los_Angeles
+最后更新时间：2026-04-13 America/Los_Angeles
 
 ## Goal
 
-这份文件是实际执行手册，不是策略说明。
+这份文件是当前版本的实际执行手册，不是定位讨论稿。
 
-目标只有一个：
+未来 `7` 天只验证一件事：
 
-**未来 14 天内，拿到 `5` 个有效 discovery calls，并争取 `1` 个付费 `Returns Decision Support Review`。**
+**多品牌 3PL / warehouse ops buyer 会不会对 `Brand Review Link + disputed return evidence` 这套卖法产生真实回应。**
 
-## Core Rule
+当前阶段不要假装已经验证了 PMF。
+目标只是：
 
-不要“发一轮试试看”。  
-要按固定节奏打：
+- 拿到 `3-5` 个有效 discovery calls
+- 拿到 `1` 个明确愿意继续看的强信号
+- 用真实点击和回复语言验证 message
 
-- 每天 `5-10` 条精准触达
-- 每次只卖一个很窄的问题
-- 每个回复都沉淀成下一版话术
+## Current Asset Stack
 
-## Offer To Sell
+当前已经上线、可以拿去卖的资产：
 
-### Main Offer
+- 官网首页：[https://dossentry.com](https://dossentry.com)
+- compare 页面：[https://dossentry.com/compare/generic-inspection-apps](https://dossentry.com/compare/generic-inspection-apps)
+- guest demo 登录：[https://demo.dossentry.com/admin/auth/login](https://demo.dossentry.com/admin/auth/login)
+- sample Brand Review Link：由首页和 compare 页主 CTA 承接
+- first-party CTA tracking：在 admin `Review Requests` 页面看
 
-`Returns Decision Support Review`
+点击数据查看入口：
 
-### One-Line Pitch
+- [https://demo.dossentry.com/admin/returns/review-requests](https://demo.dossentry.com/admin/returns/review-requests)
 
-`We review how your warehouse handles high-risk return exceptions across brands, then show where grading rules, evidence capture, refund release, and SLA visibility are breaking down.`
+这个页面会显示：
 
-### Price
+- `Last 7 days`
+- `Last 30 days`
+- `Unique clients (30d)`
+- `Top CTA combinations (30d)`
+- `Recent CTA clicks`
 
-`Pilot Review: $300`
+## What To Sell
 
-规则：
+现在不要卖：
 
-- 前 `3` 个客户可以用 pilot price
-- 不要免费
+- `another inspection app`
+- `another barcode workflow`
+- `another returns portal`
+- `full reverse logistics platform`
+- `WMS replacement`
 
-## Targeting
+现在只卖：
 
-### Best Titles
+**high-risk return exception control for multi-brand warehouse teams**
 
-- `Founder`
+一句话版本：
+
+`When a brand challenges how your warehouse handled a return, Dossentry helps your team send one brand-ready review record instead of reconstructing the case from SOPs, Slack threads, and photo folders.`
+
+## Offer Ladder
+
+### Offer 1: Low-Friction Entry
+
+`View Sample Brand Review Link`
+
+用途：
+
+- 先让对方看到“你到底交付什么”
+- 不要求他们先理解整个 product
+
+### Offer 2: Conversation CTA
+
+`Request Workflow Review`
+
+用途：
+
+- 把第一次互动收成一个低摩擦的 discovery / audit 对话
+- 避免直接把自己卖成“大软件采购”
+
+### Offer 3: Paid Entry
+
+`Warehouse Return Workflow Review`
+
+建议暂时保持窄范围：
+
+- 一个仓
+- 一个 exception lane
+- 一个品牌或一组相似品牌
+
+价格现在先别在公开页面写死。
+如果需要口头报价，可以继续用：
+
+- `pilot review: $300`
+
+但只有在对方已经承认痛点后再提。
+
+## Channel Priority
+
+未来 `7` 天只做下面这 `5` 类，不扩散。
+
+### 1. Warm Intros
+
+优先级最高。
+
+来源：
+
+- 你现有朋友
+- 认识 3PL / DTC / warehouse ops 的人
+- 能介绍 owner / ops manager 的二度关系
+
+原因：
+
+- 最快拿到第一批真实对话
+- 不需要先靠品牌信任背书
+
+CTA：
+
+- 先约 `20-minute workflow review`
+
+### 2. Founder-Led LinkedIn Outbound
+
+目标人群：
+
 - `Owner`
+- `Founder`
 - `COO`
 - `Operations Manager`
 - `Warehouse Operations Manager`
 - `Returns Manager`
 - `Client Success Lead`
 
-### Good Company Signals
+原因：
 
-- 网站提到 `DTC`
-- 网站提到 `returns management`
-- 网站提到 `ecommerce fulfillment`
-- 同时服务多个品牌
-- 有仓库运营和客户服务能力
+- 最容易打到多品牌 3PL 和 warehouse-side buyer
+- 适合 problem-first DM，不需要先发长材料
 
-### Bad Company Signals
+默认链接：
 
-- 只做 B2B freight
-- 只做传统运输 brokerage
-- 只卖 shopper returns portal
-- 主要客户不是电商品牌
+- compare page
 
-## Daily Cadence
+### 3. Cold Email
 
-### Daily Target
+用途：
 
-- `5` 个冷邮件
-- `5` 个 LinkedIn DM
-- `2` 个 follow-up
-- `1` 条社区观察或评论
+- 给 LinkedIn 不回的人第二触点
+- 给网站访问和名单研究形成闭环
 
-### Daily Workflow
+默认链接：
 
-1. 选 `5-10` 家高度相关公司
-2. 每家只找 `1-2` 个联系人
-3. 先读对方网站和 LinkedIn，写一句个性化 opening
-4. 发消息
-5. 记录状态
-6. 第二天 follow-up 前先改文案，不要机械重发
+- compare page
 
-## Outreach Templates
+### 4. Directory Presence
 
-### Email Template A
+建议：
+
+- Fulfill / 3PL 工具目录先占坑
+
+用途：
+
+- 不追求大流量
+- 只接高 intent
+
+默认链接：
+
+- 官网首页
+
+### 5. Problem-First Community Posts
+
+渠道例子：
+
+- LinkedIn 发 problem-first 帖子
+- Reddit / 社区发研究型问题帖
+
+规则：
+
+- 先讨论 workflow，不先贴产品
+- 不做广告帖
+
+## What Not To Do This Week
+
+先不要做：
+
+- Google Ads
+- Meta Ads
+- Product Hunt
+- 大范围 SEO
+- 大规模 automation 冷启动
+- 一上来就推 guest demo
+- 一上来就发 sample signed link
+
+原因：
+
+- 现在最该验证的是 message，不是 scale
+- `guest demo` 不是第一卖点
+- sample signed link 不适合作为第一层 UTM 入口
+
+## UTM Rules
+
+### Core Rule
+
+**所有第一触点外链都先指向 `landing` 或 `compare`，不要直接把 UTM 加到 signed Brand Review Link 上。**
+
+原因：
+
+- sample review 是 signed URL
+- 额外 query params 会增加签名失效风险
+- 你真正要测的是：对方是否愿意在 compare / landing 里继续点 `sample_review`
+
+### Canonical Pattern
 
 ```text
-Subject: Quick question about warehouse-side return exceptions
+?utm_source={{source}}&utm_medium={{medium}}&utm_campaign={{campaign}}&utm_content={{content}}&utm_term={{term}}
+```
+
+### Recommended Values
+
+#### `utm_source`
+
+- `linkedin`
+- `email`
+- `fulfill`
+- `reddit`
+- `warm_intro`
+
+#### `utm_medium`
+
+- `dm`
+- `cold_email`
+- `directory`
+- `comment`
+- `intro`
+- `post`
+
+#### `utm_campaign`
+
+固定一周一个名字，不要乱起。
+
+第一周建议：
+
+- `2026q2_wk1_message_validation`
+
+#### `utm_content`
+
+用来区分你发的具体话术和落点。
+
+例子：
+
+- `compare_msg_a`
+- `compare_msg_b`
+- `landing_msg_a`
+- `followup_1`
+- `followup_2`
+
+#### `utm_term`
+
+只拿来标记 segment 或 account slug。
+
+例子：
+
+- `multi_brand_3pl`
+- `warehouse_ops`
+- `acct_shipbob_like`
+
+### Link Mapping Rules
+
+#### First outbound touch
+
+优先发：
+
+- compare page
+
+示例：
+
+```text
+https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=multi_brand_3pl
+```
+
+#### Warm reply / clear pain acknowledged
+
+再发：
+
+- sample Brand Review Link
+
+规则：
+
+- 不加额外 UTM
+- 让 tracking 发生在前一层 compare / landing click
+
+#### Wants to “see the product”
+
+再发：
+
+- guest demo
+
+规则：
+
+- 不把 guest demo 当第一触点
+- 先让对方理解你卖的不是 generic inspection
+
+## First Batch Channel List
+
+### Batch A: 15 Best-Fit Accounts
+
+只找这些特征：
+
+- 多品牌 3PL
+- 服务 `5+` 个 DTC 品牌
+- 网站明确提到 returns management / reverse logistics / ecommerce fulfillment
+- 过去看起来有 warehouse-side ops 复杂度
+
+### Batch B: 10 Adjacent Accounts
+
+只找这些特征：
+
+- 多品牌 operator / aggregator
+- 自营仓
+- 有高价值 SKU 或争议率高品类
+
+### Channel Mix For Week 1
+
+- `10` 个 LinkedIn 连接请求
+- `10` 个 LinkedIn DM
+- `10` 封冷邮件
+- `5` 个 follow-up
+- `1-2` 条 problem-first 内容帖
+
+不要超过这个量。
+现在不是比量，是比 message quality。
+
+## Outreach Copy
+
+### LinkedIn Connection Note
+
+```text
+Looking at one narrow warehouse-side returns problem for multi-brand 3PLs: what happens when a brand challenges the handling of a returned item after it reaches the warehouse. Would be good to connect.
+```
+
+### LinkedIn DM A
+
+```text
+Quick question: when a client brand questions how your warehouse handled a return, what does your team send back today?
+
+I’m looking specifically at the evidence/review layer after the item is physically back, not shopper portals or labels.
+```
+
+### LinkedIn DM B
+
+```text
+I’m looking at a very narrow problem for multi-brand warehouse teams:
+how brand-specific return evidence gets captured and shared when a case becomes disputed.
+
+Not trying to replace a WMS or returns portal.
+Just the part where ops needs one clean review record instead of SOP PDFs, Slack threads, and photo folders.
+
+If relevant, I can send a short compare page that shows the workflow.
+```
+
+### LinkedIn Follow-Up With Link
+
+```text
+This is the narrow workflow I mean:
+{{compare_link}}
+
+The wedge is not generic inspection.
+It is giving warehouse ops one brand-ready review record when a return gets challenged.
+```
+
+### Cold Email A
+
+```text
+Subject: Quick question about disputed return handling
 
 Hi {{first_name}},
 
-I’m looking at one specific problem for multi-brand 3PLs:
-what happens after a returned item reaches the warehouse.
+I’m looking at one specific problem for multi-brand warehouse teams:
+what happens when a client brand questions how a returned item was handled after it is physically back in the warehouse.
 
-Not labels or customer-facing returns.
-The warehouse-side exception layer:
-inspection rules, evidence capture, and refund holds for high-risk cases.
+Not labels.
+Not shopper portals.
+Not WMS replacement.
 
-Many teams already have a shopper-facing returns tool, but still manage brand-specific warehouse rules through SOP docs, spreadsheets, and tribal knowledge.
+The narrow issue is whether the team can send one clean review record with the right photos, rule context, timeline, and recommendation, instead of rebuilding the story from SOP docs and photo folders.
 
-Is that something your team deals with today?
+This page shows the exact wedge:
+{{compare_link}}
 
-If yes, I’m offering a short paid Returns Decision Support Review where I map the current workflow, point out the biggest rule/evidence gaps, and show what a cleaner inspection + refund-control flow could look like.
-
-Open to a 20-minute call?
+Is this a problem your team deals with today?
 ```
 
-### Email Template B
+### Cold Email B
 
 ```text
-Subject: How do you manage return rules across brands today?
+Subject: How do you show return evidence back to client brands?
 
 Hi {{first_name}},
 
 Quick question:
-when a returned item hits your warehouse, how does the team know the rule is different for Brand A vs Brand B?
+when a returned item becomes disputed, how does your warehouse team show the evidence back to the client brand?
 
-That warehouse-side decision layer is the workflow I’m looking at right now for multi-brand 3PLs.
+I’m not talking about customer-facing returns tools.
+I’m looking at the warehouse-side evidence and review layer after the item reaches the floor.
 
-I’m not talking about shopper portals or labels.
-Just the inspection, evidence, and refund-hold side after the item is physically back.
+This explains the workflow more clearly than a long email:
+{{compare_link}}
 
-If useful, I can share a quick workflow review format I’m using with a few teams.
-Would a 20-minute call be worth it?
-```
-
-### LinkedIn DM
-
-```text
-Quick question: once returned items hit your warehouse, how are brand-specific grading rules and refund holds managed today?
-
-I’m working on a lightweight workflow for multi-brand 3PL return exceptions and would love to compare notes.
+If this is relevant, happy to compare notes for 20 minutes.
 ```
 
 ### Follow-Up 1
 
 ```text
-Following up because this is a very narrow problem:
-not shopper returns, just warehouse-side exception handling after items arrive.
+Following up because this is a narrow ops problem, not a broad software pitch.
 
-If your team deals with wrong item, empty box, damage disputes, or “do we have enough proof to release refund?” — that’s the workflow I’m looking at.
+If your team has ever had to answer:
+
+- did we capture enough proof?
+- which brand rule applied?
+- why was this disposition recommended?
+- what do we send back when the client pushes back?
+
+then this is the workflow I’m looking at.
 ```
 
 ### Follow-Up 2
 
 ```text
-Totally fine if this is not a priority.
+Totally fine if this is not a priority right now.
 
-If warehouse-side return exceptions are messy across brands, I’m happy to share the review format I’m using. Even if there’s no fit, it may help you pressure-test your current SOPs.
+If disputed returns across brands are messy, I’m happy to send the sample review record so you can see the exact output I’m focused on.
 ```
 
-## Personalization Angles
-
-每条消息至少带一个个性化角度：
-
-- `Saw that you support DTC brands in apparel/electronics`
-- `Noticed you mention returns management on your site`
-- `Looks like you work with multiple ecommerce brands`
-- `You seem to operate across multiple warehouse locations`
-
-不要发完全通用版。
-
-## Discovery Call Flow
-
-### Goal
-
-不是 demo。  
-不是教育市场。  
-是确认痛点真实不真实。
-
-### Call Structure
-
-1. `2 min` 破题
-2. `10 min` 了解现状
-3. `5 min` 复述问题
-4. `3 min` 提 review offer
-
-### Call Script
+### Reply When They Say “Send Me More”
 
 ```text
-I’m not trying to replace your returns stack.
-I’m trying to understand how your warehouse handles client-by-client return exceptions after the item is physically back.
+Happy to.
+
+Start here:
+{{compare_link}}
+
+If that looks close to the problem you have, I can also send a sample Brand Review Link and walk through the workflow in 20 minutes.
 ```
 
-### Questions
+## Weekly Validation Table
 
-1. `Who defines the inspection SOP for each client brand?`
-2. `How does the warehouse team know when that SOP changes?`
-3. `Where is evidence stored for wrong item, empty box, damage, or missing parts?`
-4. `Who can hold or move a refund if the evidence is incomplete?`
-5. `What types of return cases create the most pushback from clients?`
-6. `How do you spot cases that are stuck or missing proof?`
-7. `How long does it take to onboard a new brand’s return rules into warehouse operations?`
+这些数字是**执行目标和判断阈值**，不是市场基准事实。
 
-## Scoring Rubric
+| Metric | Week 1 target | Green signal | Yellow signal | Red signal |
+|---|---:|---|---|---|
+| Target accounts researched | 25 | `25+` | `15-24` | `<15` |
+| Personalized first touches sent | 30 | `30+` | `20-29` | `<20` |
+| Replies | 5 | `5+` | `2-4` | `0-1` |
+| Discovery calls booked | 3 | `3+` | `1-2` | `0` |
+| Workflow review requests | 1 | `1+` | `0` but good replies | `0` and weak replies |
+| Sample / compare CTA activity | visible in tracking | clicks + replies align | clicks but no replies | no clicks + no replies |
 
-每个 call 后立刻打分，别靠感觉。
+## Daily Operating Rhythm
 
-### High Signal
+### Monday
 
-- `3` 分：明确说 warehouse-side rules 很乱
-- `3` 分：提到多品牌规则差异
-- `2` 分：提到 evidence disputes / chargebacks / client pushback
-- `2` 分：提到 refund hold/release 模糊
-- `2` 分：愿意继续看 sample 或 demo
+- finalize target list
+- send first `8-10` touches
+- publish `1` problem-first post
 
-### Low Signal
+### Tuesday
 
-- `-3` 分：主要想要 shopper portal
-- `-3` 分：说仓库侧现在完全没问题
-- `-2` 分：没有多品牌复杂度
-- `-2` 分：没有任何愿意继续的动作
+- send `5-7` more touches
+- follow up on Monday opens/replies
+- log exact objections
 
-### Interpretation
+### Wednesday
 
-- `7+`：强跟进
-- `4-6`：继续 nurture
-- `0-3`：弱 fit
-- `<0`：放弃
+- run any booked calls
+- send next `5-7` touches
+- tighten copy based on replies
 
-## Objection Handling
+### Thursday
 
-### “We already use Loop / AfterShip”
+- second follow-up wave
+- send sample review only to warm prospects
+- update tracker
 
-```text
-That makes sense. I’m not trying to replace your whole returns stack.
-What I’m looking at is the warehouse-side exception layer after the item arrives, especially when brand-by-brand SOPs and evidence requirements are still messy.
-```
+### Friday
 
-### “We already have SOPs”
+- review click data
+- review replies
+- decide:
+  - keep message
+  - tighten ICP
+  - rewrite opening line
 
-```text
-That’s usually where teams start.
-The question I’m trying to answer is whether SOPs are enough when the inspector is making fast decisions across multiple brands and high-risk cases.
-```
+## Weekly Decision Rules
 
-### “We’re not buying software”
+### Keep current positioning
 
-```text
-That’s exactly why I start with a small paid review, not a software rollout.
-The first step is just to map where the workflow is leaking time, evidence, or refund control.
-```
+如果同时出现：
 
-### “Send me something”
+- `3+` discovery calls
+- 至少 `1` 个 prospect 明确承认 brand challenge / evidence pain
+- compare 或 sample review 有实际点击
 
-```text
-Happy to. I can send a short overview plus a 3-minute workflow video so you can see the exact problem area I’m focused on.
-```
+### Keep ICP, rewrite opening line
 
-## Weekly Scoreboard
+如果出现：
 
-每周只看这些数字：
+- 有点击
+- 有页面停留/兴趣
+- 但没有回复或没有 call
 
-- `new targets added`
-- `messages sent`
-- `replies`
-- `calls booked`
-- `calls completed`
-- `samples requested`
-- `pilot review offers made`
-- `pilot reviews sold`
+这通常说明：
 
-## Decision Rules
+- problem 方向可能对
+- 第一条 DM / email opening 不够锋利
 
-### Keep Going If
+### Tighten ICP
 
-- `>= 5` 个有效对话
-- `>= 2` 个人愿意看 sample 或 demo
-- `>= 1` 个人愿意为 review 付费
+如果出现：
 
-### Stop Or Pivot If
+- 回复很多，但都是“我们主要看 shopper portal / labels / WMS”
 
-- 所有人都说仓库侧 rules 不是问题
-- 所有人真正想买的是 shopper portal
-- 两周后没人愿意付 review fee
+这说明你打的人太宽了。
 
-## Community / Network Angles
+### Pause broader outreach and re-check the wedge
 
-按 `first-customers` 的逻辑，不要只打陌生人。
+如果一周后出现：
 
-### Circle 1
+- `30+` personalized touches
+- `0-1` 回复
+- `0` calls
+- tracking 也几乎没点击
 
-先问你认识的人里有没有：
+这时不要继续机械加量。
+先重看：
 
-- 做 3PL 的
-- 做电商运营咨询的
-- 做仓库系统或 returns 项目的
-- 有 3PL 客户的 agency / consultant
+- ICP
+- opening line
+- 你是不是还是被理解成了 generic inspection tool
 
-### Circle 2
+## Minimal Tracking Sheet
 
-找你已经有交集的人：
+表头只保留这些：
 
-- 电商运营顾问
-- fulfillment 顾问
-- 物流 SaaS 从业者
-- LinkedIn 上经常发 3PL 内容的人
+- `company`
+- `contact`
+- `role`
+- `channel`
+- `utm_link_used`
+- `date_sent`
+- `reply_status`
+- `call_booked`
+- `pain_signal`
+- `next_step`
 
-### Circle 3
+## Rules To Protect Focus
 
-再打 cold outreach。
+- 每条外联只卖一个问题，不解释全产品
+- 第一触点默认发 compare，不默认发 demo
+- sample review 只发给已经表现出兴趣的人
+- 不要把 inventory sync 说成现成功能
+- 不要把自己卖成 full returns suite
+- 不要在第一周同时测试太多 ICP
 
-## File Pack To Send After Interest
+## This Week's Default Recommendation
 
-当对方说“发我看看”，你只发这两个：
+最稳的起手式是：
 
-1. `3-minute Loom`
-2. 一页 overview
-
-不要一开始发长 deck。
-
-## Final Rule
-
-**早期增长不是 launch，是手动销售。**
-
-不要等网站完美，不要等功能再多一点。  
-先拿真实对话，再决定下一步产品。
+1. 先打 `multi-brand 3PL owner / ops manager`
+2. 第一条信息只讲 `brand challenge + evidence reconstruction`
+3. 第一层链接发 compare page
+4. 有回应后再发 sample Brand Review Link
+5. 只有明确想看 product 时才发 guest demo
