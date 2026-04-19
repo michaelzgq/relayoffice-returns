@@ -20,10 +20,10 @@ Rule:
 Send in this order:
 
 1. Returns Worldwide
-2. 3PL Worldwide
-3. Complemar
-4. eFulfillment Service
-5. DG Fulfillment
+2. DG Fulfillment
+3. Eco Fulfillment
+4. Unified Commerce
+5. MK Fulfillment
 
 ## Shared Campaign Settings
 
@@ -64,96 +64,7 @@ This is the clearest 1-minute overview:
 https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=returns_worldwide
 ```
 
-## 2. 3PL Worldwide
-
-### Best Role To Target
-
-- `Client Services Manager`
-- `COO`
-- `VP Operations`
-
-### Why This Message Fits
-
-They publicly describe a client-services-heavy model.  
-That makes “client challenge + one clean record” a better hook than generic warehouse productivity.
-
-### Link
-
-```text
-https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=3pl_worldwide
-```
-
-### First DM
-
-```text
-Hi {{first_name}} — I was looking at 3PL Worldwide because you sit in that client-services-heavy part of fulfillment where returns can turn into explanation work fast.
-
-I’m building Dossentry for one narrow problem: when a brand questions how the warehouse handled a return, the team should be able to send one review-ready record instead of rebuilding the case from SOPs, screenshots, and photo folders.
-
-Shortest overview:
-https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=3pl_worldwide
-```
-
-## 3. Complemar
-
-### Best Role To Target
-
-- `Adam Lantz`
-- `David VanRossum`
-- `Operations leadership`
-
-### Why This Message Fits
-
-Complemar publicly uses reverse-logistics language already.  
-The best hook is not “do you process returns,” but “how do you defend or explain the disputed ones.”
-
-### Link
-
-```text
-https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=complemar
-```
-
-### First DM
-
-```text
-Hi {{first_name}} — I came across Complemar while looking at operators that already handle reverse logistics, not just outbound fulfillment.
-
-I’m building Dossentry for the warehouse-side exception cases that still create manual work: the return is back, but someone now has to prove what rule applied, what evidence was captured, and why the next action made sense.
-
-This compare page is the fastest explanation:
-https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=complemar
-```
-
-## 4. eFulfillment Service
-
-### Best Role To Target
-
-- `Founder`
-- `Operations Director`
-- `Client Success`
-
-### Why This Message Fits
-
-They already market returns processing and inspection, so the message should contrast Dossentry against generic intake/restock tooling.
-
-### Link
-
-```text
-https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=efulfillment_service
-```
-
-### First DM
-
-```text
-Hi {{first_name}} — I was looking at eFulfillment Service because you already handle the practical side of returns processing, not just shipping.
-
-What I’m building is narrower: not another portal, but the warehouse-side workflow for the cases where inspection, evidence, and the client explanation are the hard part.
-
-Quick compare here:
-https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=efulfillment_service
-```
-
-## 5. DG Fulfillment
+## 2. DG Fulfillment
 
 ### Best Role To Target
 
@@ -181,6 +92,96 @@ I’m building Dossentry for the part that still tends to break when a return be
 
 Quickest overview:
 https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=dg_fulfillment
+```
+
+## 3. Eco Fulfillment
+
+### Best Role To Target
+
+- `Founder`
+- `Ops Lead`
+- `Warehouse Manager`
+
+### Why This Message Fits
+
+Strong evidence fit: `48-hour` processing, refund/exchange checks, detailed product photos, and product testing.  
+This is one of the clearest public signals that the team already lives in evidence-heavy return handling.
+
+### Link
+
+```text
+https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=eco_fulfillment
+```
+
+### First DM
+
+```text
+Hi {{first_name}} — Eco Fulfillment stood out because you already talk publicly about detailed product photos, testing, and fast return checks instead of treating returns like a generic restock step.
+
+I’m building Dossentry for the cases where that evidence has to hold up later: the right close-up photos, the right client playbook, and one clean record to send back when the handling gets questioned.
+
+Fastest overview:
+https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=eco_fulfillment
+```
+
+## 4. Unified Commerce
+
+### Best Role To Target
+
+- `Founder`
+- `Operations Lead`
+- `Support / Client Success Lead`
+
+### Why This Message Fits
+
+Smaller and easier-to-reach operator with an explicit client-facing loop: receive return, take photo, notify client, client decides next step.  
+That maps well to `Brand Review Link + evidence-ready case record`.
+
+### Link
+
+```text
+https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=unified_commerce
+```
+
+### First DM
+
+```text
+Hi {{first_name}} — Unified Commerce stood out because your public returns flow already includes the hard part most operators still handle manually: take the photo, notify the client, and decide the next step from there.
+
+I’m building Dossentry for exactly that warehouse-side gap: capture the right evidence on the phone, apply the right brand rule, and send one clean review record back instead of stitching the case together later.
+
+Quick compare here:
+https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=unified_commerce
+```
+
+## 5. MK Fulfillment
+
+### Best Role To Target
+
+- `Founder`
+- `Head of Operations`
+- `Client Services`
+
+### Why This Message Fits
+
+Good fit because the workflow is public and practical: scan into CRM, inspect condition, restock/repackage/dispose, and send daily reports.  
+That suggests real process pain without obvious enterprise heaviness.
+
+### Link
+
+```text
+https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=mk_fulfillment
+```
+
+### First DM
+
+```text
+Hi {{first_name}} — MK Fulfillment stood out because your returns process is already operationally specific: scan into CRM, inspect condition, decide restock/repackage/dispose, and report back daily.
+
+I’m building Dossentry for the cases where that workflow needs to hold up to client scrutiny later: brand-specific rules, evidence captured on the phone, and one clean review record instead of rebuilding the story from reports and folders.
+
+Quickest overview:
+https://dossentry.com/compare/generic-inspection-apps?utm_source=linkedin&utm_medium=dm&utm_campaign=2026q2_wk1_message_validation&utm_content=compare_msg_a&utm_term=mk_fulfillment
 ```
 
 ## Send Rules

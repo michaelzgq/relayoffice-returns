@@ -4096,3 +4096,56 @@
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/landing.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/compare/generic-inspection-apps.blade.php`
 - `/Users/mikezhang/Desktop/projects/6POS/web-panel/resources/views/partials/marketing-meta.blade.php`
+
+## 2026-04-18 - Broad research lists and live outreach queues must never share the same priority order
+
+## Snapshot
+- Date: 2026-04-18
+- Scope: ICP tightening and outbound target reprioritization
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Separating the broad research list from the narrow execution queue made the mismatch obvious immediately.
+- Re-reading the existing target docs before writing new ones prevented inventing a new ICP from scratch when the evidence was already in the repo.
+- Converting the narrow ICP into a scoring standard makes future list-building repeatable instead of intuition-driven.
+
+## Mistakes To Stop Repeating
+
+### Mistake: The live LinkedIn batch still followed the old broad-fit ranking after the narrow ICP had already changed
+- What happened: the research docs had already shifted toward a tighter wedge, but the actual first-touch LinkedIn file still prioritized `3PL Worldwide`, `Complemar`, and `eFulfillment Service` ahead of better direct-fit accounts like `Eco Fulfillment`, `Unified Commerce`, and `MK Fulfillment`.
+- Root cause: broad market research and active outbound execution were updated in separate passes, and no final reconciliation step forced the two lists to match.
+- Earlier signal I missed: `dossentry-narrow-icp-reprioritization-2026-04.md` already contained a better first-five order, which meant the outreach file was stale the moment that document became the new wedge definition.
+- Prevention rule: any time the ICP narrows, all active outbound artifacts must be reconciled in the same cycle.
+- Next-time checklist item: before sending message batch one, compare `research pool`, `priority board`, and `live DM batch` side by side and force one explicit final order.
+
+### Mistake: The ICP existed as narrative guidance, not a repeatable screen
+- What happened: the team had good qualitative language about the right customer, but no standard scoring gate to decide whether a target belongs in `contact now`, `active rotation`, or `skip`.
+- Root cause: positioning work matured faster than execution operations, so the repo had strong strategy language without an operational qualification framework.
+- Earlier signal I missed: multiple files were already using phrases like `narrow ICP`, `direct fit`, and `wave 1`, but none turned those phrases into a scored decision rule.
+- Prevention rule: once positioning changes affect prospect selection, create a formal qualification rubric before writing the next outreach batch.
+- Next-time checklist item: every outbound wave must have a one-page screening standard and a one-page priority board before any DM or cold email file is finalized.
+
+## Permanent Rules
+- Broad market research and live outbound execution must be stored as separate artifacts.
+- A narrowed ICP is not real until it changes the actual send order.
+- Every outbound batch needs an explicit `contact now / active rotation / skip` board.
+- First-wave messaging must prioritize the tightest wedge fit over prestigious logos or broad market representation.
+
+## Next-Project Checklist
+- [ ] Build or update the ICP scoring standard before drafting new outreach.
+- [ ] Reconcile the research list, priority board, and live DM batch in one pass.
+- [ ] Keep first-wave outreach focused on the narrowest current wedge.
+- [ ] Downgrade attractive but slower enterprise accounts unless they are obvious fit outliers.
+
+## Open Risks Or Follow-Ups
+- The new first-five order is still hypothesis-driven until the first message wave produces replies, clicks, or calls.
+- If the first five show weak response, the next refinement should test whether `client-services-heavy` accounts outperform `inspection-heavy` accounts or vice versa.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-real-target-accounts-batch-1-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-narrow-icp-reprioritization-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-linkedin-dm-batch-1-top-5-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-icp-screening-standard-v1.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-target-account-priority-board-2026-04.md`
