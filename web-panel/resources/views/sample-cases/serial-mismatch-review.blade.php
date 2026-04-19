@@ -234,6 +234,51 @@
             line-height: 1.6;
         }
 
+        .demo-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .video-shell {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: #0f172a;
+            box-shadow: var(--shadow-card);
+        }
+
+        .video-shell video {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: #020617;
+        }
+
+        .demo-copy {
+            display: grid;
+            gap: 14px;
+        }
+
+        .demo-point {
+            padding: 18px 20px;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: var(--surface-soft);
+        }
+
+        .demo-point h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .demo-point p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
         .main {
             padding: 28px 0 40px;
         }
@@ -480,6 +525,10 @@
             .hero-grid {
                 grid-template-columns: 1fr;
             }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 760px) {
@@ -522,6 +571,7 @@
             <nav class="topnav">
                 <a href="{{ route('landing') }}">Home</a>
                 <a href="{{ route('compare.generic-inspection-apps') }}">Compare</a>
+                <a href="#sample-video" data-track-page="sample_case" data-track-placement="topnav" data-track-cta="watch_video">Sample Video</a>
                 <a href="{{ route('sample-cases.serial-mismatch.pdf') }}" data-track-page="sample_case" data-track-placement="topnav" data-track-cta="download_pdf">Sample PDF</a>
                 <a href="{{ route('landing') }}#review-request" data-track-page="sample_case" data-track-placement="topnav" data-track-cta="workflow_review">Workflow Review</a>
             </nav>
@@ -541,11 +591,13 @@
                             screenshots, and chat threads.
                         </p>
                         <div class="hero-actions">
+                            <a class="button button-primary" href="#sample-video" data-track-page="sample_case" data-track-placement="hero" data-track-cta="watch_video">Watch 77-second Demo</a>
                             <a class="button button-primary" href="{{ $sampleCasePdfUrl }}" data-track-page="sample_case" data-track-placement="hero" data-track-cta="download_pdf">Download Sample PDF</a>
                             <a class="button button-secondary" href="{{ route('landing') }}#review-request" data-track-page="sample_case" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
                         </div>
                         <div class="hero-proof">
                             <span>Illustrative workflow example</span>
+                            <span>77-second walkthrough</span>
                             <span>Real handling photos</span>
                             <span>Warehouse-side evidence</span>
                             <span>Hold before release</span>
@@ -557,6 +609,38 @@
                         <div class="hero-panel-note">
                             The expected return record and the observed carton label no longer match. That gap is what triggers hold posture, review context, and evidence capture.
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card" id="sample-video">
+                <div class="section-head">
+                    <div>
+                        <h2>77-second sample walkthrough</h2>
+                        <p>This short demo shows the public sample case the same way a prospect would see it: one review-ready record, one hold reason, and one shareable workflow asset instead of scattered screenshots.</p>
+                    </div>
+                </div>
+
+                <div class="demo-grid">
+                    <div class="video-shell">
+                        <video controls playsinline preload="metadata" poster="{{ $sampleCaseAssets['compareBoard'] }}">
+                            <source src="{{ $sampleCaseVideoUrl }}" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <div class="demo-copy">
+                        <article class="demo-point">
+                            <h3>What the video covers</h3>
+                            <p>Home page entry, sample-case summary, evidence capture, hold posture, and the reason this exception should not move forward from memory.</p>
+                        </article>
+                        <article class="demo-point">
+                            <h3>How to use it</h3>
+                            <p>Use the page link when you want a prospect to click around, and use this embedded walkthrough when you need a fast first impression without asking them to read the full case.</p>
+                        </article>
+                        <article class="demo-point">
+                            <h3>Outbound-safe framing</h3>
+                            <p>Keep calling it a sample case and an illustrative workflow example. The value is clarity, not pretending this is a named customer win.</p>
+                        </article>
                     </div>
                 </div>
             </section>

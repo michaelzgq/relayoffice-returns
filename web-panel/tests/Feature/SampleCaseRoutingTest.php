@@ -20,10 +20,12 @@ class SampleCaseRoutingTest extends TestCase
         $response->assertSee('Sample Case Only');
         $response->assertSee('Serial mismatch caught before the case moved forward.');
         $response->assertSee('RMA-SAMPLE-1001');
+        $response->assertSee('Watch 77-second Demo');
         $response->assertSee('Download Sample PDF');
         $response->assertSee(json_encode(route('marketing.click-events.store')), false);
         $response->assertSee('property="og:title"', false);
         $response->assertSee('sample-serial-mismatch-board.png', false);
+        $response->assertSee('dossentry-sample-case-loom-en-final.mp4', false);
     }
 
     public function test_sample_case_pdf_route_serves_pdf_when_file_exists(): void

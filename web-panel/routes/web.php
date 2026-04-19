@@ -57,6 +57,7 @@ $sampleSerialMismatchPayload = function () use ($marketingPagePayload): array {
     return array_merge($marketingPagePayload(), [
         'sampleCaseUrl' => route('sample-cases.serial-mismatch'),
         'sampleCasePdfUrl' => route('sample-cases.serial-mismatch.pdf'),
+        'sampleCaseVideoUrl' => asset('assets/dossentry/dossentry-sample-case-loom-en-final.mp4'),
         'sampleCaseFacts' => [
             'returnId' => 'RMA-SAMPLE-1001',
             'expectedSku' => 'CRW500RO',
