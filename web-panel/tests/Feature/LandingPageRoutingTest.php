@@ -25,12 +25,13 @@ class LandingPageRoutingTest extends TestCase
         $response->assertSee('Defensible return');
         $response->assertSee('Dossentry');
         $response->assertSee('Brand Review Link');
-        $response->assertSee('View Sample Brand Review Link');
+        $response->assertSee('View Sample Case');
         $response->assertSee('Shared guest demo');
         $response->assertSee('guest@dossentry.com');
         $response->assertSee(route('privacy-policy'));
         $response->assertSee(route('terms-of-service'));
-        $response->assertSee('data-track-cta="sample_review"', false);
+        $response->assertSee('data-track-cta="sample_case"', false);
+        $response->assertSee(route('sample-cases.serial-mismatch'));
         $response->assertSee(json_encode(route('marketing.click-events.store')), false);
         $response->assertSee('property="og:title"', false);
         $response->assertSee('property="og:description"', false);
@@ -54,6 +55,8 @@ class LandingPageRoutingTest extends TestCase
         $response->assertOk();
         $response->assertSee('Generic inspection apps collect photos.');
         $response->assertSee('data-track-cta="back_to_site"', false);
+        $response->assertSee('data-track-cta="sample_case"', false);
+        $response->assertSee(route('sample-cases.serial-mismatch'));
         $response->assertSee(json_encode(route('marketing.click-events.store')), false);
         $response->assertSee('property="og:title"', false);
         $response->assertSee('property="og:description"', false);

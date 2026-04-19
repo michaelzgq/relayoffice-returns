@@ -1133,8 +1133,8 @@
                 </nav>
                 <div class="topbar-actions">
                     <a class="login-link" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="topbar" data-track-cta="login">Log in</a>
-                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl ?: $demoLoginUrl }}" data-track-page="landing" data-track-placement="topbar" data-track-cta="{{ $sampleBrandReviewUrl ? 'sample_review' : 'guest_demo' }}">
-                        {{ $sampleBrandReviewUrl ? 'View Sample Review' : 'Enter Guest Demo' }}
+                    <a class="button button-primary" href="{{ $sampleCaseUrl }}" data-track-page="landing" data-track-placement="topbar" data-track-cta="sample_case">
+                        View Sample Case
                     </a>
                 </div>
             </div>
@@ -1155,14 +1155,9 @@
                                 case from Slack threads and photo folders.
                             </p>
                             <div class="hero-actions">
-                                @if($sampleBrandReviewUrl)
-                                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}" data-track-page="landing" data-track-placement="hero" data-track-cta="sample_review">View Sample Brand Review Link</a>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
-                                    <a class="button button-tertiary" href="#review-request" data-track-page="landing" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
-                                @else
-                                    <a class="button button-primary" href="#review-request" data-track-page="landing" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
-                                @endif
+                                <a class="button button-primary" href="{{ $sampleCaseUrl }}" data-track-page="landing" data-track-placement="hero" data-track-cta="sample_case">View Sample Case</a>
+                                <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
+                                <a class="button button-tertiary" href="#review-request" data-track-page="landing" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
                             </div>
                             <div class="hero-proof">
                                 <span class="hero-proof-pill">No station rebuild</span>
@@ -1433,12 +1428,10 @@
                         <div class="cta-meta">
                             <article class="cta-note">
                                 <strong>Start with a real example</strong>
-                                <p>Open a sample Brand Review Link first. It is the fastest way to see the exact record your team could send when a brand challenges a return decision.</p>
-                                @if($sampleBrandReviewUrl)
-                                    <div class="stack-actions">
-                                        <a class="button button-secondary" href="{{ $sampleBrandReviewUrl }}" data-track-page="landing" data-track-placement="cta_meta" data-track-cta="sample_review">View sample review record</a>
-                                    </div>
-                                @endif
+                                <p>Open the public sample case first. It is the fastest way to see the exact record your team could send when a brand challenges a return decision.</p>
+                                <div class="stack-actions">
+                                    <a class="button button-secondary" href="{{ $sampleCaseUrl }}" data-track-page="landing" data-track-placement="cta_meta" data-track-cta="sample_case">View sample case</a>
+                                </div>
                             </article>
 
                             <article class="cta-note">

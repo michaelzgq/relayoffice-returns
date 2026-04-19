@@ -46,10 +46,34 @@ $marketingPagePayload = function (): array {
         'appName' => config('app.name') === 'Laravel' ? 'Dossentry' : config('app.name', 'Dossentry'),
         'demoLoginUrl' => 'https://demo.dossentry.com/admin/auth/login',
         'guestDemo' => config('dossentry.guest_demo'),
+        'sampleCaseUrl' => route('sample-cases.serial-mismatch'),
         'sampleBrandReviewUrl' => $sampleCaseId
             ? URL::temporarySignedRoute('returns.brand-review', now()->addDays(30), ['id' => $sampleCaseId])
             : null,
     ];
+};
+
+$sampleSerialMismatchPayload = function () use ($marketingPagePayload): array {
+    return array_merge($marketingPagePayload(), [
+        'sampleCaseUrl' => route('sample-cases.serial-mismatch'),
+        'sampleCasePdfUrl' => route('sample-cases.serial-mismatch.pdf'),
+        'sampleCaseFacts' => [
+            'returnId' => 'RMA-SAMPLE-1001',
+            'expectedSku' => 'CRW500RO',
+            'expectedSerial' => 'CR15788234',
+            'observedLabel' => 'CRE6000M / DSCRE99905',
+            'status' => 'Hold / Needs review',
+        ],
+        'sampleCaseAssets' => [
+            'compareBoard' => asset('assets/dossentry/sample-serial-mismatch-board.png'),
+            'receivedOverview' => asset('assets/dossentry/sample-received-overview.jpg'),
+            'observedLabels' => asset('assets/dossentry/sample-observed-labels.jpg'),
+            'cartonStack' => asset('assets/dossentry/sample-carton-stack.jpg'),
+            'palletAngle' => asset('assets/dossentry/sample-pallet-angle.jpg'),
+            'openedCase' => asset('assets/dossentry/sample-opened-case.jpg'),
+            'openedLid' => asset('assets/dossentry/sample-opened-lid.jpg'),
+        ],
+    ]);
 };
 
 $redirectMarketingDemoHost = function (Request $request) {
@@ -81,6 +105,25 @@ Route::get('compare/generic-inspection-apps', function (Request $request) use ($
 
     return response()->view('compare.generic-inspection-apps', $marketingPagePayload());
 })->name('compare.generic-inspection-apps');
+
+Route::get('sample-cases/serial-mismatch-review', function (Request $request) use ($sampleSerialMismatchPayload, $redirectMarketingDemoHost) {
+    if ($redirect = $redirectMarketingDemoHost($request)) {
+        return $redirect;
+    }
+
+    return response()->view('sample-cases.serial-mismatch-review', $sampleSerialMismatchPayload());
+})->name('sample-cases.serial-mismatch');
+
+Route::get('sample-cases/serial-mismatch-review/pdf', function () {
+    $pdfPath = base_path('public/assets/dossentry/dossentry-sample-case-serial-mismatch-2026-04.pdf');
+
+    abort_unless(is_file($pdfPath), 404);
+
+    return response()->file($pdfPath, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="dossentry-sample-case-serial-mismatch-2026-04.pdf"',
+    ]);
+})->name('sample-cases.serial-mismatch.pdf');
 
 Route::post('workflow-review-request', [WorkflowReviewRequestController::class, 'store'])
     ->name('workflow-review-requests.store');

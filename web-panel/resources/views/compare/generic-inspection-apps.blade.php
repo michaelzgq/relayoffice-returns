@@ -636,11 +636,7 @@
                 </nav>
                 <div class="topbar-actions">
                     <a class="button button-secondary" href="{{ route('landing') }}" data-track-page="compare" data-track-placement="topbar" data-track-cta="back_to_site">Back to site</a>
-                    @if($sampleBrandReviewUrl)
-                        <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}" data-track-page="compare" data-track-placement="topbar" data-track-cta="sample_review">View Sample Review</a>
-                    @else
-                        <a class="button button-primary" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="topbar" data-track-cta="workflow_review">Request Workflow Review</a>
-                    @endif
+                    <a class="button button-primary" href="{{ $sampleCaseUrl }}" data-track-page="compare" data-track-placement="topbar" data-track-cta="sample_case">View Sample Case</a>
                 </div>
             </div>
         </div>
@@ -660,14 +656,9 @@
                                 timeline, recommendation, and one shareable review link.
                             </p>
                             <div class="hero-actions">
-                                @if($sampleBrandReviewUrl)
-                                    <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}" data-track-page="compare" data-track-placement="hero" data-track-cta="sample_review">View Sample Brand Review Link</a>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
-                                    <a class="button button-quiet" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
-                                @else
-                                    <a class="button button-primary" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
-                                    <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
-                                @endif
+                                <a class="button button-primary" href="{{ $sampleCaseUrl }}" data-track-page="compare" data-track-placement="hero" data-track-cta="sample_case">View Sample Case</a>
+                                <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="hero" data-track-cta="guest_demo">Enter Guest Demo</a>
+                                <a class="button button-quiet" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="hero" data-track-cta="workflow_review">Request Workflow Review</a>
                             </div>
                             <div class="hero-proof">
                                 <span class="hero-proof-pill">Brand Review Link</span>
@@ -897,20 +888,15 @@
                                 team handles the same case today.
                             </p>
                         <div class="cta-actions">
-                            @if($sampleBrandReviewUrl)
-                                <a class="button button-primary" href="{{ $sampleBrandReviewUrl }}" data-track-page="compare" data-track-placement="cta" data-track-cta="sample_review">View Sample Brand Review Link</a>
-                                <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="cta" data-track-cta="guest_demo">Enter Guest Demo</a>
-                                <a class="button button-quiet" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="cta" data-track-cta="workflow_review">Request Workflow Review</a>
-                            @else
-                                <a class="button button-primary" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="cta" data-track-cta="workflow_review">Request Workflow Review</a>
-                                <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="cta" data-track-cta="guest_demo">Enter Guest Demo</a>
-                            @endif
+                            <a class="button button-primary" href="{{ $sampleCaseUrl }}" data-track-page="compare" data-track-placement="cta" data-track-cta="sample_case">View Sample Case</a>
+                            <a class="button button-secondary" href="{{ $demoLoginUrl }}" data-track-page="compare" data-track-placement="cta" data-track-cta="guest_demo">Enter Guest Demo</a>
+                            <a class="button button-quiet" href="{{ route('landing') }}#review-request" data-track-page="compare" data-track-placement="cta" data-track-cta="workflow_review">Request Workflow Review</a>
                         </div>
                         </div>
                         <div class="cta-notes">
                             <article class="cta-note">
                                 <strong>Start with one visible proof artifact</strong>
-                                <p>The fastest way to understand Dossentry is to open the sample Brand Review Link and see the exact record your team could send to a client brand.</p>
+                                <p>The fastest way to understand Dossentry is to open the public sample case and see the exact record your team could send to a client brand.</p>
                             </article>
                             <article class="cta-note">
                                 <strong>No replacement project required</strong>
