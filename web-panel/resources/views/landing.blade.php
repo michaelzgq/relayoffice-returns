@@ -1456,6 +1456,15 @@
                                 <strong>What you get back</strong>
                                 <p>A short review of your current evidence flow, where cases break down, and whether Dossentry fits the way your team actually works.</p>
                             </article>
+
+                            <article class="cta-note">
+                                <strong>Deep dive pages</strong>
+                                <p>Use these two narrow pages when you need to explain the workflow in plain English before asking for a call.</p>
+                                <div class="stack-actions">
+                                    <a class="button button-secondary" href="{{ $exceptionWorkflowUrl }}" data-track-page="landing" data-track-placement="cta_meta" data-track-cta="exception_workflow">3PL exception workflow</a>
+                                    <a class="button button-secondary" href="{{ $serialMismatchEvidenceUrl }}" data-track-page="landing" data-track-placement="cta_meta" data-track-cta="serial_mismatch_evidence">Serial mismatch evidence</a>
+                                </div>
+                            </article>
                         </div>
                     </div>
                 </div>
@@ -1468,6 +1477,8 @@
             <div>{{ $appName }}. Brand-ready return evidence and decision workflows.</div>
             <div class="footer-links">
                 <a href="{{ route('compare.generic-inspection-apps') }}" data-track-page="landing" data-track-placement="footer" data-track-cta="compare">Compare</a>
+                <a href="{{ $exceptionWorkflowUrl }}" data-track-page="landing" data-track-placement="footer" data-track-cta="exception_workflow">3PL workflow</a>
+                <a href="{{ $serialMismatchEvidenceUrl }}" data-track-page="landing" data-track-placement="footer" data-track-cta="serial_mismatch_evidence">Serial mismatch evidence</a>
                 <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
                 <a href="{{ route('terms-of-service') }}">Terms of Service</a>
                 <a href="{{ $demoLoginUrl }}" data-track-page="landing" data-track-placement="footer" data-track-cta="guest_demo">Live demo</a>

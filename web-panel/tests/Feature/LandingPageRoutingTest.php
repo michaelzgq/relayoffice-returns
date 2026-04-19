@@ -27,11 +27,14 @@ class LandingPageRoutingTest extends TestCase
         $response->assertSee('Brand Review Link');
         $response->assertSee('View Sample Case');
         $response->assertSee('Shared guest demo');
+        $response->assertSee('Deep dive pages');
         $response->assertSee('guest@dossentry.com');
         $response->assertSee(route('privacy-policy'));
         $response->assertSee(route('terms-of-service'));
         $response->assertSee('data-track-cta="sample_case"', false);
         $response->assertSee(route('sample-cases.serial-mismatch'));
+        $response->assertSee(route('solutions.3pl-return-exception-workflow'));
+        $response->assertSee(route('solutions.serial-mismatch-return-evidence'));
         $response->assertSee(json_encode(route('marketing.click-events.store')), false);
         $response->assertSee('property="og:title"', false);
         $response->assertSee('property="og:description"', false);
