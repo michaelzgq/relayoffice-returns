@@ -4149,3 +4149,52 @@
 - `/Users/mikezhang/Desktop/projects/6POS/dossentry-linkedin-dm-batch-1-top-5-2026-04.md`
 - `/Users/mikezhang/Desktop/projects/6POS/dossentry-icp-screening-standard-v1.md`
 - `/Users/mikezhang/Desktop/projects/6POS/dossentry-target-account-priority-board-2026-04.md`
+
+## 2026-04-18 - Ideal buyer titles and reachable public contacts must be separated in outbound targeting
+
+## Snapshot
+- Date: 2026-04-18
+- Scope: outbound target role correction for first-wave accounts
+- Outcome: success
+- Storage target: `memory/project-lessons.md`
+
+## What Worked
+- Re-checking the actual public reachability of `Returns Worldwide` exposed a practical flaw before the first wave went out.
+- Correcting the target role across every downstream asset prevented the same mistake from surviving in the research file, priority board, and live DM batch.
+
+## Mistakes To Stop Repeating
+
+### Mistake: The target role defaulted to the ideal decision-maker, not the reachable public contact
+- What happened: `Returns Worldwide` was ranked correctly as a fit, but the listed role still led with `COO`, even though there was no practical public route to that contact.
+- Root cause: the targeting logic mixed `who would ideally buy` with `who can realistically be reached right now`.
+- Earlier signal I missed: the company already had a visible founder/CEO path and a public client-relations route, which meant the listed COO target was too aspirational for founder-led outbound.
+- Prevention rule: every target account must distinguish between `ideal buyer` and `best reachable first contact`, and the outbound file must prioritize the reachable one.
+- Next-time checklist item: before finalizing any first-wave list, verify that the first listed role can be contacted through a public route, warm intro path, or verified profile.
+
+### Mistake: A role correction in one file was not automatically propagated to the others
+- What happened: the same unreachable bias appeared in the research list, narrow ICP reprioritization, priority board, and live DM batch.
+- Root cause: role fields were duplicated across documents without a final cross-file consistency pass.
+- Earlier signal I missed: once the same account appeared in multiple outbound artifacts, a change to one role should have been treated as a synchronized update across all of them.
+- Prevention rule: when an account or target role changes, update every execution artifact in the same cycle.
+- Next-time checklist item: after changing a target role, run repository search on the account name and patch every active outbound file before calling the list final.
+
+## Permanent Rules
+- `Best fit buyer` and `best reachable first contact` are not the same field.
+- First-wave outbound should optimize for contactability, not theoretical org-chart purity.
+- Any role correction must be propagated across every active outbound artifact.
+
+## Next-Project Checklist
+- [ ] Verify the public reachability of the first listed role for every account in the active queue.
+- [ ] Prefer founder, client-relations, or ops leads when executive contactability is weak.
+- [ ] Search the repository for each updated account name and patch all active outbound files in one pass.
+
+## Open Risks Or Follow-Ups
+- Other accounts may still need the same reachable-contact correction once direct prospecting starts.
+- A later enrichment pass should add verified named contacts where possible, instead of stopping at role-only targeting.
+
+## Source Artifacts
+- Conversation
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-real-target-accounts-batch-1-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-narrow-icp-reprioritization-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-target-account-priority-board-2026-04.md`
+- `/Users/mikezhang/Desktop/projects/6POS/dossentry-linkedin-dm-batch-1-top-5-2026-04.md`

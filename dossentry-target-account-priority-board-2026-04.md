@@ -20,7 +20,7 @@ These are the best current matches for the live product and message.
 
 | Priority | Company | Why It Fits Now | Best First Target | First Asset |
 |---|---|---|---|---|
-| `A1` | Returns Worldwide | Returns are core, not side work. Strong direct fit for `warehouse-side exception control + evidence`. | `COO`, `Founder`, `Head of Operations` | `compare page` |
+| `A1` | Returns Worldwide | Returns are core, not side work. Strong direct fit for `warehouse-side exception control + evidence`. | `Founder / CEO`, `Sales & Client Relations Manager`, `Head of Operations` | `compare page` |
 | `A2` | DG Fulfillment | Public workflow already includes inspection, re-kitting, vendor/customer routing, and condition intelligence. Closest operational fit to the current wedge. | `Founder`, `Operations Lead`, `Warehouse Operations Manager` | `compare page` |
 | `A3` | Eco Fulfillment | Publicly mentions detailed photos, product testing, refund/exchange checks, and fast returns handling. Strong evidence burden signal. | `Founder`, `Ops Lead`, `Warehouse Manager` | `compare page` |
 | `A4` | Unified Commerce | Public flow already includes take photo -> notify client -> client decides next step. Very close to `Brand Review Link` value. | `Founder`, `Operations Lead`, `Support / Client Success Lead` | `compare page` |

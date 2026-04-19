@@ -38,8 +38,8 @@ Use these for all `5`:
 
 ### Best Role To Target
 
-- `COO`
-- `Founder`
+- `Founder / CEO`
+- `Sales & Client Relations Manager`
 - `Head of Operations`
 
 ### Why This Message Fits
