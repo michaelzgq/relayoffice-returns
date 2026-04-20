@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Dossentry square logo">
+  <defs>
+    <linearGradient id="dossentry-logo-bg" x1="12%" y1="8%" x2="88%" y2="92%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="52%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <radialGradient id="dossentry-logo-glow" cx="28%" cy="20%" r="78%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.42" />
+      <stop offset="48%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="dossentry-logo-panel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.30" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.08" />
+    </linearGradient>
+    <filter id="dossentry-logo-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="30" stdDeviation="28" flood-color="#0f172a" flood-opacity="0.18" />
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="260" fill="url(#dossentry-logo-bg)" />
+  <circle cx="298" cy="246" r="356" fill="url(#dossentry-logo-glow)" />
+
+  <g opacity="0.16">
+    <path d="M162 308C162 255 205 212 258 212H766C819 212 862 255 862 308V716C862 769 819 812 766 812H258C205 812 162 769 162 716V308Z" fill="none" stroke="#ffffff" stroke-width="18" />
+    <path d="M256 308H768" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
+    <path d="M256 430H768" stroke="#ffffff" stroke-width="12" stroke-linecap="round" />
+    <path d="M256 546H768" stroke="#ffffff" stroke-width="12" stroke-linecap="round" />
+    <path d="M256 662H626" stroke="#ffffff" stroke-width="12" stroke-linecap="round" />
+  </g>
+
+  <g filter="url(#dossentry-logo-shadow)">
+    <rect x="208" y="190" width="608" height="644" rx="184" fill="url(#dossentry-logo-panel)" stroke="#ffffff" stroke-opacity="0.22" stroke-width="16" />
+    <path d="M372 320H536C673 320 756 397 756 512C756 627 673 704 536 704H372V320ZM527 610C601 610 646 573 646 512C646 451 601 414 527 414H482V610H527Z" fill="#ffffff" />
+    <path d="M287 362C287 350 297 340 309 340H348C360 340 370 350 370 362V662C370 674 360 684 348 684H309C297 684 287 674 287 662V362Z" fill="#ffffff" fill-opacity="0.18" />
+  </g>
+</svg>
