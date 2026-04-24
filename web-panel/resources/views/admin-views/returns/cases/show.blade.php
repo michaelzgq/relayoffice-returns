@@ -13,6 +13,7 @@
         $statusLabels = \App\Models\ReturnCase::decisionStatusLabels();
         $statusHelp = \App\Models\ReturnCase::decisionStatusHelp();
         $canInspect = \App\CPU\Helpers::admin_has_module('returns_inspect_section');
+        $reviewSignals = $resource->reviewSignals();
     @endphp
     <div class="content container-fluid">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
@@ -69,6 +70,15 @@
             </div>
         </div>
 
+        @if($reviewSignals)
+            <div class="alert alert-soft-warning mb-3">
+                <div class="font-weight-bold mb-2">Review triggers</div>
+                @foreach($reviewSignals as $signal)
+                    <div class="small">- {{ $signal }}</div>
+                @endforeach
+            </div>
+        @endif
+
         <div class="row g-3">
             <div class="col-lg-8">
                 <div class="card mb-3">
@@ -93,6 +103,17 @@
                                 <div class="text-muted small">Notes</div>
                                 <div>{{ $resource->notes ?: 'No notes recorded.' }}</div>
                             </div>
+                            @if($resource->expectedInbound)
+                                <div class="col-12">
+                                    <div class="text-muted small">Expected inbound</div>
+                                    <div>
+                                        {{ $resource->expectedInbound->return_id }} /
+                                        SKU {{ $resource->expectedInbound->product_sku ?: 'N/A' }} /
+                                        serial {{ $resource->expectedInbound->serial_number ?: 'N/A' }} /
+                                        status {{ \App\Models\ReturnExpectedInbound::statusLabels()[$resource->expectedInbound->status] ?? $resource->expectedInbound->status }}
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -205,8 +226,11 @@
                     <div class="card-body">
                         @if($resource->ruleProfile)
                             <div class="mb-2"><strong>{{ $resource->ruleProfile->profile_name }}</strong></div>
+                            <div class="text-muted small mb-2">Rule version: v{{ $resource->ruleProfile->rule_version ?? 1 }}</div>
                             <div class="text-muted small mb-2">Default decision state: {{ \App\Models\ReturnCase::decisionStatusLabel($resource->ruleProfile->default_refund_status) }}</div>
                             <div class="text-muted small mb-2">Recommended actions: {{ collect($resource->ruleProfile->recommended_dispositions ?? [])->map(fn ($item, $condition) => str_replace('_', ' ', $condition) . ' -> ' . str_replace('_', ' ', $item))->implode(', ') ?: 'No default actions' }}</div>
+                            <div class="text-muted small mb-2">Auto-hold: {{ collect($resource->ruleProfile->auto_hold_triggers ?? [])->map(fn ($item) => \App\Models\BrandRuleProfile::autoHoldTriggerOptions()[$item] ?? str_replace('_', ' ', $item))->implode(', ') ?: 'No exception triggers' }}</div>
+                            <div class="text-muted small mb-2">Reviewer template: {{ $resource->ruleProfile->reviewer_note_template ?: 'No template set' }}</div>
                             <div class="text-muted small mb-2">Conditions: {{ implode(', ', array_map(fn ($item) => str_replace('_', ' ', $item), $resource->ruleProfile->allowed_conditions ?? [])) }}</div>
                             <div class="text-muted small">Dispositions: {{ implode(', ', array_map(fn ($item) => str_replace('_', ' ', $item), $resource->ruleProfile->allowed_dispositions ?? [])) }}</div>
                         @else

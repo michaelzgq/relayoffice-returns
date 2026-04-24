@@ -25,6 +25,13 @@ class StoreBrandRuleProfileRequest extends ValidationHandler
             'allowed_dispositions' => ['required', 'array', 'min:1'],
             'allowed_dispositions.*' => ['required', 'string'],
             'recommended_dispositions' => ['nullable', 'array'],
+            'product_rule_scope' => ['nullable', 'array'],
+            'product_rule_scope.*' => ['nullable', 'string', 'max:255'],
+            'auto_hold_triggers' => ['nullable', 'array'],
+            'auto_hold_triggers.*' => ['nullable', 'string'],
+            'escalation_rules' => ['nullable', 'array'],
+            'escalation_rules.*' => ['nullable', 'string', 'max:255'],
+            'reviewer_note_template' => ['nullable', 'string', 'max:2000'],
             'required_photo_types' => ['nullable', 'array'],
             'required_photo_types.*' => ['nullable', 'string'],
             'required_photo_count' => ['required', 'integer', 'min:0', 'max:10'],
@@ -51,6 +58,9 @@ class StoreBrandRuleProfileRequest extends ValidationHandler
                 ->values();
             $recommendedDispositions = collect($this->input('recommended_dispositions', []))
                 ->filter(fn($value) => filled($value));
+            $autoHoldTriggers = collect($this->input('auto_hold_triggers', []))
+                ->filter()
+                ->values();
 
             $requiredPhotoCount = (int) $this->input('required_photo_count', 0);
 
@@ -81,6 +91,13 @@ class StoreBrandRuleProfileRequest extends ValidationHandler
                         "recommended_dispositions.{$condition}",
                         'Recommended actions must point to one of the allowed warehouse actions.'
                     );
+                }
+            }
+
+            $allowedTriggers = collect(\App\Models\BrandRuleProfile::autoHoldTriggerOptions())->keys();
+            foreach ($autoHoldTriggers as $trigger) {
+                if (!$allowedTriggers->contains($trigger)) {
+                    $validator->errors()->add('auto_hold_triggers', 'Auto-hold triggers must use one of the supported exception rules.');
                 }
             }
         });

@@ -168,4 +168,35 @@ class ReturnsInspectionFlowTest extends TestCase
         $event = ReturnCaseEvent::query()->where('return_case_id', $case->id)->latest('id')->first();
         $this->assertTrue((bool) data_get($event?->meta, 'recommended_disposition_used'));
     }
+
+    public function test_inspection_can_be_saved_as_draft_without_required_evidence(): void
+    {
+        $admin = $this->signInAdmin();
+        $bundle = $this->createBrandWithProfile();
+        $brand = $bundle['brand'];
+
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.returns.inspect.store'), [
+            'return_id' => 'RMA-DRAFT-9104',
+            'brand_id' => $brand->id,
+            'save_as_draft' => 1,
+            'offline_draft_uuid' => 'draft-9104',
+        ]);
+
+        $response->assertRedirect();
+
+        $case = ReturnCase::query()->where('return_id', 'RMA-DRAFT-9104')->firstOrFail();
+
+        $this->assertSame('draft', $case->inspection_status);
+        $this->assertSame('draft', $case->sync_status);
+        $this->assertFalse($case->evidence_complete);
+        $this->assertSame('custom', $case->condition_code);
+        $this->assertSame('hold', $case->disposition_code);
+        $this->assertDatabaseMissing('refund_gate_decisions', [
+            'return_case_id' => $case->id,
+        ]);
+        $this->assertDatabaseHas('return_case_events', [
+            'return_case_id' => $case->id,
+            'event_type' => 'inspection_draft_saved',
+        ]);
+    }
 }

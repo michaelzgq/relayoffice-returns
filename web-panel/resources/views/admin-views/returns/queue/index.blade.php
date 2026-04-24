@@ -101,10 +101,14 @@
                         </div>
                         <div class="col-lg-2">
                             <div class="form-group mb-0">
-                                <label class="title d-block">Evidence</label>
+                                <label class="title d-block">Exceptions</label>
                                 <div class="custom-control custom-checkbox mt-2">
                                     <input class="custom-control-input" type="checkbox" name="evidence_missing" id="queue-evidence-missing" value="1" {{ request()->boolean('evidence_missing') ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="queue-evidence-missing">Only missing</label>
+                                </div>
+                                <div class="custom-control custom-checkbox mt-2">
+                                    <input class="custom-control-input" type="checkbox" name="rule_gap" id="queue-rule-gap" value="1" {{ request()->boolean('rule_gap') ? 'checked' : '' }}>
+                                    <label class="custom-control-label" for="queue-rule-gap">Rule gaps</label>
                                 </div>
                             </div>
                         </div>
@@ -146,6 +150,9 @@
                         @endif
                         @if(request()->boolean('evidence_missing'))
                             <input type="hidden" name="evidence_missing" value="1">
+                        @endif
+                        @if(request()->boolean('rule_gap'))
+                            <input type="hidden" name="rule_gap" value="1">
                         @endif
                         @if(request()->filled('filter_status'))
                             <input type="hidden" name="filter_status" value="{{ request('filter_status') }}">
@@ -201,6 +208,7 @@
                                     $ageBadge = $resource->sla_age_hours >= 48
                                         ? 'badge-soft-danger'
                                         : ($resource->sla_age_hours >= 24 ? 'badge-soft-warning' : 'badge-soft-success');
+                                    $reviewSignals = $resource->reviewSignals();
                                 @endphp
                                 <div class="queue-card {{ $resource->evidence_complete ? '' : 'evidence-risk' }} p-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-start gap-2">
@@ -230,6 +238,14 @@
                                         <span class="badge {{ $resource->evidence_complete ? 'badge-soft-success' : 'badge-soft-danger' }}">
                                             Evidence {{ $resource->evidence_photo_count }}/{{ $resource->required_photo_count }}
                                         </span>
+                                        @if($resource->inspection_status === 'draft')
+                                            <span class="badge badge-soft-warning">Draft</span>
+                                        @endif
+                                        @if($resource->expectedInbound)
+                                            <span class="badge {{ $resource->expectedInbound->status === 'exception' ? 'badge-soft-danger' : 'badge-soft-info' }}">
+                                                Expected {{ \App\Models\ReturnExpectedInbound::statusLabels()[$resource->expectedInbound->status] ?? $resource->expectedInbound->status }}
+                                            </span>
+                                        @endif
                                     </div>
 
                                     <div class="queue-meta mt-3 text-capitalize">
@@ -249,6 +265,15 @@
                                     @if(!$resource->evidence_complete)
                                         <div class="small text-danger mt-3">
                                             This case cannot move to Ready for brand review or Decision completed until evidence is complete.
+                                        </div>
+                                    @endif
+
+                                    @if($reviewSignals)
+                                        <div class="queue-note mt-3">
+                                            <div class="font-weight-bold mb-1">Review triggers</div>
+                                            @foreach(array_slice($reviewSignals, 0, 4) as $signal)
+                                                <div class="small">- {{ $signal }}</div>
+                                            @endforeach
                                         </div>
                                     @endif
 
@@ -273,6 +298,9 @@
                                             @endif
                                             @if(request()->boolean('evidence_missing'))
                                                 <input type="hidden" name="evidence_missing" value="1">
+                                            @endif
+                                            @if(request()->boolean('rule_gap'))
+                                                <input type="hidden" name="rule_gap" value="1">
                                             @endif
                                             @if(request()->filled('filter_status'))
                                                 <input type="hidden" name="filter_status" value="{{ request('filter_status') }}">

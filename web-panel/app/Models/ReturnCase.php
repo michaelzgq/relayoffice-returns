@@ -15,6 +15,7 @@ class ReturnCase extends Model
         'return_id',
         'brand_id',
         'brand_rule_profile_id',
+        'expected_inbound_id',
         'order_id',
         'product_sku',
         'serial_number',
@@ -33,6 +34,10 @@ class ReturnCase extends Model
         'assigned_to',
         'created_by',
         'company_id',
+        'offline_draft_uuid',
+        'sync_status',
+        'sync_error',
+        'draft_payload',
     ];
 
     protected $casts = [
@@ -40,6 +45,7 @@ class ReturnCase extends Model
         'received_at' => 'datetime',
         'inspected_at' => 'datetime',
         'refund_decided_at' => 'datetime',
+        'draft_payload' => 'array',
     ];
 
     public static function conditionOptions(): array
@@ -150,6 +156,11 @@ class ReturnCase extends Model
         return $this->hasMany(ReturnCaseMedia::class)->orderBy('sort_order')->orderByDesc('id');
     }
 
+    public function expectedInbound()
+    {
+        return $this->belongsTo(ReturnExpectedInbound::class, 'expected_inbound_id');
+    }
+
     public function events()
     {
         return $this->hasMany(ReturnCaseEvent::class)->latest();
@@ -165,5 +176,51 @@ class ReturnCase extends Model
         $from = $this->received_at ?? $this->created_at ?? Carbon::now();
 
         return $from->diffInHours(Carbon::now());
+    }
+
+    public function reviewSignals(): array
+    {
+        $signals = [];
+        $ruleProfile = $this->ruleProfile;
+        $triggers = $ruleProfile?->auto_hold_triggers ?? [];
+
+        $push = static function (bool $condition, string $message) use (&$signals): void {
+            if ($condition) {
+                $signals[] = $message;
+            }
+        };
+
+        $push($this->inspection_status === 'draft', 'Inspection is still a draft.');
+        $push(!$this->evidence_complete, 'Evidence checklist is incomplete.');
+        $push((bool) ($ruleProfile?->sku_required) && empty($this->product_sku), 'SKU is required but missing.');
+        $push((bool) ($ruleProfile?->serial_required) && empty($this->serial_number), 'Serial number is required but missing.');
+        $push((bool) ($ruleProfile?->notes_required) && empty($this->notes), 'Inspector notes are required but missing.');
+
+        foreach ($this->expectedInbound?->mismatchSummaryForCase($this) ?? [] as $mismatch) {
+            $signals[] = $mismatch;
+        }
+
+        $triggerMessages = [
+            'draft_capture' => [$this->inspection_status === 'draft', 'Auto-hold trigger: draft capture.'],
+            'missing_evidence' => [!$this->evidence_complete, 'Auto-hold trigger: missing evidence.'],
+            'missing_sku' => [(bool) ($ruleProfile?->sku_required) && empty($this->product_sku), 'Auto-hold trigger: missing SKU.'],
+            'missing_serial' => [(bool) ($ruleProfile?->serial_required) && empty($this->serial_number), 'Auto-hold trigger: missing serial.'],
+            'missing_notes' => [(bool) ($ruleProfile?->notes_required) && empty($this->notes), 'Auto-hold trigger: missing notes.'],
+            'wrong_item' => [$this->condition_code === 'wrong_item', 'Auto-hold trigger: wrong item.'],
+            'empty_box' => [$this->condition_code === 'empty_box', 'Auto-hold trigger: empty box.'],
+            'missing_parts' => [$this->condition_code === 'missing_parts', 'Auto-hold trigger: missing parts.'],
+            'opened_damaged' => [$this->condition_code === 'opened_damaged', 'Auto-hold trigger: opened damaged.'],
+            'expected_sku_mismatch' => [$this->expectedInbound?->hasSkuMismatch($this) ?? false, 'Auto-hold trigger: expected SKU mismatch.'],
+            'expected_serial_mismatch' => [$this->expectedInbound?->hasSerialMismatch($this) ?? false, 'Auto-hold trigger: expected serial mismatch.'],
+            'expected_condition_mismatch' => [$this->expectedInbound?->hasConditionMismatch($this) ?? false, 'Auto-hold trigger: expected condition mismatch.'],
+        ];
+
+        foreach ($triggers as $trigger) {
+            if (isset($triggerMessages[$trigger])) {
+                $push($triggerMessages[$trigger][0], $triggerMessages[$trigger][1]);
+            }
+        }
+
+        return array_values(array_unique($signals));
     }
 }

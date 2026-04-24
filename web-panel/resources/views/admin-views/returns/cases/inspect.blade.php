@@ -241,10 +241,12 @@
 @endpush
 
 @section('content')
-    @php($selectedBrandId = (int) old('brand_id', $currentCase?->brand_id))
+    @php($selectedBrandId = (int) old('brand_id', $currentCase?->brand_id ?? $expectedInbound?->brand_id))
     @php($initialProfile = $selectedBrandId ? $profiles->get($selectedBrandId) : null)
     @php($canManageRefundGate = \App\CPU\Helpers::admin_has_module('returns_queue_section'))
     @php($inspectorView = \App\CPU\Helpers::returns_user_is_inspector())
+    @php($initialCondition = old('condition_code', $currentCase?->condition_code ?? $expectedInbound?->expected_condition))
+    @php($initialOfflineUuid = old('offline_draft_uuid', $currentCase?->offline_draft_uuid ?? (string) \Illuminate\Support\Str::uuid()))
     <div class="content container-fluid inspection-page">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
             <div>
@@ -258,11 +260,27 @@
             <a href="{{ route('admin.returns.cases.index') }}" class="btn btn-light">{{ $inspectorView ? 'Back to my cases' : 'Back to cases' }}</a>
         </div>
 
-        <form method="post" action="{{ route('admin.returns.inspect.store') }}" enctype="multipart/form-data">
+        @if($expectedInbound)
+            <div class="alert alert-soft-info mb-3">
+                <div class="font-weight-bold mb-1">Expected inbound matched</div>
+                <div class="small mb-0">
+                    {{ $expectedInbound->return_id }} from {{ $expectedInbound->brand?->name ?? 'N/A' }}.
+                    Expected SKU {{ $expectedInbound->product_sku ?: 'N/A' }},
+                    serial {{ $expectedInbound->serial_number ?: 'N/A' }},
+                    condition {{ $expectedInbound->expected_condition ? str_replace('_', ' ', $expectedInbound->expected_condition) : 'N/A' }}.
+                </div>
+            </div>
+        @endif
+
+        <form method="post" action="{{ route('admin.returns.inspect.store') }}" enctype="multipart/form-data" data-local-draft-key="dossentry-inspection-draft-v1">
             @csrf
             @if($currentCase)
                 <input type="hidden" name="case_id" value="{{ $currentCase->id }}">
             @endif
+            @if($expectedInbound)
+                <input type="hidden" name="expected_inbound_id" value="{{ $expectedInbound->id }}">
+            @endif
+            <input type="hidden" id="offline-draft-uuid-input" name="offline_draft_uuid" value="{{ $initialOfflineUuid }}">
 
             <div class="row g-3">
                 <div class="col-lg-4">
@@ -284,7 +302,7 @@
                             <div class="form-group">
                                 <label class="title">Return ID</label>
                                 <div class="scan-input-row">
-                                    <input class="form-control form-control-lg" id="return-id-input" type="text" name="return_id" value="{{ old('return_id', $currentCase?->return_id) }}" placeholder="Scan or type return ID" required>
+                                    <input class="form-control form-control-lg" id="return-id-input" type="text" name="return_id" value="{{ old('return_id', $currentCase?->return_id ?? $expectedInbound?->return_id) }}" placeholder="Scan or type return ID" required>
                                     <button class="btn btn-outline-primary scan-action-btn" type="button" data-scan-mode="field" data-scan-target="return_id">Scan</button>
                                 </div>
                                 <div class="scan-helper">Works with camera scan, USB/Bluetooth barcode scanners, or manual typing.</div>
@@ -294,7 +312,7 @@
                                 <select class="form-control form-control-lg" id="brand-select-input" name="brand_id" required>
                                     <option value="">Choose the client playbook</option>
                                     @foreach($brands as $brand)
-                                        <option value="{{ $brand->id }}" {{ (string) old('brand_id', $currentCase?->brand_id) === (string) $brand->id ? 'selected' : '' }}>
+                                        <option value="{{ $brand->id }}" {{ (string) old('brand_id', $currentCase?->brand_id ?? $expectedInbound?->brand_id) === (string) $brand->id ? 'selected' : '' }}>
                                             {{ $brand->name }}
                                         </option>
                                     @endforeach
@@ -303,14 +321,14 @@
                             <div class="form-group">
                                 <label class="title">SKU / Barcode <span class="text-danger {{ $initialProfile?->sku_required ? '' : 'd-none' }}" id="sku-required-indicator">*</span></label>
                                 <div class="scan-input-row">
-                                    <input class="form-control form-control-lg" id="product-sku-input" type="text" name="product_sku" value="{{ old('product_sku', $currentCase?->product_sku) }}" placeholder="Scan or type SKU">
+                                    <input class="form-control form-control-lg" id="product-sku-input" type="text" name="product_sku" value="{{ old('product_sku', $currentCase?->product_sku ?? $expectedInbound?->product_sku) }}" placeholder="Scan or type SKU">
                                     <button class="btn btn-outline-primary scan-action-btn" type="button" data-scan-mode="field" data-scan-target="product_sku">Scan</button>
                                 </div>
                             </div>
                             <div class="form-group mb-0">
                                 <label class="title">Serial Number <span class="text-danger {{ $initialProfile?->serial_required ? '' : 'd-none' }}" id="serial-required-indicator">*</span></label>
                                 <div class="scan-input-row">
-                                    <input class="form-control form-control-lg" id="serial-number-input" type="text" name="serial_number" value="{{ old('serial_number', $currentCase?->serial_number) }}" placeholder="Only if this playbook requires it">
+                                    <input class="form-control form-control-lg" id="serial-number-input" type="text" name="serial_number" value="{{ old('serial_number', $currentCase?->serial_number ?? $expectedInbound?->serial_number) }}" placeholder="Only if this playbook requires it">
                                     <button class="btn btn-outline-primary scan-action-btn" type="button" data-scan-mode="field" data-scan-target="serial_number">Scan</button>
                                 </div>
                             </div>
@@ -331,6 +349,9 @@
                                     </span>
                                     <span class="badge badge-soft-info requirement-chip" id="rule-default-refund">
                                         {{ $initialProfile ? 'Default decision state: ' . \App\Models\ReturnCase::decisionStatusLabel($initialProfile->default_refund_status) : 'Decision default pending' }}
+                                    </span>
+                                    <span class="badge badge-soft-dark requirement-chip" id="rule-version">
+                                        {{ $initialProfile ? 'Rule v' . ($initialProfile->rule_version ?? 1) : 'Rule version pending' }}
                                     </span>
                                 </div>
 
@@ -354,6 +375,14 @@
                                     Allowed condition / disposition:
                                     {{ $initialProfile ? collect($initialProfile->allowed_conditions ?? [])->map(fn ($item) => str_replace('_', ' ', $item))->implode(', ') . ' / ' . collect($initialProfile->allowed_dispositions ?? [])->map(fn ($item) => str_replace('_', ' ', $item))->implode(', ') : 'Select a brand first' }}
                                 </div>
+                                <div class="small mt-2" id="rule-auto-hold-triggers">
+                                    Auto-hold triggers:
+                                    {{ $initialProfile && !empty($initialProfile->auto_hold_triggers) ? collect($initialProfile->auto_hold_triggers)->map(fn ($item) => \App\Models\BrandRuleProfile::autoHoldTriggerOptions()[$item] ?? str_replace('_', ' ', $item))->implode(', ') : 'No auto-hold triggers set' }}
+                                </div>
+                                <div class="small mt-2" id="rule-reviewer-template">
+                                    Reviewer note template:
+                                    {{ $initialProfile?->reviewer_note_template ?: 'No template set' }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -369,7 +398,7 @@
                                 @foreach($conditionOptions as $condition)
                                     <div class="col-sm-6 col-xl-3">
                                         <label class="inspection-option d-flex align-items-center condition-option" data-value="{{ $condition }}">
-                                            <input class="condition-input" type="radio" name="condition_code" value="{{ $condition }}" {{ old('condition_code', $currentCase?->condition_code) === $condition ? 'checked' : '' }} required>
+                                            <input class="condition-input" type="radio" name="condition_code" value="{{ $condition }}" {{ $initialCondition === $condition ? 'checked' : '' }} required>
                                             <span class="text-capitalize">{{ str_replace('_', ' ', $condition) }}</span>
                                         </label>
                                     </div>
@@ -385,10 +414,10 @@
                         <div class="card-body">
                             <div class="recommendation-banner p-3 mb-3">
                                 <div class="font-weight-bold mb-1" id="recommendation-title">
-                                    {{ $initialProfile?->recommendedDispositionForCondition(old('condition_code', $currentCase?->condition_code)) ? 'Recommended action ready' : 'Choose item condition first' }}
+                                    {{ $initialProfile?->recommendedDispositionForCondition($initialCondition) ? 'Recommended action ready' : 'Choose item condition first' }}
                                 </div>
                                 <div class="small text-muted mb-0" id="recommendation-copy">
-                                    @php($initialRecommendedDisposition = $initialProfile?->recommendedDispositionForCondition(old('condition_code', $currentCase?->condition_code)))
+                                    @php($initialRecommendedDisposition = $initialProfile?->recommendedDispositionForCondition($initialCondition))
                                     {{ $initialRecommendedDisposition
                                         ? 'Playbook suggests ' . str_replace('_', ' ', $initialRecommendedDisposition) . ' for this condition. Inspectors can submit with the default or choose another allowed action.'
                                         : 'The playbook will suggest a warehouse action after you select the return condition.' }}
@@ -476,6 +505,9 @@
                 <div class="col-12">
                     <div class="d-flex justify-content-end gap-2">
                         <a class="btn btn-light" href="{{ route('admin.returns.cases.index') }}">Cancel</a>
+                        <button class="btn btn-outline-secondary btn-lg" type="button" id="save-local-draft-button">Save local draft</button>
+                        <button class="btn btn-light btn-lg" type="button" id="restore-local-draft-button">Restore local draft</button>
+                        <button class="btn btn-outline-primary btn-lg" type="submit" name="save_as_draft" value="1" formnovalidate>Save server draft</button>
                         <button class="btn btn-primary btn-lg" type="submit">{{ $currentCase ? 'Update inspection' : 'Submit inspection' }}</button>
                     </div>
                 </div>
@@ -552,15 +584,21 @@
             const ruleProfileStatus = document.getElementById('rule-profile-status');
             const rulePhotoCount = document.getElementById('rule-photo-count');
             const ruleDefaultRefund = document.getElementById('rule-default-refund');
+            const ruleVersion = document.getElementById('rule-version');
             const ruleRecommendedActions = document.getElementById('rule-recommended-actions');
             const ruleRequiredFields = document.getElementById('rule-required-fields');
             const rulePhotoTypes = document.getElementById('rule-photo-types');
             const ruleAllowedValues = document.getElementById('rule-allowed-values');
+            const ruleAutoHoldTriggers = document.getElementById('rule-auto-hold-triggers');
+            const ruleReviewerTemplate = document.getElementById('rule-reviewer-template');
             const photoRequirementHelp = document.getElementById('photo-requirement-help');
             const recommendationTitle = document.getElementById('recommendation-title');
             const recommendationCopy = document.getElementById('recommendation-copy');
             const conditionInputs = Array.from(form.querySelectorAll('.condition-input'));
             const dispositionInputs = Array.from(form.querySelectorAll('.disposition-input'));
+            const offlineDraftUuidInput = document.getElementById('offline-draft-uuid-input');
+            const saveLocalDraftButton = document.getElementById('save-local-draft-button');
+            const restoreLocalDraftButton = document.getElementById('restore-local-draft-button');
             const scanStatusBanner = document.getElementById('scan-status-banner');
             const scanSheet = document.getElementById('scan-sheet');
             const scanReader = document.getElementById('scan-reader');
@@ -575,9 +613,11 @@
             const scanClosers = Array.from(document.querySelectorAll('[data-scan-close]'));
 
             const statusLabels = @json(\App\Models\ReturnCase::decisionStatusLabels());
+            const autoHoldTriggerLabels = @json(\App\Models\BrandRuleProfile::autoHoldTriggerOptions());
             const humanize = (value) => statusLabels[value] || String(value || '').replaceAll('_', ' ');
             const humanizeList = (values) => (values || []).map((value) => humanize(value)).join(', ');
             const mapToHumanList = (mapping) => Object.entries(mapping || {}).map(([condition, disposition]) => `${humanize(condition)} -> ${humanize(disposition)}`).join(', ');
+            const triggerList = (values) => (values || []).map((value) => autoHoldTriggerLabels[value] || humanize(value)).join(', ');
 
             const scanState = {
                 active: false,
@@ -733,10 +773,13 @@
                     ruleProfileStatus.textContent = 'Create or activate a client playbook before submitting inspections.';
                     rulePhotoCount.textContent = 'Evidence requirement unavailable';
                     ruleDefaultRefund.textContent = 'Decision default unavailable';
+                    ruleVersion.textContent = 'Rule version unavailable';
                     ruleRecommendedActions.textContent = 'Recommended warehouse actions: brand rule missing';
                     ruleRequiredFields.textContent = 'Required fields: brand rule missing';
                     rulePhotoTypes.textContent = 'Required photo types: brand rule missing';
                     ruleAllowedValues.textContent = 'Allowed condition / disposition: brand rule missing';
+                    ruleAutoHoldTriggers.textContent = 'Auto-hold triggers: brand rule missing';
+                    ruleReviewerTemplate.textContent = 'Reviewer note template: brand rule missing';
                     photoRequirementHelp.textContent = 'This brand cannot be submitted until an active rule profile exists.';
 
                     setRequiredState(skuInput, skuRequiredIndicator, false);
@@ -753,6 +796,7 @@
                 ruleProfileStatus.textContent = 'This playbook controls what proof is required and which decision state is used by default.';
                 rulePhotoCount.textContent = `${profile.required_photo_count} evidence photo(s) required`;
                 ruleDefaultRefund.textContent = `Default decision state: ${humanize(profile.default_refund_status)}`;
+                ruleVersion.textContent = `Rule v${profile.rule_version || 1}`;
                 ruleRecommendedActions.textContent = `Recommended warehouse actions: ${mapToHumanList(profile.recommended_dispositions || {}) || 'No default actions'}`;
 
                 const requiredFields = [];
@@ -763,6 +807,8 @@
                 ruleRequiredFields.textContent = `Required fields: ${requiredFields.length ? requiredFields.join(', ') : 'No extra fields required'}`;
                 rulePhotoTypes.textContent = `Required photo types: ${profile.required_photo_types.length ? humanizeList(profile.required_photo_types) : 'No specific capture types'}`;
                 ruleAllowedValues.textContent = `Allowed condition / disposition: ${humanizeList(profile.allowed_conditions)} / ${humanizeList(profile.allowed_dispositions)}`;
+                ruleAutoHoldTriggers.textContent = `Auto-hold triggers: ${triggerList(profile.auto_hold_triggers || []) || 'No auto-hold triggers set'}`;
+                ruleReviewerTemplate.textContent = `Reviewer note template: ${profile.reviewer_note_template || 'No template set'}`;
                 photoRequirementHelp.textContent = `Need at least ${profile.required_photo_count} photo(s). Existing evidence: ${existingEvidence}. Required captures: ${profile.required_photo_types.length ? humanizeList(profile.required_photo_types) : 'No specific capture types'}.`;
 
                 setRequiredState(skuInput, skuRequiredIndicator, Boolean(profile.sku_required));
@@ -1191,6 +1237,92 @@
                 }
             };
 
+            const localDraftKey = form.dataset.localDraftKey || 'dossentry-inspection-draft-v1';
+            const draftableElements = () => Array.from(form.elements).filter((element) => {
+                return element.name
+                    && !['_token', 'photos[]', 'save_as_draft'].includes(element.name)
+                    && element.type !== 'file';
+            });
+
+            const collectLocalDraft = () => {
+                const draft = {};
+
+                draftableElements().forEach((element) => {
+                    if ((element.type === 'radio' || element.type === 'checkbox') && !element.checked) {
+                        return;
+                    }
+
+                    draft[element.name] = element.value;
+                });
+
+                draft.saved_at = new Date().toISOString();
+                return draft;
+            };
+
+            const applyLocalDraft = (draft) => {
+                if (!draft || typeof draft !== 'object') {
+                    return;
+                }
+
+                Object.entries(draft).forEach(([name, value]) => {
+                    if (name === 'saved_at') {
+                        return;
+                    }
+
+                    draftableElements()
+                        .filter((element) => element.name === name)
+                        .forEach((element) => {
+                            if (element.type === 'radio' || element.type === 'checkbox') {
+                                element.checked = element.value === String(value);
+                                return;
+                            }
+
+                            element.value = value;
+                        });
+                });
+
+                brandSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                conditionInputs.forEach((input) => {
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+                setScanStatus('Local draft restored on this browser. Review the fields before submitting.', 'success');
+            };
+
+            const saveLocalDraft = () => {
+                try {
+                    localStorage.setItem(localDraftKey, JSON.stringify(collectLocalDraft()));
+                    setScanStatus('Local draft saved on this browser. It can be restored even if the page refreshes.', 'success');
+                } catch (error) {
+                    setScanStatus('Local draft could not be saved in this browser. Use server draft if network is available.', 'warning');
+                }
+            };
+
+            const restoreLocalDraft = () => {
+                try {
+                    const draft = JSON.parse(localStorage.getItem(localDraftKey) || 'null');
+                    if (!draft) {
+                        setScanStatus('No local draft found on this browser for this inspection.', 'warning');
+                        return;
+                    }
+
+                    applyLocalDraft(draft);
+                } catch (error) {
+                    setScanStatus('Local draft exists but could not be read. Start a new draft or use server draft.', 'warning');
+                }
+            };
+
+            let localDraftTimer = null;
+            const scheduleLocalDraftSave = () => {
+                clearTimeout(localDraftTimer);
+                localDraftTimer = setTimeout(() => {
+                    try {
+                        localStorage.setItem(localDraftKey, JSON.stringify(collectLocalDraft()));
+                    } catch (error) {
+                        // Explicit save button will surface browser storage failures.
+                    }
+                }, 600);
+            };
+
             if (refundSelect) {
                 refundSelect.addEventListener('change', function () {
                     refundSelect.dataset.userTouched = '1';
@@ -1238,6 +1370,17 @@
                     void scanFromImageFile(file);
                 });
             }
+
+            if (saveLocalDraftButton) {
+                saveLocalDraftButton.addEventListener('click', saveLocalDraft);
+            }
+
+            if (restoreLocalDraftButton) {
+                restoreLocalDraftButton.addEventListener('click', restoreLocalDraft);
+            }
+
+            form.addEventListener('input', scheduleLocalDraftSave);
+            form.addEventListener('change', scheduleLocalDraftSave);
 
             window.addEventListener('beforeunload', function () {
                 void closeScanner();

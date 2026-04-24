@@ -64,10 +64,16 @@
                             </select>
                         </div>
                         <div class="col-md-2 d-flex align-items-center gap-2">
-                            <label class="mb-0 d-flex align-items-center gap-2">
-                                <input type="checkbox" name="evidence_missing" value="1" {{ request()->boolean('evidence_missing') ? 'checked' : '' }}>
-                                <span>Evidence missing</span>
-                            </label>
+                            <div>
+                                <label class="mb-1 d-flex align-items-center gap-2">
+                                    <input type="checkbox" name="evidence_missing" value="1" {{ request()->boolean('evidence_missing') ? 'checked' : '' }}>
+                                    <span>Evidence missing</span>
+                                </label>
+                                <label class="mb-0 d-flex align-items-center gap-2">
+                                    <input type="checkbox" name="rule_gap" value="1" {{ request()->boolean('rule_gap') ? 'checked' : '' }}>
+                                    <span>Rule gaps</span>
+                                </label>
+                            </div>
                         </div>
                     @endunless
                     <div class="col-12 d-flex justify-content-end gap-2">
@@ -95,10 +101,14 @@
                     </thead>
                     <tbody>
                     @forelse($resources as $resource)
+                        @php($reviewSignals = $resource->reviewSignals())
                         <tr>
                             <td>
                                 <div class="font-weight-bold">{{ $resource->return_id }}</div>
                                 <div class="text-muted small">{{ $resource->product_sku ?: 'No SKU' }}</div>
+                                @if($resource->inspection_status === 'draft')
+                                    <span class="badge badge-soft-warning mt-1">Draft</span>
+                                @endif
                             </td>
                             <td>{{ $resource->brand?->name ?? 'N/A' }}</td>
                             <td class="text-capitalize">{{ str_replace('_', ' ', $resource->condition_code) }}</td>
@@ -112,6 +122,9 @@
                                 {{ $resource->evidence_photo_count }}/{{ $resource->required_photo_count }}
                                 @if(!$resource->evidence_complete)
                                     <div class="text-danger small">Incomplete</div>
+                                @endif
+                                @if($reviewSignals)
+                                    <div class="text-danger small">{{ count($reviewSignals) }} review trigger(s)</div>
                                 @endif
                             </td>
                             <td>{{ $resource->sla_age_hours }}h</td>

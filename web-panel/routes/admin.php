@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\POSController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ReceivableController;
 use App\Http\Controllers\Admin\ReturnCaseController;
+use App\Http\Controllers\Admin\ReturnExpectedInboundController;
 use App\Http\Controllers\Admin\ReturnsRuleController;
 use App\Http\Controllers\Admin\StocklimitController;
 use App\Http\Controllers\Admin\SupplierController;
@@ -227,6 +228,11 @@ Route::group(['namespace'=>'Admin', 'as' => 'admin.', 'prefix'=>'admin', 'middle
             Route::group(['middleware' => ['module:returns_ops_board_section']], function () {
                 Route::controller(ReturnCaseController::class)->group(function () {
                     Route::get('dashboard', 'dashboard')->name('dashboard.index');
+                });
+
+                Route::controller(ReturnExpectedInboundController::class)->group(function () {
+                    Route::get('inbound', 'index')->name('inbound.index');
+                    Route::post('inbound', 'store')->name('inbound.store');
                 });
 
                 Route::controller(WorkflowReviewRequestController::class)->group(function () {

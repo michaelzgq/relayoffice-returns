@@ -23,11 +23,14 @@ class StoreReturnInspectionRequest extends ValidationHandler
     {
         return [
             'case_id' => ['nullable', 'exists:return_cases,id'],
+            'expected_inbound_id' => ['nullable', 'exists:return_expected_inbounds,id'],
+            'save_as_draft' => ['nullable', 'boolean'],
+            'offline_draft_uuid' => ['nullable', 'string', 'max:80'],
             'return_id' => ['required', 'string', 'max:255'],
             'brand_id' => ['required', 'exists:brands,id'],
             'product_sku' => ['nullable', 'string', 'max:255'],
             'serial_number' => ['nullable', 'string', 'max:255'],
-            'condition_code' => ['required', Rule::in([
+            'condition_code' => [$this->isDraftSubmission() ? 'nullable' : 'required', Rule::in([
                 'unopened',
                 'like_new',
                 'opened_resaleable',
@@ -60,6 +63,11 @@ class StoreReturnInspectionRequest extends ValidationHandler
 
             if (!$ruleProfile) {
                 $validator->errors()->add('brand_id', 'This brand does not have an active rule profile yet.');
+                return;
+            }
+
+            if ($this->isDraftSubmission()) {
+                $this->validateDraftSubmission($validator, $ruleProfile);
                 return;
             }
 
@@ -168,14 +176,35 @@ class StoreReturnInspectionRequest extends ValidationHandler
         return $this->ruleProfile()?->recommendedDispositionForCondition((string) $this->input('condition_code'));
     }
 
+    public function isDraftSubmission(): bool
+    {
+        return $this->boolean('save_as_draft');
+    }
+
     protected function getRedirectUrl(): string
     {
         $parameters = [];
 
         if ($this->filled('case_id')) {
             $parameters['case_id'] = $this->input('case_id');
+        } elseif ($this->filled('expected_inbound_id')) {
+            $parameters['expected_id'] = $this->input('expected_inbound_id');
         }
 
         return route('admin.returns.inspect', $parameters);
+    }
+
+    private function validateDraftSubmission(Validator $validator, BrandRuleProfile $ruleProfile): void
+    {
+        $allowedConditions = $ruleProfile->allowed_conditions ?? [];
+        if ($this->filled('condition_code') && $allowedConditions && !in_array($this->input('condition_code'), $allowedConditions, true)) {
+            $validator->errors()->add('condition_code', 'Selected condition is not allowed by the brand rule profile.');
+        }
+
+        $resolvedDisposition = $this->resolvedDispositionCode();
+        $allowedDispositions = $ruleProfile->allowed_dispositions ?? [];
+        if ($resolvedDisposition && $allowedDispositions && !in_array($resolvedDisposition, $allowedDispositions, true)) {
+            $validator->errors()->add('disposition_code', 'Selected disposition is not allowed by the brand rule profile.');
+        }
     }
 }

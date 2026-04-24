@@ -60,7 +60,10 @@ class ReturnsRuleController extends Controller
             return redirect()->route('admin.returns.rules.index');
         }
 
-        $this->brandRuleProfile->findOrFail($id)->update($this->payload($request));
+        $profile = $this->brandRuleProfile->findOrFail($id);
+        $payload = $this->payload($request);
+        $payload['rule_version'] = (int) ($profile->rule_version ?? 1) + 1;
+        $profile->update($payload);
 
         Toastr::success(translate('Returns rule profile updated successfully'));
         return redirect()->route('admin.returns.rules.index');
@@ -77,6 +80,10 @@ class ReturnsRuleController extends Controller
                 ->filter(fn($value) => filled($value))
                 ->map(fn($value) => (string) $value)
                 ->all(),
+            'product_rule_scope' => array_values(array_filter((array) $request->input('product_rule_scope', []), fn($value) => filled($value))),
+            'auto_hold_triggers' => array_values(array_filter((array) $request->input('auto_hold_triggers', []), fn($value) => filled($value))),
+            'escalation_rules' => array_values(array_filter((array) $request->input('escalation_rules', []), fn($value) => filled($value))),
+            'reviewer_note_template' => $request->filled('reviewer_note_template') ? (string) $request->input('reviewer_note_template') : null,
             'required_photo_types' => array_values($request->input('required_photo_types', [])),
             'required_photo_count' => $request->integer('required_photo_count'),
             'notes_required' => $request->boolean('notes_required'),

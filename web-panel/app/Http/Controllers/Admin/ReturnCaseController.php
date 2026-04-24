@@ -42,7 +42,7 @@ class ReturnCaseController extends Controller
     public function show(Request $request, int $id): View
     {
         $resource = $this->visibleCaseQuery()
-            ->with(['brand', 'ruleProfile', 'media', 'events', 'refundDecision'])
+            ->with(['brand', 'ruleProfile', 'expectedInbound', 'media', 'events', 'refundDecision'])
             ->findOrFail($id);
 
         $shareDays = ReturnCase::normalizeShareExpiryDays($request->integer('share_days'));
@@ -206,9 +206,17 @@ class ReturnCaseController extends Controller
 
         return $this->visibleCaseQuery()
             ->with(['brand', 'ruleProfile', 'refundDecision'])
+            ->with('expectedInbound')
             ->when($request->filled('brand_id'), fn($query) => $query->where('brand_id', $request->integer('brand_id')))
             ->when(filled($filterStatus), fn($query) => $query->where('refund_status', (string) $filterStatus))
             ->when($request->boolean('evidence_missing'), fn($query) => $query->where('evidence_complete', false))
+            ->when($request->boolean('rule_gap'), function ($query) {
+                $query->where(function ($nested) {
+                    $nested->where('inspection_status', 'draft')
+                        ->orWhere('evidence_complete', false)
+                        ->orWhereHas('expectedInbound', fn($expectedQuery) => $expectedQuery->where('status', 'exception'));
+                });
+            })
             ->when($request->filled('min_sla_hours'), fn($query) => $query->whereRaw($this->slaAgeSql() . ' >= ?', [$request->integer('min_sla_hours')]))
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = (string) $request->input('search');
@@ -267,6 +275,7 @@ class ReturnCaseController extends Controller
             'search' => $request->input('search'),
             'brand_id' => $request->input('brand_id'),
             'evidence_missing' => $request->boolean('evidence_missing') ? 1 : null,
+            'rule_gap' => $request->boolean('rule_gap') ? 1 : null,
             'filter_status' => $request->input('filter_status'),
             'min_sla_hours' => $request->input('min_sla_hours'),
         ], fn ($value) => !is_null($value) && $value !== '');

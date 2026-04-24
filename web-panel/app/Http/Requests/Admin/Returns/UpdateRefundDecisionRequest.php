@@ -25,6 +25,7 @@ class UpdateRefundDecisionRequest extends ValidationHandler
             'search' => ['nullable', 'string', 'max:255'],
             'brand_id' => ['nullable', 'integer'],
             'evidence_missing' => ['nullable'],
+            'rule_gap' => ['nullable'],
             'filter_status' => ['nullable', Rule::in(['hold', 'ready_to_release', 'needs_review', 'released'])],
             'min_sla_hours' => ['nullable', 'integer', 'in:24,48'],
         ];
@@ -57,6 +58,7 @@ class UpdateRefundDecisionRequest extends ValidationHandler
                 'search' => $this->input('search'),
                 'brand_id' => $this->input('brand_id'),
                 'evidence_missing' => $this->boolean('evidence_missing') ? 1 : null,
+                'rule_gap' => $this->boolean('rule_gap') ? 1 : null,
                 'filter_status' => $this->input('filter_status'),
                 'min_sla_hours' => $this->input('min_sla_hours'),
             ], fn ($value) => !is_null($value) && $value !== ''));

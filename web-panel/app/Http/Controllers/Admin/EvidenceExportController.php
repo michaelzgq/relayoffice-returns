@@ -24,7 +24,7 @@ class EvidenceExportController extends Controller
         $resource = $this->returnCase
             ->newQuery()
             ->when(Helpers::returns_user_is_inspector(), fn($query) => $query->where('created_by', auth('admin')->id()))
-            ->with(['brand', 'ruleProfile', 'media', 'events', 'refundDecision'])
+            ->with(['brand', 'ruleProfile', 'expectedInbound', 'media', 'events', 'refundDecision'])
             ->findOrFail($id);
 
         $packData = $this->buildPackData($resource);
@@ -42,7 +42,7 @@ class EvidenceExportController extends Controller
     {
         $resource = $this->returnCase
             ->newQuery()
-            ->with(['brand', 'ruleProfile', 'media', 'events', 'refundDecision'])
+            ->with(['brand', 'ruleProfile', 'expectedInbound', 'media', 'events', 'refundDecision'])
             ->findOrFail($id);
 
         $packData = $this->buildPackData($resource, externalView: true);
@@ -59,7 +59,7 @@ class EvidenceExportController extends Controller
     {
         $resource = $this->returnCase
             ->newQuery()
-            ->with(['brand', 'ruleProfile', 'media', 'events', 'refundDecision'])
+            ->with(['brand', 'ruleProfile', 'expectedInbound', 'media', 'events', 'refundDecision'])
             ->findOrFail($id);
 
         return $this->downloadPdf(
@@ -98,6 +98,9 @@ class EvidenceExportController extends Controller
         }
         if ($resource->ruleProfile?->notes_required && empty($resource->notes)) {
             $coverageGaps->push('Inspector notes are required by the rule profile but were not captured.');
+        }
+        foreach ($resource->expectedInbound?->mismatchSummaryForCase($resource) ?? [] as $expectedGap) {
+            $coverageGaps->push($expectedGap);
         }
 
         $recommendedDisposition = $resource->ruleProfile?->recommendedDispositionForCondition($resource->condition_code);
@@ -198,6 +201,8 @@ class EvidenceExportController extends Controller
                 ['label' => 'Condition', 'value' => ucfirst($conditionLabel)],
                 ['label' => 'Warehouse action', 'value' => ucfirst($dispositionLabel)],
                 ['label' => 'Playbook recommendation', 'value' => $recommendedDisposition ? ucfirst(str_replace('_', ' ', $recommendedDisposition)) : 'No playbook default'],
+                ['label' => 'Rule version', 'value' => 'v' . ($resource->ruleProfile?->rule_version ?? 1)],
+                ['label' => 'Expected inbound', 'value' => $resource->expectedInbound ? ($resource->expectedInbound->return_id . ' / ' . ($resource->expectedInbound->product_sku ?: 'No SKU')) : 'No expected inbound record'],
                 ['label' => 'Decision state', 'value' => $decisionStateLabel],
                 ['label' => 'Evidence readiness', 'value' => $evidenceSummary],
             ])
@@ -206,6 +211,8 @@ class EvidenceExportController extends Controller
                 ['label' => 'Condition', 'value' => ucfirst($conditionLabel)],
                 ['label' => 'Warehouse action', 'value' => ucfirst($dispositionLabel)],
                 ['label' => 'Playbook recommendation', 'value' => $recommendedDisposition ? ucfirst(str_replace('_', ' ', $recommendedDisposition)) : 'No playbook default'],
+                ['label' => 'Rule version', 'value' => 'v' . ($resource->ruleProfile?->rule_version ?? 1)],
+                ['label' => 'Expected inbound', 'value' => $resource->expectedInbound ? ($resource->expectedInbound->return_id . ' / ' . ($resource->expectedInbound->product_sku ?: 'No SKU')) : 'No expected inbound record'],
                 ['label' => 'Decision state', 'value' => $decisionStateLabel],
                 ['label' => 'Decision note', 'value' => $resource->refundDecision?->reason ?: 'No decision note recorded'],
             ]);
@@ -243,6 +250,7 @@ class EvidenceExportController extends Controller
             'actionsNeeded' => $actionsNeeded,
             'decisionBasis' => $decisionBasis,
             'recommendedDisposition' => $recommendedDisposition,
+            'reviewSignals' => collect($resource->reviewSignals()),
             'mediaAssets' => $mediaAssets,
             'timelineItems' => $timelineItems,
             'decisionStateLabel' => $decisionStateLabel,

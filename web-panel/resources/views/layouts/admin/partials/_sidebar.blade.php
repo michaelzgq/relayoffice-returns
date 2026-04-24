@@ -67,6 +67,15 @@
                         @endif
 
                         @if($showOpsBoard && !$inspectorView && !$guestDemoView)
+                            <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/returns/inbound*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('admin.returns.inbound.index') }}" title="Expected inbound">
+                                    <i class="fi fi-sr-inbox-in nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Inbound</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if($showOpsBoard && !$inspectorView && !$guestDemoView)
                             <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/returns/review-requests*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('admin.returns.review-requests.index') }}" title="Review requests">
                                     <i class="fi fi-sr-envelope nav-icon"></i>

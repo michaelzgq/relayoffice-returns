@@ -9,6 +9,8 @@
         $selectedDispositions = old('allowed_dispositions', $editingProfile?->allowed_dispositions ?? []);
         $recommendedDispositions = old('recommended_dispositions', $editingProfile?->recommended_dispositions ?? []);
         $selectedPhotoTypes = old('required_photo_types', $editingProfile?->required_photo_types ?? []);
+        $selectedAutoHoldTriggers = old('auto_hold_triggers', $editingProfile?->auto_hold_triggers ?? ['draft_capture', 'missing_evidence', 'wrong_item', 'empty_box', 'expected_sku_mismatch', 'expected_serial_mismatch']);
+        $autoHoldTriggerOptions = \App\Models\BrandRuleProfile::autoHoldTriggerOptions();
     @endphp
     <div class="content container-fluid">
         <div class="row align-items-center mb-3">
@@ -163,6 +165,27 @@
                                 </div>
                             </div>
 
+                            <div class="mb-4">
+                                <h5>Auto-Hold Exception Rules</h5>
+                                <p class="text-muted small mb-3">These triggers turn a normal receiving record into a review workflow. This is the core rule engine moat.</p>
+                                <div class="row">
+                                    @foreach($autoHoldTriggerOptions as $trigger => $label)
+                                        <div class="col-sm-6 mb-2">
+                                            <label class="d-flex align-items-start gap-2">
+                                                <input type="checkbox" name="auto_hold_triggers[]" value="{{ $trigger }}" {{ in_array($trigger, $selectedAutoHoldTriggers, true) ? 'checked' : '' }}>
+                                                <span>{{ $label }}</span>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h5>Reviewer Note Template</h5>
+                                <p class="text-muted small mb-2">A short internal template that tells ops what to verify before moving a case forward.</p>
+                                <textarea class="form-control" name="reviewer_note_template" rows="4" placeholder="Check serial against expected inbound, confirm required evidence, then release only if SKU/serial match.">{{ old('reviewer_note_template', $editingProfile?->reviewer_note_template) }}</textarea>
+                            </div>
+
                                 <div class="d-flex gap-2 justify-content-end">
                                     @if($editingProfile)
                                         <a class="btn btn-light" href="{{ route('admin.returns.rules.index') }}">Cancel edit</a>
@@ -198,12 +221,17 @@
                                     <td>
                                         <div class="font-weight-bold">{{ $profile->brand?->name }}</div>
                                         <div class="text-muted small">{{ $profile->profile_name }}</div>
+                                        <div class="text-muted small">Rule v{{ $profile->rule_version ?? 1 }}</div>
                                         <div class="text-muted small mt-1">
                                             {{ collect($profile->required_photo_types ?? [])->map(fn ($item) => str_replace('_', ' ', $item))->implode(', ') ?: 'No evidence template' }}
                                         </div>
                                         <div class="text-muted small mt-1">
                                             Recommended actions:
                                             {{ collect($profile->recommended_dispositions ?? [])->map(fn ($item, $condition) => str_replace('_', ' ', $condition) . ' -> ' . str_replace('_', ' ', $item))->implode(', ') ?: 'No default actions' }}
+                                        </div>
+                                        <div class="text-muted small mt-1">
+                                            Auto-hold:
+                                            {{ collect($profile->auto_hold_triggers ?? [])->map(fn ($item) => $autoHoldTriggerOptions[$item] ?? str_replace('_', ' ', $item))->implode(', ') ?: 'No exception triggers' }}
                                         </div>
                                     </td>
                                     <td>{{ $profile->required_photo_count }} photos</td>
