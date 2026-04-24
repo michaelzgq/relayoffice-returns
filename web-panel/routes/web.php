@@ -47,6 +47,8 @@ $marketingPagePayload = function (): array {
         'demoLoginUrl' => 'https://demo.dossentry.com/admin/auth/login',
         'guestDemo' => config('dossentry.guest_demo'),
         'sampleCaseUrl' => route('sample-cases.serial-mismatch'),
+        'auditUrl' => route('return-exception-audit'),
+        'returnExceptionChecklistPdfUrl' => asset('assets/dossentry/dossentry-3pl-return-exception-checklist-2026-04.pdf'),
         'exceptionWorkflowUrl' => route('solutions.3pl-return-exception-workflow'),
         'serialMismatchEvidenceUrl' => route('solutions.serial-mismatch-return-evidence'),
         'sampleBrandReviewUrl' => $sampleCaseId
@@ -313,6 +315,14 @@ Route::get('sample-cases/serial-mismatch-review', function (Request $request) us
 
     return response()->view('sample-cases.serial-mismatch-review', $sampleSerialMismatchPayload());
 })->name('sample-cases.serial-mismatch');
+
+Route::get('return-exception-audit', function (Request $request) use ($marketingPagePayload, $redirectMarketingDemoHost) {
+    if ($redirect = $redirectMarketingDemoHost($request)) {
+        return $redirect;
+    }
+
+    return response()->view('lead-magnets.return-exception-audit', $marketingPagePayload());
+})->name('return-exception-audit');
 
 Route::get('3pl-return-exception-workflow', function (Request $request) use ($solutionPagePayload, $redirectMarketingDemoHost) {
     if ($redirect = $redirectMarketingDemoHost($request)) {

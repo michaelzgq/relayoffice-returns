@@ -1128,6 +1128,7 @@
                 <nav class="topnav">
                     <a href="#workflow">Products</a>
                     <a href="#deployment">Solutions</a>
+                    <a href="{{ $auditUrl }}" data-track-page="landing" data-track-placement="topnav" data-track-cta="return_exception_audit">Free Audit</a>
                     <a href="{{ route('compare.generic-inspection-apps') }}" data-track-page="landing" data-track-placement="topnav" data-track-cta="compare">Compare</a>
                     <a href="#faq">FAQ</a>
                 </nav>
@@ -1477,6 +1478,8 @@
             <div>{{ $appName }}. Brand-ready return evidence and decision workflows.</div>
             <div class="footer-links">
                 <a href="{{ route('compare.generic-inspection-apps') }}" data-track-page="landing" data-track-placement="footer" data-track-cta="compare">Compare</a>
+                <a href="{{ $auditUrl }}" data-track-page="landing" data-track-placement="footer" data-track-cta="return_exception_audit">Free audit</a>
+                <a href="{{ $returnExceptionChecklistPdfUrl }}" data-track-page="landing" data-track-placement="footer" data-track-cta="return_exception_checklist">Checklist PDF</a>
                 <a href="{{ $exceptionWorkflowUrl }}" data-track-page="landing" data-track-placement="footer" data-track-cta="exception_workflow">3PL workflow</a>
                 <a href="{{ $serialMismatchEvidenceUrl }}" data-track-page="landing" data-track-placement="footer" data-track-cta="serial_mismatch_evidence">Serial mismatch evidence</a>
                 <a href="{{ route('privacy-policy') }}">Privacy Policy</a>

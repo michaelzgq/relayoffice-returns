@@ -14,6 +14,17 @@ class WorkflowReviewRequestFlowTest extends TestCase
     use BuildsReturnsFixtures;
     use RefreshDatabase;
 
+    public function test_return_exception_audit_page_is_public(): void
+    {
+        $response = $this->get('http://dossentry.com/return-exception-audit');
+
+        $response->assertOk();
+        $response->assertSee('Free Return Exception Audit', false);
+        $response->assertSee('3 anonymized return cases', false);
+        $response->assertSee('dossentry-3pl-return-exception-checklist-2026-04.pdf', false);
+        $this->assertFileExists(public_path('assets/dossentry/dossentry-3pl-return-exception-checklist-2026-04.pdf'));
+    }
+
     public function test_public_landing_form_stores_a_workflow_review_request(): void
     {
         Mail::fake();
@@ -42,6 +53,49 @@ class WorkflowReviewRequestFlowTest extends TestCase
         Mail::assertSent(\App\Mail\WorkflowReviewRequestSubmitted::class, function ($mail) {
             return $mail->hasTo('michael.zgq@gmail.com');
         });
+    }
+
+    public function test_public_audit_form_can_redirect_back_to_audit_page(): void
+    {
+        Mail::fake();
+
+        $response = $this->post('http://dossentry.com/workflow-review-request', [
+            'full_name' => 'Taylor Audit',
+            'work_email' => 'taylor@dockline.co',
+            'company_name' => 'Dockline Fulfillment',
+            'role_title' => 'Returns Lead',
+            'volume_note' => '500-1,000',
+            'workflow_note' => 'Audit our disputed return SOP for refund hold gaps.',
+            'website' => '',
+            'success_path' => '/return-exception-audit#audit-request',
+        ]);
+
+        $response->assertRedirect('http://dossentry.com/return-exception-audit#audit-request');
+
+        $this->assertDatabaseHas('workflow_review_requests', [
+            'full_name' => 'Taylor Audit',
+            'company_name' => 'Dockline Fulfillment',
+            'status' => 'new',
+            'submitted_from_url' => 'http://dossentry.com/workflow-review-request',
+        ]);
+    }
+
+    public function test_public_form_rejects_external_success_redirects(): void
+    {
+        Mail::fake();
+
+        $response = $this->post('http://dossentry.com/workflow-review-request', [
+            'full_name' => 'Taylor Safe',
+            'work_email' => 'safe@dockline.co',
+            'company_name' => 'Dockline Fulfillment',
+            'role_title' => 'Returns Lead',
+            'volume_note' => '100-500',
+            'workflow_note' => 'Audit our disputed return SOP for redirect safety.',
+            'website' => '',
+            'success_path' => '//evil.example',
+        ]);
+
+        $response->assertRedirect('http://dossentry.com/#review-request');
     }
 
     public function test_public_landing_form_logs_email_failure_but_still_stores_request(): void
@@ -149,4 +203,3 @@ class WorkflowReviewRequestFlowTest extends TestCase
     }
 
 }
-
